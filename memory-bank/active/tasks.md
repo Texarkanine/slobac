@@ -141,6 +141,14 @@ No runtime validation required for `actions/deploy-pages` — it's a first-party
 - [x] Test planning complete (TDD)
 - [x] Implementation plan complete
 - [x] Technology validation planned (execution deferred to Build Step 4)
-- [ ] Preflight
-- [ ] Build
+- [x] Preflight (PASS — one accretive amendment: `mkdocs-redirects`)
+- [x] Build (PASS — clean strict build; see Build Notes below)
 - [ ] QA
+
+## Build Notes
+
+- Technology validation (plan Step 4) was executed during build: `uv venv` + `pip install -r requirements-docs.txt` + `mkdocs build --strict` → all green.
+- **Deviation: slugifier + validation config added mid-build.** Initial strict build surfaced 3 anchor mismatches in cross-links from `taxonomy/pseudo-tested.md`, `taxonomy/wrong-level.md`, and `glossary.md` self-link. Root cause: the existing markdown was authored against GitHub's slug rules (double-hyphen separator for `/`), which don't match mkdocs/python-markdown defaults. **Fix:** configured `toc.slugify` to use `pymdownx.slugs.slugify(case='lower')` (GitHub-compatible), *and* added explicit `validation:` block because mkdocs 1.5+ `strict: true` alone does not escalate anchor warnings (they log at INFO by default). Net effect: docs render identically on github.com and the built site, and anchor drift will now fail CI going forward.
+- **Deviation: `DISABLE_MKDOCS_2_WARNING=true` added to workflow env.** One of the mkdocs-ecosystem plugins shoves an unsolicited "switch to ProperDocs" notice into every build. Silenced via env var, called out in a comment in the workflow.
+- **Deviation: `.pages` at docs root.** Plan Step 5 was conditional; executed because the default alphabetical nav order disagreed with the reading order recommended in `docs/index.md`. `docs/.pages` now pins the top-level order: Home → Principles → Workflows → Taxonomy → Glossary.
+- **Side-effect files added** (planned, recorded for completeness): `.gitignore` (new), `README.md` (new, minimal), `memory-bank/techContext.md` (updated to reflect docs publishing toolchain).

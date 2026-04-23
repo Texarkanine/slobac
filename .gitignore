@@ -1,0 +1,8 @@
+# mkdocs build output
+/site/
+
+# Python virtualenvs (docs-preview)
+.venv-docs/
+.venv/
+__pycache__/
+*.pyc

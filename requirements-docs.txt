@@ -1,0 +1,8 @@
+# Docs-build dependencies only. Runtime deps (Phase 1+) go elsewhere.
+# Loose-compatible pins (~= on major.minor) — reproducibility without locking out security patches.
+
+mkdocs ~= 1.6
+mkdocs-material ~= 9.5
+mkdocs-awesome-pages-plugin ~= 2.9
+mkdocs-redirects ~= 1.2
+pymdown-extensions ~= 10.7
