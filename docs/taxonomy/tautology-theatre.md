@@ -1,4 +1,4 @@
-# Tautology Theatre (Mock-Verifies-Itself)
+# Tautology Theatre
 
 | Slug | Severity | Protects |
 |---|---|---|

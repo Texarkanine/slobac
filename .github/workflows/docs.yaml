@@ -1,0 +1,66 @@
+name: Build and Deploy Docs Site
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    # Build on all PRs so link-validation / strict-mode gates docs changes at review time.
+    # Deploy job is skipped for PRs (see the `if:` on `deploy:` below).
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One concurrent deploy to Pages; do not cancel in-progress prod deploys, but skip
+# any runs queued between the in-progress one and the latest queued one.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v8.0.0
+        with:
+          # Auto-keys the cache on pyproject.toml + uv.lock. uv also auto-provisions
+          # Python per `requires-python` in pyproject.toml, so no separate
+          # actions/setup-python step is needed.
+          enable-cache: true
+
+      - name: Install docs dependencies
+        # --frozen: fail if uv.lock is out of date vs pyproject.toml. Lock drift
+        # must be a PR-reviewable change, not a silent CI-time regeneration.
+        # If this step fails: run `uv sync --group docs` locally and commit the
+        # updated uv.lock.
+        run: uv sync --group docs --frozen
+
+      - name: Build site (strict)
+        run: uv run properdocs build --strict
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    name: Deploy to GitHub Pages
+    # PR builds stop at the `build` job — they gate link validity without deploying.
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5

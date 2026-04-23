@@ -1,0 +1,92 @@
+site_name: SLOBAC — Suite-Life Of Bobs And Code
+site_description: >-
+  A manifesto for what tests and test suites should be, and the named
+  ways they go wrong. Plus (eventually) an audit-and-remediation capability.
+site_url: https://texarkanine.github.io/slobac/
+site_author: Texarkanine
+
+repo_url: https://github.com/Texarkanine/slobac
+repo_name: Texarkanine/slobac
+edit_uri: edit/main/docs/
+
+docs_dir: docs
+site_dir: site
+
+# Strict mode = warnings become errors. Combined with the explicit `validation:` block
+# below, this is the integrity gate for the tightly cross-linked docs/ tree (see
+# memory-bank/systemPatterns.md — cross-link drift is the primary failure mode).
+strict: true
+
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+    - content.action.view
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+  - awesome-pages
+
+markdown_extensions:
+  # Core structure / typography
+  - admonition
+  - footnotes
+  - tables
+  - toc:
+      permalink: true
+      permalink_title: Permanent link to this section
+      # GitHub-compatible slugifier so docs/ markdown renders identically on
+      # github.com and the mkdocs site. Existing cross-links were authored
+      # against GitHub's slug rules (e.g. "a / b" → "a--b"); this preserves them.
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.snippets:
+      base_path:
+        - .
+      check_paths: true
+      auto_append: []
+  - pymdownx.superfences
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Texarkanine/slobac
+  generator: false

@@ -1,14 +1,25 @@
 # Tech Context
 
-SLOBAC is currently a **Markdown-only project**. There is no source code, no build system, no test framework, and no runtime yet. The current artifact is the `docs/` manifesto, with `planning/VISION.md` as the product brief. When implementation begins, the target packaging is **mainstream agentic-coding-harness primitives — Skills and Sub-Agents** (per `planning/VISION.md` §1.2 and §5 open question #6). The specific harness target order is deliberately unresolved.
+SLOBAC has no runtime source code yet — the current artifact is the `docs/` manifesto, with `planning/VISION.md` as the product brief. When implementation begins, the target packaging is **mainstream agentic-coding-harness primitives — Skills and Sub-Agents** (per `planning/VISION.md` §1.2 and §5 open question #6). The specific harness target order is deliberately unresolved.
+
+The project does have a **docs publishing toolchain** (Phase 0 deliverable): the `docs/` tree is published to GitHub Pages by `.github/workflows/docs.yaml` using [ProperDocs](https://properdocs.org/) (the actively-maintained continuation of MkDocs 1.x) with the `mkdocs-material` theme, using `--strict` link validation as a CI gate. This is build-only infrastructure — it does not change the "manifesto ships as raw markdown on github.com" property.
 
 ## Environment Setup
 
-None required to work on the manifesto. A Markdown-capable editor is sufficient. Anchor-aware preview is helpful because `docs/taxonomy/*.md` entries rely heavily on cross-linked anchors to `docs/principles.md` and `docs/glossary.md`.
+**To read/edit the manifesto:** a Markdown-capable editor is sufficient. Anchor-aware preview is helpful because `docs/taxonomy/*.md` entries rely heavily on cross-linked anchors to `docs/principles.md` and `docs/glossary.md`.
+
+**To preview the built docs site locally:** `uv` (which auto-provisions Python per `pyproject.toml`), then `uv sync --group docs` + `uv run properdocs serve`.
 
 ## Build Tools
 
-None yet. The `docs/` tree is consumed as-is.
+- **properdocs + mkdocs-material** (docs site generator; Phase 0 publishing). ProperDocs is a drop-in replacement for MkDocs 1.x by its last active maintainer; the config file, plugin names, and CLI semantics are identical except the command is `properdocs` instead of `mkdocs`.
+- **mkdocs-awesome-pages-plugin** (nav ordering via `.pages` files).
+- **mkdocs-redirects** (pre-positioned for future rename resilience; empty `redirect_maps` until first taxonomy rename).
+- **pymdown-extensions** (snippet-includes via `pymdownx.snippets`, plus the standard mkdocs-material extension stack).
+
+Dependencies are declared in `pyproject.toml` under the PEP 735 `[dependency-groups] docs` group; `uv.lock` pins them for reproducibility. CI uses `uv sync --group docs --frozen` so lock drift must be a PR-reviewable change. No runtime Python is required for the manifesto itself.
+
+The cross-link integrity gate is `properdocs build --strict` combined with `validation.anchors: warn` — every broken markdown cross-reference fails the build. This is the CI-enforced version of the cross-link-drift invariant named in `memory-bank/systemPatterns.md`. PRs are built (but not deployed) so link-drift is caught at review time.
 
 ## Testing Process
 
