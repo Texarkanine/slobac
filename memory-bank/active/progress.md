@@ -7,3 +7,5 @@ Ship Phase 1 of [`planning/VISION.md`](../../planning/VISION.md): an audit MVP f
 ## History
 
 - **Complexity analysis complete** — Level 3 determined; rationale in [`activeContext.md`](./activeContext.md). Next phase: Level 3 planning.
+- **Plan (component analysis)** — components, cross-module dependencies, boundary changes, and invariants identified. `tasks.md` carries the full component analysis and invariant checklist. Two open questions flagged (OQ1 customization shape, OQ2 docs↔customization DRY); VISION §5 open questions #1 (output format → markdown), #3 (subset UX → natural language), #8 (artifact name → `slobac-audit.md`), and testing approach (fixture suites + manual verification) decided at plan-time with rationale in `tasks.md`.
+- **Creative OQ1 — Customization primitive shape & granularity** — **Resolved (high confidence):** ur-Skill + per-smell entries under `references/smells/<slug>.md`, AgentSkills.io shape. See [`creative/creative-customization-shape.md`](./creative/creative-customization-shape.md). Resumes plan phase for OQ2.
