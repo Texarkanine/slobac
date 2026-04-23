@@ -16,7 +16,6 @@ Write to `./slobac-audit.md` in the operator's current working directory. If the
 - **Scope invoked:** <comma-separated smell slugs the operator requested, or `all` if unscoped>
 - **Target suite root:** <path to the audited directory, as given to the skill>
 - **Audit date:** <ISO-8601 date, e.g. 2026-04-23>
-- **Skill version:** <git ref of the SKILL.md, if available; otherwise `unversioned`>
 
 ## Summary
 

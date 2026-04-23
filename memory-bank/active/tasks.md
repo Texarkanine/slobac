@@ -234,7 +234,7 @@ No new runtime dependencies. The validation target is **harness discovery**: bot
 - [x] Technology validation complete
 - [x] Preflight — PASS with two implementation amendments applied (report default path; always-present augmentation file) + one advisory (report versioning)
 - [x] Build — PASS, 12 of 14 planned steps executed (step 10 marked unneeded at plan time; step 14 conditional pivot not triggered)
-- [ ] QA
+- [x] QA — PASS with one trivial fix applied (removed preflight-advisory "Skill version" field that was scope-crept into the report template)
 
 ## Preflight Amendments Applied
 
