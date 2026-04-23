@@ -2,7 +2,7 @@
 
 SLOBAC has no runtime source code yet — the current artifact is the `docs/` manifesto, with `planning/VISION.md` as the product brief. When implementation begins, the target packaging is **mainstream agentic-coding-harness primitives — Skills and Sub-Agents** (per `planning/VISION.md` §1.2 and §5 open question #6). The specific harness target order is deliberately unresolved.
 
-The project does have a **docs publishing toolchain** (Phase 0 deliverable): the `docs/` tree is published to GitHub Pages by `.github/workflows/docs.yml` using [ProperDocs](https://properdocs.org/) (the actively-maintained continuation of MkDocs 1.x) with the `mkdocs-material` theme, using `--strict` link validation as a CI gate. This is build-only infrastructure — it does not change the "manifesto ships as raw markdown on github.com" property.
+The project does have a **docs publishing toolchain** (Phase 0 deliverable): the `docs/` tree is published to GitHub Pages by `.github/workflows/docs.yaml` using [ProperDocs](https://properdocs.org/) (the actively-maintained continuation of MkDocs 1.x) with the `mkdocs-material` theme, using `--strict` link validation as a CI gate. This is build-only infrastructure — it does not change the "manifesto ships as raw markdown on github.com" property.
 
 ## Environment Setup
 

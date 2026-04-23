@@ -28,7 +28,7 @@ Working rules (TDD discipline, markdown style, git safety, the Niko workflow) li
 
 ## Docs publishing
 
-The `docs/` manifesto is published to GitHub Pages by [`.github/workflows/docs.yml`](.github/workflows/docs.yml). The workflow uses [ProperDocs](https://properdocs.org/) (a drop-in continuation of MkDocs 1.x) with the [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) theme and strict-mode link validation — a PR that breaks a cross-link fails CI.
+The `docs/` manifesto is published to GitHub Pages by [`.github/workflows/docs.yaml`](.github/workflows/docs.yaml). The workflow uses [ProperDocs](https://properdocs.org/) (a drop-in continuation of MkDocs 1.x) with the [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) theme and strict-mode link validation — a PR that breaks a cross-link fails CI.
 
 **Local preview:**
 
