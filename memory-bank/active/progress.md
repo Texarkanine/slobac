@@ -32,6 +32,13 @@ Operator's feedback:
 
 Neither change reopens any of the design decisions settled in the original build (mkdocs-material + awesome-pages + redirects + pymdownx.snippets + GH-compat slugifier + strict-mode link validation + PR-gating + Actions deploy-pages). They are a toolchain swap.
 
+**Complexity:** Level 2
+
+## Rework — Phase Log
+
+- Rework initiated. Stale ephemerals cleared (tasks.md, activeContext.md, `.preflight-status`, `.qa-validation-status`). Reflection preserved. Operator had partially pre-swapped `mkdocs → properdocs` in the working tree before invoking rework; that WIP was swept into the `chore: initiating rework on phase0-docs-publish` commit as the rework's starting state.
+- Complexity re-classified: Level 2 (two self-contained infra swaps, known recipes, no architectural decisions).
+
 ## Operator Handoff Items (deferred to post-merge)
 
 - **GitHub Pages source toggle**: repo Settings → Pages → Build and deployment → Source must be set to "GitHub Actions". Workflow cannot set this itself. Without it, `deploy:` job fails; `build:` still succeeds so PR-gating still works.
