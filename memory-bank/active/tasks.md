@@ -171,6 +171,11 @@ The audit's "code" is prompt/instruction content (SKILL.md workflow prose + per-
 - B7 (both harnesses) is a cross-harness integration test.
 - Both are operator-executed manual validations in Phase 1.
 
+### Rework-Specific Behaviors (added in rework)
+
+- **B8 — Generator output matches committed skill files.** `uv run python scripts/sync-taxonomy.py --check` exits zero on a clean working tree (no drift between `docs/taxonomy/*.md` and committed `skills/slobac-audit/references/taxonomy/*.md`) and non-zero when a manifesto entry is changed without regenerating. This is the CI drift gate.
+- **B9 — Skill tree contains no cross-root references.** No file under `skills/slobac-audit/` references a path outside the skill's root (no `../` escaping the root, no bare `docs/` path references in agent-runtime reads). This is an invariant-#11 spot check, verified manually during build; optional future automation is out of scope for Phase 1.
+
 ## Implementation Plan
 
 TDD order: fixtures + expected-findings first; then skill content; then tech-validation in each harness.
@@ -238,6 +243,59 @@ TDD order: fixtures + expected-findings first; then skill content; then tech-val
     - Changes: *conditional.* If step 12 reveals the manifesto's Signals or Prescribed Fix sections are insufficient for the audit (per the OQ2 decision's "taxonomy entry extension" failure mode), extend the docs entry. Per governor rules (commit-before-refactor), land this as its own PR/commit *before* resuming audit work that depends on the extension.
     - Creative ref: OQ2 — the audit cannot carry detection content the manifesto doesn't bless.
 
+## Rework Implementation Plan (applied after OQ2-redux closure)
+
+TDD order: author the generator and emit its output first (which produces the canonical content the skill will read at runtime); then rewrite SKILL.md and the augmentation files against that shape; then update docs; then re-run the fixture validation. Steps R1–R11 are additive to (and in one case explicitly deletes/rewrites content from) the pre-rework implementation plan above.
+
+**R1. Author `scripts/sync-taxonomy.py`.**
+- Files: `scripts/sync-taxonomy.py` (new), `scripts/__init__.py` if needed, `pyproject.toml` (likely unchanged — Python stdlib only).
+- Changes: Python script that walks `docs/taxonomy/*.md` (excluding `README.md`), and for each writes `skills/slobac-audit/references/taxonomy/<slug>.md` with a fixed "generated from `docs/taxonomy/<slug>.md`; do not hand-edit; regenerate with `uv run python scripts/sync-taxonomy.py`" header followed by the verbatim content of the source. Supports two modes: default (write outputs); `--check` (compute outputs in memory, diff against committed files, exit non-zero on mismatch with a clear error message telling the contributor which files are stale and how to fix).
+- Scope: the generator walks all 15 taxonomy entries, not just the Phase-1 two. Rationale: Phase-2 ready, no allowlist to maintain, bundle-size impact is minor and uniform. SKILL.md's scope-parsing logic independently controls which smells the skill actually recognizes at invocation time.
+- Creative ref: OQ2-redux.
+
+**R2. Run the generator and commit outputs.**
+- Files: `skills/slobac-audit/references/taxonomy/*.md` (15 new files, one per manifesto entry).
+- Changes: verbatim-copy-with-header of each manifesto entry into the skill tree. Committed; file-mode read-only by convention (not enforced at filesystem level).
+- Creative ref: OQ2-redux.
+
+**R3. Add CI job that verifies no drift.**
+- Files: update `.github/workflows/docs.yaml` (or a new small workflow if that file's scope is strictly docs-build).
+- Changes: new job step `uv run python scripts/sync-taxonomy.py --check`. Runs on every PR against `main`. Failure message in the script output tells the contributor to run the generator locally and commit the result.
+- Creative ref: OQ2-redux.
+
+**R4. Rewrite SKILL.md workflow prose to read only from inside the skill root.**
+- Files: `skills/slobac-audit/SKILL.md`
+- Changes: replace the per-smell "read `docs/taxonomy/<slug>.md` ... and read `references/smells/<slug>.md`" instruction with "read `references/taxonomy/<slug>.md` (canonical, generated from the manifesto) and `references/smells/<slug>.md` (audit-specific augmentation)." The surrounding workflow (scope parsing, detection loop, report emission, read-only guard) is unchanged.
+- Creative ref: OQ2-redux.
+
+**R5. Rewrite per-smell augmentation files.**
+- Files: `skills/slobac-audit/references/smells/deliverable-fossils.md`, `skills/slobac-audit/references/smells/naming-lies.md`
+- Changes: remove the opening paragraph that cross-links to `../../../../docs/taxonomy/<slug>.md` (the invariant #11 violation). Replace with a preamble clarifying the role-split: the generated `references/taxonomy/<slug>.md` sibling is the canonical definition; this file carries only audit-runtime augmentation. The body (invocation phrases, emission hints, false-positive guards) is preserved verbatim — it's all hand-authored augmentation, unaffected by the rework.
+- Creative ref: OQ2-redux.
+
+**R6. Update `skills/slobac-audit/README.md`.**
+- Files: `skills/slobac-audit/README.md`
+- Changes: remove "skill reads `docs/taxonomy/<slug>.md` at runtime" language; describe the self-contained bundle ("ships its own canonical per-smell content under `references/taxonomy/`, generated from `docs/taxonomy/` and gated by CI"); note that contributors who edit the manifesto must regenerate before committing (one command).
+- Creative ref: OQ2-redux.
+
+**R7. Update `memory-bank/techContext.md`.**
+- Files: `memory-bank/techContext.md`
+- Changes: replace the "canonical-docs-referenced-from-skill pattern" note with the "generator-synchronised skill bundle" pattern. Note the new `scripts/sync-taxonomy.py` tool and the CI drift-check job. Note the two-directory skill-references layout.
+
+**R8. Update `memory-bank/systemPatterns.md`.**
+- Files: `memory-bank/systemPatterns.md`
+- Changes: revise the "no manifesto copy in skill tree" claim if present — the claim becomes "the skill tree contains a verbatim, generator-produced copy of the manifesto's per-smell content; manifesto-independence is enforced procedurally via CI rather than structurally." Record invariant #11 (skill-root self-containment) as a system-level pattern now that it has been codified by a rework.
+
+**R9. Re-run the manual harness validation (operator gate).**
+- Files: *none authored.* Operator runs the skill against each fixture in each harness and confirms findings match `expected-findings.md`. Same gate as pre-rework step 12; re-run because the workflow prose has changed.
+
+**R10. Structural spot-check for invariant #11.**
+- Files: *none authored.* Manual `rg '(\.\./\.\.|^\s*docs/)' skills/slobac-audit/` (or equivalent) confirms no cross-root references remain inside the skill tree. This is a one-time check after R4/R5/R6 land; not wired to CI for Phase 1 (the CI drift-gate on the generator is the primary invariant #11 enforcement).
+
+**R11. Reflection follow-up.**
+- Files: `memory-bank/active/reflection/reflection-phase-1-audit-mvp.md`
+- Changes: amend insight #2 ("OQ2 held up cleanly") with a retraction noting that the pre-rework "high confidence" was misplaced because a constraint (runtime-root vs filesystem co-location) was missed; the rework pass made invariant #11 explicit. This is calibration work, not a rewrite — the other reflection insights stand.
+
 ## Technology Validation
 
 No new runtime dependencies. The validation target is **harness discovery**: both Cursor and Claude Code must find and invoke a `SKILL.md`-format skill at whatever path we settle on.
@@ -245,6 +303,12 @@ No new runtime dependencies. The validation target is **harness discovery**: bot
 - **POC:** step 10 above. Put a minimal SKILL.md at a candidate location, invoke in each harness, confirm discovery.
 - **Expected outcome:** either (a) a shared path both harnesses can read (ideal), or (b) a canonical path plus thin per-harness symlinks/pointers (acceptable), or (c) per-harness path wrappers with a shared content root (acceptable). If none of these work, preflight FAIL.
 - **No new packages:** `uv.lock` unchanged. `properdocs.yml` unchanged (the creative decision does not use build-time snippet includes for the Skill tree).
+
+### Rework additions
+
+- **New tool:** `scripts/sync-taxonomy.py` — stdlib-only Python script. No new `pyproject.toml` deps required. Validation approach: write the script, run it once to generate the 15 taxonomy copies, confirm outputs are byte-identical (modulo the generated header) to the source manifesto entries. Then delete the outputs and re-run; confirm idempotence. This is a trivial POC done inline during build step R1.
+- **New CI job:** addition to the existing docs workflow (or a sibling workflow) that runs `uv run python scripts/sync-taxonomy.py --check`. No new infrastructure; uses the existing `uv` toolchain already bootstrapped for the docs build.
+- **Nothing else in the rework adds runtime deps, build steps, or external-service dependencies.** The skill itself remains filesystem-only at runtime, per invariant #11.
 
 ## Challenges & Mitigations
 
@@ -254,6 +318,13 @@ No new runtime dependencies. The validation target is **harness discovery**: bot
 - **Taxonomy entry found insufficient mid-build.** Per OQ2, detection content the manifesto doesn't bless cannot live in the skill. *Mitigation:* step 14 is an explicit mid-build pivot branch; PR-able manifesto extensions are a normal outcome, not a blocker.
 - **Skill prompt-context bloat at scale.** Phase 1 is two smells and manageable. At Phase 2's 15 smells, the ur-SKILL.md + referenced files may overflow context budgets in the target harness. *Mitigation:* the OQ1 decision already reserves the additive Option-4 migration (Sub-Agents) if/when this emerges as a real limit.
 - **Preservation of regression-detection power (governor rule).** Phase 1 is read-only audit; nothing the audit *does* touches the regression-detection power of the target suite. *Mitigation:* Phase 1 is structurally out-of-scope for this governor rule; only the apply capability (Phase 3) carries that gate.
+
+### Rework-specific challenges
+
+- **Authoring footgun: hand-edits to generated files silently overwritten.** Despite the two-directory split (generated under `references/taxonomy/`; hand-authored under `references/smells/`), a contributor could still edit a generated file; the next `sync-taxonomy.py` run wipes the edit. *Mitigation:* every generated file opens with a "do not hand-edit" header naming the canonical source; CI drift-gate catches uncommitted hand-edits at PR time. Pre-commit hook deliberately deferred (contributor-ergonomics optimisation, not a Phase-1 blocker).
+- **Generator-CI failure mode is new to contributors.** A manifesto change without a `sync-taxonomy` re-run fails CI with a message the first-time contributor hasn't seen. *Mitigation:* error message in `--check` mode names the exact command to fix (`uv run python scripts/sync-taxonomy.py`); skill README documents the sync step.
+- **Invariant #11 is procedurally enforced, not structurally.** A future contributor could still, in principle, reintroduce a `../` cross-root reference somewhere in the skill tree. *Mitigation:* the one-time spot-check in R10 confirms current cleanliness; future violations are caught at code-review time. If they start recurring, a dedicated lint in CI is an additive Phase-2 improvement.
+- **Calibration-debt from the failed prior OQ2.** The rework adds trust cost: the next architectural claim in this project should be treated with extra scrutiny until a few more decisions have landed cleanly. *Mitigation:* the creative doc's explicit calibration note and the enumeration of the five analysis axes that Option E depends on. Future creative-phase invocations on SLOBAC should similarly surface assumed-vs-verified constraints.
 
 ## Status
 
@@ -272,9 +343,10 @@ No new runtime dependencies. The validation target is **harness discovery**: bot
 ### Post-rework (re-entry from plan)
 
 - [x] Component analysis re-assessed (narrow delta: OQ2-redux, steps 7–9, 11, 13; fixtures + report template preserved; invariant #11 added)
-- [ ] OQ2-redux resolved (creative phase pending)
-- [ ] Test plan re-verified (expected no change; expected-findings docs survive; rework is internal to the skill tree)
-- [ ] Implementation plan restated with OQ2-redux resolution applied (pending creative)
+- [x] OQ2-redux resolved (Option E — generator + drift-check CI gate; see creative doc)
+- [x] Test plan re-verified (B8 drift-gate and B9 invariant spot-check added; fixtures and expected-findings preserved)
+- [x] Implementation plan extended with rework steps R1–R11
+- [x] Technology validation re-assessed (one new stdlib-only Python script + one CI job; no new runtime deps)
 - [ ] Preflight (post-rework)
 - [ ] Build (post-rework)
 - [ ] QA (post-rework)

@@ -70,8 +70,16 @@ Written to [`reflection/reflection-phase-1-audit-mvp.md`](./reflection/reflectio
 
 Persistent memory-bank files reconciled: `systemPatterns.md` updated to reflect that the project is no longer "pre-code, docs-only"; `productContext.md` open-questions paragraph updated to reflect Phase-1 resolutions. `techContext.md` was already updated during build (Step 13).
 
+## Rework plan summary (post-creative)
+
+OQ2-redux resolved to **Option E**: generator + drift-check CI gate, two-directory skill layout. `docs/taxonomy/<slug>.md` stays canonical; `scripts/sync-taxonomy.py` (new, stdlib-only Python) regenerates `skills/slobac-audit/references/taxonomy/<slug>.md` as verbatim copies with "do not hand-edit" headers; a CI job runs `--check` mode on PRs and fails on drift. The hand-authored `skills/slobac-audit/references/smells/<slug>.md` files survive in their original role (audit-specific augmentation only). SKILL.md's per-smell workflow reads both files — both inside the skill root.
+
+**Rework implementation steps (R1–R11):** R1 authors the generator; R2 produces the 15 taxonomy copies (all of the manifesto, for Phase-2 readiness even though only two smells are active); R3 adds the CI drift-gate; R4–R6 rewrite SKILL.md, the augmentation files, and the README; R7–R8 update memory-bank `techContext.md` and `systemPatterns.md`; R9 is the operator-run manual validation re-execution; R10 is the one-time invariant #11 spot-check; R11 amends reflection insight #2 to retract the misplaced "high confidence" claim.
+
+**Calibration-debt from the failed prior OQ2:** explicitly carried into the creative doc and tasks.md Challenges section. The next SLOBAC architectural claim should be treated with extra scrutiny until a few more decisions land cleanly.
+
 ## Next step
 
-**Creative phase for OQ2-redux.** The rework hinges on how the skill carries (or synthesises) canonical content it can no longer read from outside its own root. Candidates span a generator + drift-check CI gate (Option E), a role-split operational playbook with hand-authored overlap (Option H), a vendored copy with manual sync discipline (Option K), and runtime network fetch (Option J). Given that the previous OQ2 creative pass missed the skill-root self-containment constraint, OQ2-redux should go through creative with an airtight bar rather than being pre-answered at plan time.
+**Preflight (post-rework).** Per L3 workflow Phase Mappings, plan → preflight. The preflight pass should verify: (a) the rework's implementation plan is complete and testable; (b) invariant #11 is properly wired into the detection logic; (c) the generator + CI-gate technology choice is sound; (d) the creative's calibration note is honored (no new assumed-vs-verified ambiguity).
 
-PLAN PHASE (rework) — creative pending for OQ2-redux
+PLAN PHASE (rework) — PASS; proceeding to preflight
