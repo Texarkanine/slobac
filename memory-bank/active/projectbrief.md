@@ -55,4 +55,5 @@ After the original task reached REFLECT COMPLETE, operator initiated a rework to
 ### Rework — Out of Scope
 
 - Changing plugin selection, theme, slugifier, strict/validation config, nav ordering (`.pages`), landing page content, deploy target, or anything in `docs/` itself.
-- Renaming `mkdocs.yml` to `properdocs.yml` — explicitly optional per the announcement; skip unless there's a motivating reason.
+
+Note: renaming `mkdocs.yml` → `properdocs.yml` was initially classified out-of-scope (per the announcement it was optional), but moved into scope during plan's tech validation after `properdocs 1.6.7` was observed emitting a legacy-filename deprecation INFO notice on every build. The rename is now Step 1 of the plan.

@@ -8,7 +8,7 @@ The project does have a **docs publishing toolchain** (Phase 0 deliverable): the
 
 **To read/edit the manifesto:** a Markdown-capable editor is sufficient. Anchor-aware preview is helpful because `docs/taxonomy/*.md` entries rely heavily on cross-linked anchors to `docs/principles.md` and `docs/glossary.md`.
 
-**To preview the built docs site locally:** Python 3.10+ with `pip install -r requirements-docs.txt`, then `mkdocs serve`.
+**To preview the built docs site locally:** `uv` (which auto-provisions Python per `pyproject.toml`), then `uv sync --group docs` + `uv run properdocs serve`.
 
 ## Build Tools
 
@@ -17,7 +17,7 @@ The project does have a **docs publishing toolchain** (Phase 0 deliverable): the
 - **mkdocs-redirects** (pre-positioned for future rename resilience; empty `redirect_maps` until first taxonomy rename).
 - **pymdown-extensions** (snippet-includes via `pymdownx.snippets`, plus the standard mkdocs-material extension stack).
 
-Dependencies are declared in `requirements-docs.txt`. No runtime Python is required for the manifesto itself.
+Dependencies are declared in `pyproject.toml` under the PEP 735 `[dependency-groups] docs` group; `uv.lock` pins them for reproducibility. CI uses `uv sync --group docs --frozen` so lock drift must be a PR-reviewable change. No runtime Python is required for the manifesto itself.
 
 The cross-link integrity gate is `properdocs build --strict` combined with `validation.anchors: warn` — every broken markdown cross-reference fails the build. This is the CI-enforced version of the cross-link-drift invariant named in `memory-bank/systemPatterns.md`. PRs are built (but not deployed) so link-drift is caught at review time.
 

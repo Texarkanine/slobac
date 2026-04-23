@@ -1,0 +1,42 @@
+# SLOBAC — Suite-Life Of Bobs And Code
+#
+# This repository ships the SLOBAC manifesto (docs/) — not a publishable Python
+# package. There is no runtime code here yet. The [project] table below is a
+# minimal stub purely so `uv` has an unambiguous Python floor to resolve against
+# when setting up the docs-build toolchain; it is not intended for PyPI.
+#
+# The docs-build toolchain lives in the PEP 735 [dependency-groups] docs group
+# below. Local preview and CI both install it via:
+#
+#     uv sync --group docs
+#     uv run properdocs serve        # local preview
+#     uv run properdocs build --strict   # what CI runs
+#
+# Runtime dependencies for Phase 1+ (the audit / apply capabilities) will land
+# in a separate group — or a proper [project] package shape — once there is
+# actual runtime code to support. Don't pre-stuff them here.
+
+[project]
+name = "slobac-docs"
+version = "0"
+description = "Docs-build toolchain for the SLOBAC manifesto (not a published package)."
+requires-python = ">=3.10"
+
+[dependency-groups]
+# Loose-compatible pins (~= on major.minor) — reproducibility without locking
+# out security patches. `uv.lock` provides the exact reproducibility gate.
+#
+# properdocs is oprypin's (the last active MkDocs maintainer) drop-in
+# continuation of MkDocs 1.x. mkdocs-* plugins keep their names and work
+# unchanged; only the CLI command becomes `properdocs`.
+# See: https://github.com/ProperDocs/properdocs
+docs = [
+    "properdocs ~= 1.6",
+    "mkdocs-material ~= 9.5",
+    "mkdocs-awesome-pages-plugin ~= 2.9",
+    "mkdocs-redirects ~= 1.2",
+    "pymdown-extensions ~= 10.7",
+]
+
+[tool.uv]
+required-version = ">=0.5"

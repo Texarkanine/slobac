@@ -28,19 +28,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: "3.12"
-          cache: pip
-          cache-dependency-path: requirements-docs.txt
+          # Auto-keys the cache on pyproject.toml + uv.lock. uv also auto-provisions
+          # Python per `requires-python` in pyproject.toml, so no separate
+          # actions/setup-python step is needed.
+          enable-cache: true
 
-      - name: Install dependencies
-        run: pip install -r requirements-docs.txt
+      - name: Install docs dependencies
+        # --frozen: fail if uv.lock is out of date vs pyproject.toml. Lock drift
+        # must be a PR-reviewable change, not a silent CI-time regeneration.
+        # If this step fails: run `uv sync --group docs` locally and commit the
+        # updated uv.lock.
+        run: uv sync --group docs --frozen
 
       - name: Build site (strict)
-        # properdocs is a drop-in for mkdocs build; config file stays mkdocs.yml.
-        run: properdocs build --strict
+        run: uv run properdocs build --strict
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

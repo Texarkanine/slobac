@@ -33,10 +33,8 @@ The `docs/` manifesto is published to GitHub Pages by [`.github/workflows/docs.y
 **Local preview:**
 
 ```bash
-python -m venv .venv-docs
-source .venv-docs/bin/activate
-pip install -r requirements-docs.txt
-properdocs serve
+uv sync --group docs
+uv run properdocs serve
 ```
 
 **First-time setup** (one-time, by repo admin): repo Settings → Pages → *Source* must be set to **GitHub Actions** (not "Deploy from a branch"). Without this, the `build` job passes but `deploy` fails.
