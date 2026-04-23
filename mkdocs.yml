@@ -66,10 +66,8 @@ plugins:
 
 markdown_extensions:
   # Core structure / typography
-  - abbr
   - admonition
   - attr_list
-  - def_list
   - footnotes
   - md_in_html
   - tables
@@ -82,9 +80,7 @@ markdown_extensions:
       slugify: !!python/object/apply:pymdownx.slugs.slugify
         kwds:
           case: lower
-  # pymdown-extensions
-  - pymdownx.betterem
-  - pymdownx.caret
+  # pymdown-extensions — kept minimal; add more here when a docs page actually needs them.
   - pymdownx.details
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
@@ -93,10 +89,6 @@ markdown_extensions:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
-  - pymdownx.inlinehilite
-  - pymdownx.keys
-  - pymdownx.mark
-  - pymdownx.smartsymbols
   - pymdownx.snippets:
       base_path:
         - .
@@ -111,7 +103,6 @@ markdown_extensions:
       alternate_style: true
   - pymdownx.tasklist:
       custom_checkbox: true
-  - pymdownx.tilde
 
 extra:
   social:

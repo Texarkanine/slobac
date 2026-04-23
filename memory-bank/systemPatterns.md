@@ -20,7 +20,7 @@ If a change would weaken the manifesto, it transitively weakens everything downs
 - [`docs/taxonomy/README.md`](../docs/taxonomy/README.md) defines the uniform entry shape (header table, summary, description, signals, prescribed fix, example, related, polyglot notes). **That file is the source of truth for taxonomy file shape** — don't restate it elsewhere. Changes to the shape require updating every existing entry.
 - [`docs/workflows.md`](../docs/workflows.md) codifies the RED-GREEN-MUTATE-KILL-REFACTOR cycle that the taxonomy *assumes* when it talks about transform safety. A new taxonomy entry whose prescribed fix does not fit this workflow is suspect and needs its rationale spelled out.
 
-Before changing any `docs/` file, re-read the cross-links it receives and sends. `grep` for the anchor or filename across `docs/` and `planning/` before renaming.
+Before changing any `docs/` file, re-read the cross-links it receives and sends. `grep` for the anchor or filename across `docs/` and `planning/` before renaming. CI runs `mkdocs build --strict` with `validation.anchors: warn` as a secondary mechanical gate — it will fail the PR build on any broken internal link or missing anchor — but CI is slower feedback than grep; grep discipline stays primary. The CI gate is guaranteed to catch drift within `docs/`; it does **not** catch `docs/` → `planning/` links (those would need to be absolute URLs anyway) or external-URL rot.
 
 **3. Scope exclusions are load-bearing, not decorative.**
 

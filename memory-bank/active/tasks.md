@@ -143,7 +143,7 @@ No runtime validation required for `actions/deploy-pages` — it's a first-party
 - [x] Technology validation planned (execution deferred to Build Step 4)
 - [x] Preflight (PASS — one accretive amendment: `mkdocs-redirects`)
 - [x] Build (PASS — clean strict build; see Build Notes below)
-- [ ] QA
+- [x] QA (PASS — two trivial fixes applied: trimmed 9 YAGNI markdown_extensions; updated `systemPatterns.md` to acknowledge the strict-mode CI gate as a secondary defense alongside grep discipline)
 
 ## Build Notes
 
