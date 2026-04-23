@@ -251,6 +251,7 @@ TDD order: author the generator and emit its output first (which produces the ca
 - Files: `scripts/sync-taxonomy.py` (new), `scripts/__init__.py` if needed, `pyproject.toml` (likely unchanged — Python stdlib only).
 - Changes: Python script that walks `docs/taxonomy/*.md` (excluding `README.md`), and for each writes `skills/slobac-audit/references/taxonomy/<slug>.md` with a fixed "generated from `docs/taxonomy/<slug>.md`; do not hand-edit; regenerate with `uv run python scripts/sync-taxonomy.py`" header followed by the verbatim content of the source. Supports two modes: default (write outputs); `--check` (compute outputs in memory, diff against committed files, exit non-zero on mismatch with a clear error message telling the contributor which files are stale and how to fix).
 - Scope: the generator walks all 15 taxonomy entries, not just the Phase-1 two. Rationale: Phase-2 ready, no allowlist to maintain, bundle-size impact is minor and uniform. SKILL.md's scope-parsing logic independently controls which smells the skill actually recognizes at invocation time.
+- **Link-handling policy (added during preflight):** generator output preserves source content **verbatim** — no rewriting of intra-manifesto relative links (`[slug](./<slug>.md)`, `[principle](../principles.md#anchor)`, etc.). At agent-runtime, these links are inert text the agent ignores; the agent reads the prose for detection content. At report-emission time, the agent synthesizes published URLs from the project's publish-domain convention. This is a conscious design decision: the verbatim-copy property is an invariant on the generator, which keeps the generator trivial and prevents silent link-rewriting drift between in-docs and in-skill representations. If an intra-manifesto link ever needs to be reachable from inside the skill tree, that is a ticket to add the cross-referenced file to the skill bundle (as the augmentation files already do for intra-manifesto cross-references via R5b), not a ticket for the generator to get smart about rewriting.
 - Creative ref: OQ2-redux.
 
 **R2. Run the generator and commit outputs.**
@@ -263,19 +264,39 @@ TDD order: author the generator and emit its output first (which produces the ca
 - Changes: new job step `uv run python scripts/sync-taxonomy.py --check`. Runs on every PR against `main`. Failure message in the script output tells the contributor to run the generator locally and commit the result.
 - Creative ref: OQ2-redux.
 
-**R4. Rewrite SKILL.md workflow prose to read only from inside the skill root.**
+**R4. Rewrite SKILL.md to eliminate every cross-root reference.**
 - Files: `skills/slobac-audit/SKILL.md`
-- Changes: replace the per-smell "read `docs/taxonomy/<slug>.md` ... and read `references/smells/<slug>.md`" instruction with "read `references/taxonomy/<slug>.md` (canonical, generated from the manifesto) and `references/smells/<slug>.md` (audit-specific augmentation)." The surrounding workflow (scope parsing, detection loop, report emission, read-only guard) is unchanged.
+- Changes: four distinct edits, not one:
+  - **R4a.** Per-smell workflow step: replace "read `docs/taxonomy/<slug>.md` ... and read `references/smells/<slug>.md`" with "read `references/taxonomy/<slug>.md` (canonical, generated from the manifesto) and `references/smells/<slug>.md` (audit-specific augmentation)." (Line 41 in the currently-shipped SKILL.md.)
+  - **R4b.** Phase-1 scope header (line 10): rewrite `[deliverable-fossils](../../docs/taxonomy/deliverable-fossils.md)` and `[naming-lies](../../docs/taxonomy/naming-lies.md)` to intra-skill links `[deliverable-fossils](references/taxonomy/deliverable-fossils.md)` and `[naming-lies](references/taxonomy/naming-lies.md)`.
+  - **R4c.** Governor-rule cite (line 79): rewrite `[preservation-of-regression-detection-power](../../docs/principles.md#...)` to a published-URL link (`https://slobac.github.io/slobac/principles/#preservation-of-regression-detection-power` or the equivalent under the project's actual publish domain). The skill cannot ship `principles.md`; intra-skill link is not an option; the URL is the correct target for an operator reading the rendered report.
+  - **R4d.** Any other `../` or `docs/` reference surfaced by the invariant-#11 spot-check in R10 gets the same treatment: intra-skill target if the content is (or will be) inside the skill; published URL if it's manifesto content the skill deliberately does not bundle.
+- Verification: after R4, `rg '(\.\./|docs/)' skills/slobac-audit/SKILL.md` emits nothing.
 - Creative ref: OQ2-redux.
 
-**R5. Rewrite per-smell augmentation files.**
+**R5. Rewrite per-smell augmentation files; restore their intra-manifesto cross-references through intra-skill paths.**
 - Files: `skills/slobac-audit/references/smells/deliverable-fossils.md`, `skills/slobac-audit/references/smells/naming-lies.md`
-- Changes: remove the opening paragraph that cross-links to `../../../../docs/taxonomy/<slug>.md` (the invariant #11 violation). Replace with a preamble clarifying the role-split: the generated `references/taxonomy/<slug>.md` sibling is the canonical definition; this file carries only audit-runtime augmentation. The body (invocation phrases, emission hints, false-positive guards) is preserved verbatim — it's all hand-authored augmentation, unaffected by the rework.
+- Changes:
+  - **R5a.** Rewrite the opening paragraph that cross-links to `../../../../docs/taxonomy/<slug>.md`. New preamble clarifies the role-split: the generated `references/taxonomy/<slug>.md` sibling is the canonical definition; this file carries only audit-runtime augmentation. No external link.
+  - **R5b.** Rewrite intra-manifesto cross-references that currently use `../../../../docs/taxonomy/<other>.md` to intra-skill paths `../taxonomy/<other>.md`. Specifically: `naming-lies.md` references `vacuous-assertion`; `deliverable-fossils.md` references `semantic-redundancy`. Both `vacuous-assertion.md` and `semantic-redundancy.md` will be present under `references/taxonomy/` as a byproduct of R2 (generator walks all 15 manifesto entries).
+  - **R5c.** Rewrite principle references that currently use `../../../../docs/principles.md#anchor` to published URLs (same treatment as R4c). Specifically: `naming-lies.md` line 22 references `describe-before-edit` at `docs/principles.md#behavior-articulation-before-change` → becomes a published URL.
+  - The body of each file (invocation phrases, emission hints, false-positive guards) is otherwise preserved verbatim — it's all hand-authored augmentation, unaffected by the rework.
+- Verification: after R5, `rg '(\.\./\.\.|\.\./\.\./\.\./\.\./|docs/)' skills/slobac-audit/references/smells/` emits nothing.
 - Creative ref: OQ2-redux.
 
-**R6. Update `skills/slobac-audit/README.md`.**
+**R5a. Update `references/report-template.md` citation instruction.**
+- Files: `skills/slobac-audit/references/report-template.md`
+- Changes: line 32's "Cite the specific signal from `docs/taxonomy/<slug>.md`" becomes "Cite the specific signal from `references/taxonomy/<slug>.md` (the skill's canonical copy of the manifesto entry) and include a link to the published manifesto URL for the reader." The agent-facing instruction changes from a cross-root content reference to an intra-skill content reference plus a URL-emission instruction for report output. Rationale: the agent reads from inside the skill; the human reader of the report is served by a published URL they can navigate to. No invariant violation; no broken link at runtime; readers of the report still get a clickable target.
+- Creative ref: OQ2-redux.
+
+**R6. Update `skills/slobac-audit/README.md` to fix every external reference.**
 - Files: `skills/slobac-audit/README.md`
-- Changes: remove "skill reads `docs/taxonomy/<slug>.md` at runtime" language; describe the self-contained bundle ("ships its own canonical per-smell content under `references/taxonomy/`, generated from `docs/taxonomy/` and gated by CI"); note that contributors who edit the manifesto must regenerate before committing (one command).
+- Changes: four distinct edits, not one. (The README is operator-facing, not agent-runtime, so invariant #11 does not strictly apply. But the README ships with the skill bundle to external installers, who see broken links on every relative path. Fix unconditionally.)
+  - **R6a.** Line 3 manifesto scope links: rewrite `[deliverable-fossils](../../docs/taxonomy/deliverable-fossils.md)` and `[naming-lies](../../docs/taxonomy/naming-lies.md)` to absolute GitHub URLs (e.g. `https://github.com/Texarkanine/slobac/blob/main/docs/taxonomy/deliverable-fossils.md` or the published site's URL).
+  - **R6b.** Line 20 "skill reads `docs/taxonomy/<slug>.md` at runtime" paragraph: replace entirely with a self-contained-bundle paragraph: "This skill ships its own canonical per-smell content under `references/taxonomy/`, generated verbatim from the project manifesto and gated by CI drift-check. At runtime, the skill reads only files inside its own directory — no external paths, no network fetches, no harness-cwd assumptions. Contributors editing the manifesto must regenerate (`uv run python scripts/sync-taxonomy.py`) and commit the synced outputs before push; CI fails on drift."
+  - **R6c.** Fixture references (lines 71, 74): rewrite `[tests/fixtures/audit/](../../tests/fixtures/audit/)` and the specific `expected-findings.md` path to absolute GitHub URLs. External installers don't have the fixture tree locally; in-repo contributors' relative links still work via GitHub redirect on absolute URLs.
+  - **R6d.** Line 90 `docs/taxonomy/` reference and the entire line-91 "skill cannot find `docs/taxonomy/<slug>.md`" paragraph: delete the paragraph (the failure mode is structurally impossible after R1–R3; the paragraph no longer applies). The preceding "skill misses a finding" paragraph (line 90) keeps its manifesto-gap recommendation but rewrites the docs-taxonomy link to an absolute URL.
+- Verification: after R6, `rg '(\.\./|^\s*docs/)' skills/slobac-audit/README.md` emits nothing.
 - Creative ref: OQ2-redux.
 
 **R7. Update `memory-bank/techContext.md`.**
@@ -290,7 +311,7 @@ TDD order: author the generator and emit its output first (which produces the ca
 - Files: *none authored.* Operator runs the skill against each fixture in each harness and confirms findings match `expected-findings.md`. Same gate as pre-rework step 12; re-run because the workflow prose has changed.
 
 **R10. Structural spot-check for invariant #11.**
-- Files: *none authored.* Manual `rg '(\.\./\.\.|^\s*docs/)' skills/slobac-audit/` (or equivalent) confirms no cross-root references remain inside the skill tree. This is a one-time check after R4/R5/R6 land; not wired to CI for Phase 1 (the CI drift-gate on the generator is the primary invariant #11 enforcement).
+- Files: *none authored.* Manual `rg '(\.\./|^\s*docs/)' skills/slobac-audit/` (scoped to the skill tree) confirms no cross-root references remain in agent-runtime files (SKILL.md, `references/taxonomy/**`, `references/smells/**`, `references/report-template.md`). Non-agent-runtime files (README) are checked separately for operator-UX correctness via R6's verification clauses. Exceptions that should survive the spot-check: (a) the generated `references/taxonomy/<slug>.md` files may contain `../principles.md#anchor` style links from the source manifesto — these are inert at runtime per the R1 link-handling policy and are not invariant-#11 violations; (b) absolute `https://` URLs obviously pass. The spot-check is a one-time gate after R4/R5/R6 land; future invariant-#11 enforcement is procedural (code review) plus the CI drift-gate on the generator.
 
 **R11. Reflection follow-up.**
 - Files: `memory-bank/active/reflection/reflection-phase-1-audit-mvp.md`
@@ -347,10 +368,25 @@ No new runtime dependencies. The validation target is **harness discovery**: bot
 - [x] Test plan re-verified (B8 drift-gate and B9 invariant spot-check added; fixtures and expected-findings preserved)
 - [x] Implementation plan extended with rework steps R1–R11
 - [x] Technology validation re-assessed (one new stdlib-only Python script + one CI job; no new runtime deps)
-- [ ] Preflight (post-rework)
+- [x] Preflight (post-rework) — **PASS with amendments** (PF1 MAJOR, applied: R4/R5/R6 expanded; R5a added; R1 and R10 clarified) + three advisories (PF3 scripts-dir convention, PF4 CI-job placement, PF5 smells-manifest idea); see `.preflight-status` for the full report
 - [ ] Build (post-rework)
 - [ ] QA (post-rework)
 - [ ] Reflect (post-rework; must also correct the invalidated reflection insight)
+
+## Preflight Amendments Applied (rework pass)
+
+- **R4 split into four sub-edits** (R4a/R4b/R4c/R4d) to cover the three distinct cross-root reference shapes in SKILL.md (workflow step, scope header, principle cite) plus a catch-all for anything R10's spot-check surfaces.
+- **R5 split into three sub-edits** (R5a/R5b/R5c) to separate (a) the preamble rewrite from (b) intra-manifesto cross-references (which become intra-skill links since R2 ships all 15 taxonomy entries) from (c) principle references (which become published URLs).
+- **R5a (new step)** rewrites `references/report-template.md`'s agent-facing citation instruction to name `references/taxonomy/` as the in-skill canonical source and instruct the agent to emit a published URL in the report for human readers.
+- **R6 split into four sub-edits** (R6a/R6b/R6c/R6d) to cover the README's manifesto scope links, the runtime-reads paragraph, fixture links, and the now-obsolete "skill cannot find docs/taxonomy/<slug>.md" paragraph (deletion).
+- **R1 amended** with an explicit link-handling policy: the generator preserves source content verbatim; intra-manifesto relative links in generated files are inert text at runtime, not invariant-#11 violations.
+- **R10 amended** to exclude the generated taxonomy files' inert links from the spot-check and to separate agent-runtime invariant-#11 enforcement (SKILL.md, references/**) from README operator-UX correctness.
+
+## Preflight Advisories (rework pass, not applied)
+
+- **PF3 — scripts/ directory convention.** The rework adds a new top-level `scripts/` dir for `sync-taxonomy.py`. Common Python convention; no new deps; not blocking. Operator may consider moving future tooling under a `[dependency-groups].tools` group in `pyproject.toml` once there are multiple scripts, but stdlib-only single-script tooling does not warrant it.
+- **PF4 — CI-job placement.** R3 is permissive ("existing docs workflow or a sibling workflow"). Recommended: add a step to the existing `build` job in `.github/workflows/docs.yaml` for uv-cache reuse. A parallel job is also acceptable. Decision deferred to build phase.
+- **PF5 — smells-manifest idea.** SKILL.md currently enumerates active slugs in prose. A `references/smells-manifest.yaml` (or similar) declaring the active Phase-1 slugs as data would make Phase-2 additions a manifest edit rather than a SKILL.md prose edit. Out of Phase-1 rework scope; surfaced as a Phase-2 entry-point candidate for operator consideration.
 
 ## Preflight Amendments Applied (pre-rework)
 

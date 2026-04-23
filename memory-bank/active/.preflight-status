@@ -1,12 +1,39 @@
-PASS
+PASS (rework pass, post-OQ2-redux)
 
-Preflight validation complete for Phase 1 Audit MVP (L3).
+Preflight validation complete for Phase 1 Audit MVP rework.
 
-Amendments applied inline to tasks.md:
-- Report emission default path: ./slobac-audit.md in operator's CWD, override allowed.
-- Always-present augmentation file convention: every smell has references/smells/<slug>.md even if minimal.
+Findings:
 
-Advisory raised (not applied, operator decision):
-- Audit-report versioning (stamp manifesto/skill git ref in report header).
+PF1 (MAJOR, amendments applied inline to tasks.md): The initial R4/R5/R6 scopes in the plan undercounted cross-root references inside the skill tree. A grep over `skills/slobac-audit/**` surfaced cross-root references in files and at line-locations the plan did not name:
 
-All gates clear: prerequisites, convention compliance, dependency impact, conflict detection, completeness precheck.
+- SKILL.md line 10 (Phase-1 scope header), line 41 (per-smell workflow step), line 79 (governor-rule cite).
+- references/smells/naming-lies.md line 3 (primary preamble), line 21 (vacuous-assertion cross-reference), line 22 (describe-before-edit principle cite).
+- references/smells/deliverable-fossils.md line 3 (primary preamble), line 24 (semantic-redundancy cross-reference).
+- references/report-template.md line 32 (agent-facing citation instruction).
+- README.md lines 3, 20, 71, 74, 90, 91 (operator-facing scope links, runtime-reads paragraph, fixture links, docs-taxonomy link, obsolete failure-mode paragraph).
+
+Amendments applied:
+- R4 split into R4a/R4b/R4c/R4d; each rewrites a specific category of cross-root reference with a specific target shape (intra-skill link, published URL, or removal).
+- R5 split into R5a/R5b/R5c; R5b preserves intra-manifesto cross-references as intra-skill links (`../taxonomy/<other>.md`) which is sound because R2 ships all 15 taxonomy entries.
+- R5a (new step) rewrites the report template's citation instruction to name `references/taxonomy/` as the canonical source and instruct the agent to emit published URLs in report output for human readers.
+- R6 split into R6a/R6b/R6c/R6d; fixes manifesto scope links, the runtime-reads paragraph, fixture links, and deletes the obsolete "skill cannot find docs/taxonomy/<slug>.md" paragraph.
+- R1 amended with an explicit "link-handling policy" clause: generator output preserves source content verbatim; intra-manifesto relative links inside generated files are inert text at runtime, not cross-root-reference violations.
+- R10 amended to exclude the generated `references/taxonomy/` files' inert intra-manifesto links from the invariant-#11 spot-check, and to separate agent-runtime checks (SKILL.md, references/**) from operator-UX checks (README).
+
+After these amendments, R4/R5/R5a/R6 between them cover every cross-root reference found in the grep. Verification clauses are included in each step (post-amendment grep commands that must return empty).
+
+PF2 (MODERATE, clarification recorded in R6 and R10): The README is operator-facing, not agent-runtime. Invariant #11 (skill-root self-containment) strictly applies to agent-runtime files only. But the README ships with the skill bundle to external installers, who see broken relative links. R6 fixes the README unconditionally (rewrites to absolute GitHub/published URLs) as operator UX, not invariant-#11 compliance. This separation of concerns is recorded in R10 so the invariant-#11 spot-check does not conflate the two.
+
+PF3 (MINOR): The rework introduces a new top-level `scripts/` directory. `pyproject.toml` notes "There is no runtime code here yet" and reserves future runtime code for a "separate group — or a proper [project] package shape." `scripts/sync-taxonomy.py` is build/tooling code (stdlib only, no new deps). Top-level `scripts/` is a common Python repo convention. Not blocking; noted for operator awareness.
+
+PF4 (MINOR): R3's CI-job placement latitude ("addition to the existing docs workflow or a sibling workflow") is preserved. Recommended placement: add a step to the existing `build` job in `.github/workflows/docs.yaml` after the `uv sync` step, reusing the uv cache. A parallel job would also work but adds a cold-start cost for a ~second-scale script. Not blocking; decision deferred to build phase.
+
+PF5 (ADVISORY, not applied): Consider replacing SKILL.md's hardcoded Phase-1 slug list (currently baked into scope-parsing prose: "this skill recognizes deliverable-fossils and naming-lies") with a `references/smells-manifest.yaml` (or similar) declaring the active slugs as data. Phase-2 additions would become manifest edits rather than SKILL.md prose edits; SKILL.md's scope-parsing language could reference the manifest generically. Cost: small config-loading instruction in SKILL.md prose; scope-parsing language becomes less concrete for Phase-1. Benefit: Phase-2 entry point is data-driven. Out of Phase-1 rework scope (SKILL.md scope-parsing was not itself broken by the invariant #11 rework). Surfaced for operator consideration as a Phase-2 candidate.
+
+PF6 (INFORMATIONAL, no action): The Phase-1 reflection document's insight #2 ("OQ2 held up cleanly") is retroactively invalidated. R11 is the step that amends it. The amendment is calibration work — a surgical retraction with a note, not a rewrite of the reflection. Kept in the implementation plan rather than handled separately so the rework's audit trail remains single-threaded.
+
+All gates clear: prerequisites, convention compliance, dependency impact, conflict detection, completeness precheck. Rework scope is now complete; no remaining cross-root references can be added to R4/R5/R5a/R6 without a new plan phase.
+
+Calibration-debt from the prior OQ2 pass is carried forward to the build phase as a reminder: this rework is the second planning pass on essentially the same architectural question, and the first pass missed a constraint. Build-phase authors should treat each file-level change against invariant #11 with concrete grep verification, not by-inspection claims.
+
+Transition: Preflight PASS with advisories → requires operator input (`/niko-build`) per L3 workflow Phase Mappings.

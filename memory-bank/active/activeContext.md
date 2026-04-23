@@ -2,7 +2,7 @@
 
 **Current Task:** Phase 1 Audit MVP — `deliverable-fossils` + `naming-lies` as harness-portable agent customizations for Cursor and Claude Code.
 
-**Phase:** PLAN (re-entered post-reflect; rework in progress)
+**Phase:** PREFLIGHT (rework) COMPLETE — awaiting operator `/niko-build`
 
 ## Rework In Progress
 
@@ -78,8 +78,14 @@ OQ2-redux resolved to **Option E**: generator + drift-check CI gate, two-directo
 
 **Calibration-debt from the failed prior OQ2:** explicitly carried into the creative doc and tasks.md Challenges section. The next SLOBAC architectural claim should be treated with extra scrutiny until a few more decisions land cleanly.
 
+## Preflight outcome (rework)
+
+**PASS with amendments.** The plan's R4/R5/R6 undercounted cross-root references inside `skills/slobac-audit/**`; a grep surfaced six additional locations the plan did not name. Amendments applied inline: R4 split 4-way, R5 split 3-way, R5a added, R6 split 4-way, R1 and R10 clarified. All cross-root references are now covered. Three advisories not applied (scripts-dir convention, CI-job placement latitude, smells-manifest as Phase-2 entry-point candidate). Full report in `.preflight-status`.
+
+**Calibration-debt reminder for build phase:** this is the second planning pass on OQ2 and the first pass missed a constraint; the preflight's grep also surfaced plan undercounting. Build authors should grep-verify invariant #11 at every touch-point, not rely on by-inspection claims.
+
 ## Next step
 
-**Preflight (post-rework).** Per L3 workflow Phase Mappings, plan → preflight. The preflight pass should verify: (a) the rework's implementation plan is complete and testable; (b) invariant #11 is properly wired into the detection logic; (c) the generator + CI-gate technology choice is sound; (d) the creative's calibration note is honored (no new assumed-vs-verified ambiguity).
+**Operator input required — `/niko-build`.** Per L3 workflow Phase Mappings, preflight PASS → build is an operator-gated edge. Waiting for operator.
 
-PLAN PHASE (rework) — PASS; proceeding to preflight
+PREFLIGHT PHASE (rework) — PASS; awaiting operator gate to build
