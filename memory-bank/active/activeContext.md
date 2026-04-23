@@ -1,6 +1,6 @@
 # Active Context
 
 - **Current Task**: Phase 0 docs publishing — mkdocs-material → GitHub Pages via Actions
-- **Phase**: PLAN - COMPLETE
-- **What Was Done**: Authored full Level 2 plan in `tasks.md`. 7 behaviors identified, 8 implementation steps sequenced, 4 new dependencies declared with loose version ranges, 6 challenges + mitigations documented. Plan-time audit confirmed all `../` cross-links in `docs/` resolve within the docs tree (strict mode will be clean). Discovered Phase-0 gap: no `docs/index.md` — plan Step 2 creates a minimal landing page seeded from VISION §1.1. Also flagged operator-only step: repo Settings → Pages source must be set to "GitHub Actions".
-- **Next Step**: Preflight validation of the plan (`niko-preflight` skill).
+- **Phase**: PREFLIGHT - COMPLETE (PASS)
+- **What Was Done**: Preflight validated the plan against `systemPatterns.md` invariants and `techContext.md` conventions. No conventions violated; no duplication; all 8 behaviors map to concrete steps. One accretive plan amendment applied within scope: added `mkdocs-redirects` plugin + dep to pre-position URL stability for future taxonomy renames (realizes the URL-citeable pillar the operator chose Option B for). Deps now: 5. `.preflight-status` = PASS.
+- **Next Step**: Build phase (`level2-build.md`).

@@ -39,8 +39,9 @@ Linear and ordered. Each step is a discrete edit-and-verify cycle.
 
 1. **Create `requirements-docs.txt` at repo root** — scoped to docs-build deps so future runtime deps (Phase 1+) live in their own file.
    - Files: `requirements-docs.txt` (new)
-   - Contents: `mkdocs`, `mkdocs-material`, `mkdocs-awesome-pages-plugin`, `pymdown-extensions` (provides `pymdownx.snippets`, `pymdownx.superfences`, etc.; `footnotes` ships with base `python-markdown`).
+   - Contents: `mkdocs`, `mkdocs-material`, `mkdocs-awesome-pages-plugin`, `mkdocs-redirects`, `pymdown-extensions` (provides `pymdownx.snippets`, `pymdownx.superfences`, etc.; `footnotes` ships with base `python-markdown`).
    - Pin to loose-compatible ranges (`~=` on major.minor) for reproducibility without locking out security patches.
+   - **`mkdocs-redirects` rationale (preflight amendment)**: zero-cost-until-first-use plugin that lets a future rename (e.g. a taxonomy entry reshape during Phase 1 dogfooding) keep the old URL working. Realizes the URL-stability pillar the operator chose Option B for. Empty `redirect_maps:` until a rename happens.
 
 2. **Create `docs/index.md`** — the site landing page. Previously a Phase-0 gap: no root README, no existing site index.
    - Files: `docs/index.md` (new)
@@ -52,7 +53,7 @@ Linear and ordered. Each step is a discrete edit-and-verify cycle.
    - Site metadata: `site_name: SLOBAC — Suite-Life Of Bobs And Code`, `site_description`, `site_url` (GitHub Pages URL pattern: `https://<user>.github.io/<repo>/`), `repo_url`, `repo_name`, `edit_uri: edit/main/docs/`.
    - `docs_dir: docs`, `site_dir: site` (default, but explicit).
    - `theme: name: material` with: palette with light/dark toggle, navigation features (`navigation.instant`, `navigation.tracking`, `navigation.sections`, `navigation.top`, `toc.follow`), `search.suggest`, `search.highlight`, `content.code.copy`.
-   - `plugins:` `search`, `awesome-pages`.
+   - `plugins:` `search`, `awesome-pages`, `redirects` (with empty `redirect_maps:` for now).
    - `markdown_extensions:` `admonition`, `attr_list`, `md_in_html`, `tables`, `toc` with `permalink: true`, `footnotes`, `pymdownx.details`, `pymdownx.superfences` with mermaid fence format, `pymdownx.tabbed` (arguable for now — include for parity with future entries), `pymdownx.tasklist`, `pymdownx.snippets` with `base_path: ["."]` and `check_paths: true`, `pymdownx.emoji` (material icons), `pymdownx.highlight` with `anchor_linenums: true`.
    - `strict: true` — fails build on broken links, missing anchors, etc. This is the integrity gate.
 
@@ -109,6 +110,7 @@ No runtime validation required for `actions/deploy-pages` — it's a first-party
 - `mkdocs ~= 1.6`
 - `mkdocs-material ~= 9.5`
 - `mkdocs-awesome-pages-plugin ~= 2.9`
+- `mkdocs-redirects ~= 1.2` (preflight amendment — URL-stability pre-positioning)
 - `pymdown-extensions ~= 10.7`
 
 (Exact versions pinned when `requirements-docs.txt` is authored; these are anchor ranges, not gospel.)
