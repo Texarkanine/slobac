@@ -2,7 +2,7 @@
 
 **Current Task:** Phase 1 Audit MVP — `deliverable-fossils` + `naming-lies` as harness-portable agent customizations for Cursor and Claude Code.
 
-**Phase:** BUILD COMPLETE (awaiting QA)
+**Phase:** REFLECT COMPLETE (awaiting operator decision to archive)
 
 ## What Was Done (cumulative)
 
@@ -54,6 +54,18 @@
 - **Python fixture parse check:** all 4 fixture files parse as valid Python 3.
 - **Link-depth audit:** all relative links from new markdown files (`skills/**`, `tests/fixtures/audit/**`) to `docs/taxonomy/<slug>.md` and `docs/principles.md` resolved correctly after fixing four initially-incorrect links in the fixture `expected-findings.md` files.
 
+## QA outcome
+
+PASS with one trivial fix (removed preflight-advisory `Skill version` field that was scope-crept into the report template). Full report in [`.qa-validation-status`](./.qa-validation-status).
+
+## Reflection outcome
+
+Written to [`reflection/reflection-phase-1-audit-mvp.md`](./reflection/reflection-phase-1-audit-mvp.md). Key insights: prompt-artifact TDD worked (fixture-first discipline reshaped augmentation prose); the five-field per-finding invariant is the report's quality lever; structural enforcement of manifesto-independence (OQ2) made QA's DRY check collapse to one line; "preflight advisory not applied" is an ambiguous state that leaked scope during build and was caught by QA.
+
+Persistent memory-bank files reconciled: `systemPatterns.md` updated to reflect that the project is no longer "pre-code, docs-only"; `productContext.md` open-questions paragraph updated to reflect Phase-1 resolutions. `techContext.md` was already updated during build (Step 13).
+
 ## Next step
 
-Phase transition to **QA** (Level 3 workflow: Build → QA, automatic). QA performs a post-implementation semantic review of what was built against the plan and the creative decisions.
+**Operator input required.** Per L3 workflow, Reflect → Archive requires `/niko-archive` invocation by the operator. Task remains open until archived.
+
+REFLECT COMPLETE

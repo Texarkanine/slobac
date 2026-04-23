@@ -74,4 +74,4 @@ Explicitly **not** smell counts. Success is measured per layer:
 - Commit-before-refactor.
 - A refactor must not reduce regression-detection power without a named absorber in the rationale.
 
-**Open questions shaping scope** (tracked in `planning/VISION.md` §5, not yet decided): audit output format; report persistence (transient vs committed artifact); subset-selection UX; apply-layer verification depth; Skill granularity (per-smell vs per-fix-shape); first-class harness target; license; name for the audit artifact.
+**Open questions shaping scope** (tracked in `planning/VISION.md` §5). Phase 1 resolved or pre-answered several: audit output format (markdown-only for Phase 1; JSON deferred to Phase 3); subset-selection UX (natural-language invocation); Skill granularity (ur-Skill + per-smell `references/smells/<slug>.md`, per the OQ1 creative decision); first-class harness target (Cursor + Claude Code jointly via portable `SKILL.md` + `references/` primitive); audit-artifact name (`slobac-audit.md`). Still open: report persistence (transient vs committed artifact); apply-layer verification depth; license.

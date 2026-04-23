@@ -2,7 +2,7 @@
 
 ## How This System Works
 
-SLOBAC is currently a **pre-code, docs-only project**. The "system" is the `docs/` manifesto, with `planning/VISION.md` as the product brief and `planning/research/` as the prior-art survey that justifies the positioning. There is no runtime, no build, no tests. Architectural judgment at this stage is about the *shape of the documents and how they couple* — not about module boundaries.
+SLOBAC's canonical artifact is the `docs/` manifesto, with `planning/VISION.md` as the product brief and `planning/research/` as the prior-art survey that justifies the positioning. Since Phase 1 shipped, the repo also carries the first runtime artifact: the audit skill at `skills/slobac-audit/`. The skill does **not** carry a copy of the manifesto — it reads `docs/taxonomy/<slug>.md` at runtime and layers audit-specific augmentation on top. That structural split is the integrity mechanism for the manifesto-independence invariant (see "Phased-delivery order is not a free choice" below, and `techContext.md` for the canonical-docs-referenced-from-skill pattern). Architectural judgment at this stage is still predominantly about the *shape of the documents and how they couple* — module boundaries matter only inside `skills/slobac-audit/` (ur-SKILL.md + per-smell augmentation + report template).
 
 A contributor who wants to modify SLOBAC safely needs to hold three load-bearing facts in mind:
 
