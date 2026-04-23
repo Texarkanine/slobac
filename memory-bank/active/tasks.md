@@ -128,8 +128,24 @@ The de-risking checkpoints below were executed in the working tree before writin
 - [x] Technology validation complete (done inline; see section above)
 - [x] Preflight
 - [x] Build
-- [ ] QA
+- [x] QA
 - [ ] Reflect
+
+## QA Notes
+
+Clean PASS. Walked the seven semantic constraints against the 14 committed files; no fixes applied, no findings deferred.
+
+- **KISS**: `pyproject.toml` is the minimum shape that works (minimal `[project]` + one `[dependency-groups] docs` + the sanctioned `[tool.uv] required-version` pin). Workflow shrunk from 3 install steps to 2. README local-preview shrunk from 4 lines to 2.
+- **DRY**: Dep pins now have a single source of truth (`pyproject.toml`), with `uv.lock` as the exact-version gate. No duplication between files.
+- **YAGNI**: No speculative additions. The `[tool.uv] required-version` line was explicitly sanctioned as optional in plan Step 2; cost is one line and it guards against silent failures on very old uv — kept.
+- **Completeness**: All 8 test-plan behaviors verified (PEP 735 install clean, strict build clean, no abandonment propaganda, lockfile reproducibility, CI PR-gating unchanged, CI deploy unchanged, local preview one-shot, original Phase 0 behaviors preserved). All 9 implementation-plan steps checked off. No TODOs, stubs, or placeholders introduced.
+- **Regression**: No `docs/` changes (honors out-of-scope). All four preflight-mandated operational straggler fixes applied. Workflow structure (triggers, permissions, concurrency, PR-gating, deploy job) byte-identical in semantics. `properdocs.yml` is a 100%-similarity rename of `mkdocs.yml`.
+- **Integrity**: No debug artifacts (`print`, `console.log`, TODO/FIXME/XXX) introduced. Version pins (`~= X.Y`) are deliberate and justified; workflow action pin (`astral-sh/setup-uv@v5`) matches plan Challenge #4's explicit decision.
+- **Documentation**: Every affected persistent doc updated alongside the code change — `README.md`, `memory-bank/techContext.md`, `memory-bank/systemPatterns.md` (operational claim), `memory-bank/active/projectbrief.md` (superseded Out-of-Scope bullet), plus the standard active-folder ephemerals (tasks, activeContext, progress). `pyproject.toml` and workflow both carry inline comments explaining non-obvious intent.
+
+Residual `mkdocs` and `requirements-docs.txt` references across the repo are all in one of: (a) auto-generated `uv.lock` entries; (b) literal package/theme names that keep their `mkdocs-*` identity per the ProperDocs announcement; or (c) memory-bank narrative describing the swap itself. None are operational paths — classification matches plan Step 9's acceptable-residuals policy exactly.
+
+**Operator-owned out-of-scope**: two unstaged docs edits exist in the working tree (`docs/taxonomy/rotten-green.md`, `docs/taxonomy/tautology-theatre.md`) — header renames not part of this task. Deliberately left uncommitted for operator handling. Their presence on disk did not affect the strict-build gate (build ran clean with them included).
 
 ## Build Notes
 
