@@ -2,9 +2,15 @@
 
 **Current Task:** Phase 1 Audit MVP — `deliverable-fossils` + `naming-lies` as harness-portable agent customizations for Cursor and Claude Code.
 
-**Phase:** REFLECT COMPLETE (awaiting operator decision to archive)
+**Phase:** PLAN (re-entered post-reflect; rework in progress)
 
-## What Was Done (cumulative)
+## Rework In Progress
+
+The operator surfaced a portability defect after Reflect: the shipped skill references `docs/taxonomy/<slug>.md` via paths that cross its own root directory (`../../../../docs/...` from inside `skills/slobac-audit/references/smells/*.md`, and the SKILL.md "read docs at runtime" step). AgentSkills.io skills are self-contained — their runtime root is wherever they're installed (`~/.claude/skills/slobac-audit/` on an external machine, a user-level Cursor install, etc.) — so the cross-root reference breaks on every real install.
+
+OQ2's creative decision (Option D: docs canonical, skill reads both files at runtime) is invalidated. A new invariant (**#11 Skill-root self-containment**) has been codified in tasks.md so the constraint isn't missed again. OQ2-redux is open; creative phase pending. Affected implementation steps: 7 (SKILL.md workflow), 8–9 (per-smell augmentation files), 11 (README language), 13 (techContext pattern). Preserved: OQ1, all fixtures, the report template, the five-field per-finding invariant, the invocation UX.
+
+## What Was Done (cumulative, including pre-rework)
 
 - Complexity analysis: Level 3 (Intermediate Feature).
 - Plan phase: component analysis, invariant checklist, TDD test plan, 14-step implementation plan, challenges, technology validation note, all in [`tasks.md`](./tasks.md).
@@ -66,6 +72,6 @@ Persistent memory-bank files reconciled: `systemPatterns.md` updated to reflect 
 
 ## Next step
 
-**Operator input required.** Per L3 workflow, Reflect → Archive requires `/niko-archive` invocation by the operator. Task remains open until archived.
+**Creative phase for OQ2-redux.** The rework hinges on how the skill carries (or synthesises) canonical content it can no longer read from outside its own root. Candidates span a generator + drift-check CI gate (Option E), a role-split operational playbook with hand-authored overlap (Option H), a vendored copy with manual sync discipline (Option K), and runtime network fetch (Option J). Given that the previous OQ2 creative pass missed the skill-root self-containment constraint, OQ2-redux should go through creative with an airtight bar rather than being pre-answered at plan time.
 
-REFLECT COMPLETE
+PLAN PHASE (rework) — creative pending for OQ2-redux

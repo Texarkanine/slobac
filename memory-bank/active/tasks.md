@@ -6,6 +6,28 @@
 
 Ship Phase 1 of [`planning/VISION.md`](../../planning/VISION.md): an audit MVP for the `deliverable-fossils` and `naming-lies` smells, packaged as harness-portable agent customizations runnable in both Cursor and Claude Code. Two smells are in scope together so any shared structure we pick is stress-tested against two genuinely different fix shapes (two-phase rename→regroup vs three-way rename/strengthen/investigate).
 
+## Rework Context (post-reflect re-entry)
+
+A post-reflect review by the operator surfaced a material defect in the previously-shipped implementation: the skill references `docs/taxonomy/<slug>.md` via relative paths that cross the skill's root directory (`skills/slobac-audit/references/smells/*.md` → `../../../../docs/taxonomy/<slug>.md`, and the SKILL.md workflow step "read `docs/taxonomy/<slug>.md`"). This is a **skill-portability violation**: AgentSkills.io skills are self-contained units whose runtime root is the skill's own install location (`~/.claude/skills/slobac-audit/`, user-level Cursor install, or wherever the skill is dropped). A skill cannot reach outside that root and assume anything is there.
+
+**Root cause:** the OQ2 creative analysis conflated **filesystem co-location** (the files live in the same tree in this repo) with **runtime co-location** (the path is reachable relative to the skill's install root at invocation time). The former is true; the latter is false on every real install.
+
+**What this invalidates:**
+
+- The OQ2 creative decision (`creative/creative-docs-skill-dry.md`). Option D relied on runtime co-location of the `docs/` tree; that premise does not survive install. Option D is structurally dead under the corrected constraint.
+- The SKILL.md workflow's per-smell "read both files" step (reads only one of the two files are reachable at runtime).
+- The "no manifesto copy in skill tree" structural invariant claim, which depended on Option D.
+- The reflection's insight #2 ("OQ2 held up cleanly") — wrong under a false premise. To be corrected in the post-rework Reflect phase.
+
+**What this preserves:**
+
+- OQ1 (ur-Skill + `references/smells/<slug>.md` shape). This decision is orthogonal to the runtime-root issue and survives unchanged.
+- The fixtures and expected-findings files (they live under `tests/fixtures/audit/`, not inside the skill; their reader-facing cross-links to `docs/taxonomy/` are fine).
+- The report template (lives inside the skill, references nothing outside).
+- The invocation-UX, the scope-parsing workflow, the five-field per-finding invariant, the read-only guard — all unchanged.
+
+The rework scope is therefore narrow: resolve the redux open question (OQ2-redux), rewrite the SKILL.md workflow step that reads external files, re-author the per-smell augmentation files under the new shape, and update the README / techContext / systemPatterns accordingly. The fixtures and expected-findings are preserved as-is.
+
 ## Pinned Info
 
 ### Component Dependency Graph
@@ -92,6 +114,7 @@ The correct solution must preserve:
 8. **Phase-2 extensibility**. Whatever shape is picked must extend to the remaining 13 smells without a second architectural pass. Two smells in scope are the stress test for this constraint.
 9. **Knowledge-DRY (not syntactic-DRY)** — from the manifesto's own governor rules, applied reflexively to SLOBAC's authorship.
 10. **Commit-before-refactor**, per the manifesto's governor rules. Every per-file restructuring of the docs tree must be a standalone commit if applied, so it can be reverted cleanly.
+11. **Skill-root self-containment** (new, added in rework). An AgentSkills.io-shaped skill's runtime root is its own install directory. Every file the skill reads at agent-runtime must be reachable via a path anchored inside that root — no references that escape the skill tree (`../`, absolute paths outside the root, or assumptions about the harness cwd). This invariant is the corrected form of the assumption that broke OQ2; it is codified here so future phases do not miss it.
 
 ## Defaults Decided at Plan Time (not creative-phase)
 
@@ -106,8 +129,9 @@ These VISION §5 open questions were judged resolvable without creative-phase ex
 
 Two questions are genuinely ambiguous, have real architectural implications, and need creative-phase exploration with an airtight bar.
 
-- [x] **OQ1 — Customization primitive shape and granularity.** → **Resolved (high confidence):** Ur-Skill with per-smell entries under `references/smells/<slug>.md`, packaged as an AgentSkills.io-shaped `SKILL.md` + `references/` tree. Uniquely satisfies the portability + Phase-2-extensibility + knowledge-DRY quality attributes under the user's stated constraints. See [`creative/creative-customization-shape.md`](./creative/creative-customization-shape.md).
-- [x] **OQ2 — Docs↔customization DRY mechanism.** → **Resolved (high confidence):** Docs (`docs/taxonomy/<slug>.md`) is canonical; `references/smells/<slug>.md` carries only audit-specific augmentation and may be absent for smells that need none. SKILL.md workflow instructs the agent to read both files per in-scope smell. Structurally enforces the manifesto-independence invariant (no manifesto copy exists in the Skill tree; nothing to drift). Eliminates `pymdownx.snippets`-based options (build-time-only; doesn't work at agent-runtime or on github.com). See [`creative/creative-docs-skill-dry.md`](./creative/creative-docs-skill-dry.md).
+- [x] **OQ1 — Customization primitive shape and granularity.** → **Resolved (high confidence):** Ur-Skill with per-smell entries under `references/smells/<slug>.md`, packaged as an AgentSkills.io-shaped `SKILL.md` + `references/` tree. Uniquely satisfies the portability + Phase-2-extensibility + knowledge-DRY quality attributes under the user's stated constraints. See [`creative/creative-customization-shape.md`](./creative/creative-customization-shape.md). **Unaffected by the rework** — orthogonal to the runtime-root issue.
+- [ ] ~~**OQ2 — Docs↔customization DRY mechanism.**~~ → ~~Resolved (high confidence): Docs canonical; SKILL.md reads both files per smell.~~ **Invalidated** by the skill-root self-containment invariant (see Rework Context above). Superseded by OQ2-redux. The superseded creative document [`creative/creative-docs-skill-dry.md`](./creative/creative-docs-skill-dry.md) is preserved for traceability; its Option-D decision is marked invalid on re-entry.
+- [ ] **OQ2-redux — Docs↔skill DRY mechanism under skill-root self-containment.** The skill tree must be self-contained at runtime: `references/smells/<slug>.md` can no longer delegate canonical content to `docs/taxonomy/<slug>.md`. The question is how the skill carries (or synthesises) the canonical content it needs for detection, while preserving the ranked quality attributes from the original OQ2 (zero-drift, manifesto-independence, knowledge-DRY). Candidates to evaluate include (non-exhaustive): **E** — generator + drift-check CI gate (docs canonical, skill content generated and committed, CI verifies no drift); **H** — hand-authored operational playbook with explicit role-split (docs = reader-facing manifesto, skill-refs = agent-facing operational notes, overlap by design, drift handled by periodic review); **K** — vendored copy with manual sync discipline (docs canonical, skill carries a committed copy, no automation, operator responsible for re-copying on docs changes); **J** — runtime fetch from GitHub Pages or raw URL (eliminates local copy but introduces network dependency and harness-specific fetch capabilities). Requires creative-phase exploration with airtight bar, especially given that the previous "high confidence" OQ2 decision missed a constraint. → **Creative phase pending.**
 
 ## Test Plan (TDD)
 
@@ -146,6 +170,8 @@ The audit's "code" is prompt/instruction content (SKILL.md workflow prose + per-
 ## Implementation Plan
 
 TDD order: fixtures + expected-findings first; then skill content; then tech-validation in each harness.
+
+**Rework annotation:** Steps 1–6 are unaffected (shipped and still valid). Step 7 (SKILL.md workflow) needs rewriting to eliminate the cross-root read. Steps 8–9 (per-smell augmentation files) need re-authoring under whatever shape OQ2-redux picks. Step 11 (READMEs) needs the "skill reads docs at runtime" language removed. Step 13 (techContext) needs the "canonical-docs-referenced-from-skill" pattern replaced. New steps may be added after OQ2-redux resolves (e.g. a generator script + CI gate under Option E, or a sync-discipline section under Option K). Steps are revisited in detail after creative-phase closure.
 
 1. **Establish fixture infrastructure.**
     - Files: `tests/fixtures/audit/README.md`
@@ -227,6 +253,8 @@ No new runtime dependencies. The validation target is **harness discovery**: bot
 
 ## Status
 
+### Pre-rework (original pass through the L3 workflow)
+
 - [x] Component analysis complete
 - [x] Open questions resolved (OQ1, OQ2)
 - [x] Test planning complete (TDD)
@@ -235,23 +263,24 @@ No new runtime dependencies. The validation target is **harness discovery**: bot
 - [x] Preflight — PASS with two implementation amendments applied (report default path; always-present augmentation file) + one advisory (report versioning)
 - [x] Build — PASS, 12 of 14 planned steps executed (step 10 marked unneeded at plan time; step 14 conditional pivot not triggered)
 - [x] QA — PASS with one trivial fix applied (removed preflight-advisory "Skill version" field that was scope-crept into the report template)
+- [x] Reflect — COMPLETE, with the caveat that insight #2 ("OQ2 held up cleanly") is retroactively invalidated
 
-## Preflight Amendments Applied
+### Post-rework (re-entry from plan)
+
+- [x] Component analysis re-assessed (narrow delta: OQ2-redux, steps 7–9, 11, 13; fixtures + report template preserved; invariant #11 added)
+- [ ] OQ2-redux resolved (creative phase pending)
+- [ ] Test plan re-verified (expected no change; expected-findings docs survive; rework is internal to the skill tree)
+- [ ] Implementation plan restated with OQ2-redux resolution applied (pending creative)
+- [ ] Preflight (post-rework)
+- [ ] Build (post-rework)
+- [ ] QA (post-rework)
+- [ ] Reflect (post-rework; must also correct the invalidated reflection insight)
+
+## Preflight Amendments Applied (pre-rework)
 
 - **Report emission path specified.** Steps 6 and 7 now pin the default output location to `./slobac-audit.md` in the operator's working directory, with override allowed per invocation. (Addresses completeness gap.)
 - **Always-present augmentation file.** The OQ2 creative decision's allowance for `references/smells/<slug>.md` to be absent is tightened at the implementation level: every smell has an augmentation file, even if its contents are an explicit "no audit-specific augmentation required" marker. Simplifies SKILL.md workflow (no if-present branch) and enforces convention consistency at Phase-2 scale.
 
-## Preflight Advisory (Not Applied)
+## Preflight Advisory (Not Applied, pre-rework)
 
 - **Audit-report versioning.** Consider stamping each emitted `slobac-audit.md` with the manifesto git ref / audit-skill version that produced it. Supports VISION §1.2's portability goal (a reviewer three months later can trace which smell definitions a finding was based on) and costs ~1 line of template. Not applied because the user explicitly did not flag VISION §5 #2 (persistence/versioning) as a Phase-1 concern; surfacing here for operator consideration before build.
-
-## Status
-
-- [x] Component analysis complete
-- [ ] Open questions resolved (OQ1, OQ2 — creative phases pending)
-- [ ] Test planning complete (TDD)
-- [ ] Implementation plan complete
-- [ ] Technology validation complete
-- [ ] Preflight
-- [ ] Build
-- [ ] QA
