@@ -107,33 +107,136 @@ These VISION §5 open questions were judged resolvable without creative-phase ex
 Two questions are genuinely ambiguous, have real architectural implications, and need creative-phase exploration with an airtight bar.
 
 - [x] **OQ1 — Customization primitive shape and granularity.** → **Resolved (high confidence):** Ur-Skill with per-smell entries under `references/smells/<slug>.md`, packaged as an AgentSkills.io-shaped `SKILL.md` + `references/` tree. Uniquely satisfies the portability + Phase-2-extensibility + knowledge-DRY quality attributes under the user's stated constraints. See [`creative/creative-customization-shape.md`](./creative/creative-customization-shape.md).
-- [ ] **OQ2 — Docs↔customization DRY mechanism.** How do the customization's knowledge of a smell and the user-facing `docs/taxonomy/<slug>.md` share a single source of truth, and which side is canonical?
-  - *Why ambiguous:* Three candidate shapes at a minimum. **(a)** Docs are canonical; customization snippet-includes from docs. **(b)** Customization is canonical (e.g. `references/<slug>.md` inside the ur-shape); docs snippet-include from the customization via `pymdownx.snippets` (already configured). **(c)** A neutral third source that both sides consume. The right answer depends on whether the taxonomy entry as currently shaped is **sufficient** input for the customization or whether the customization needs a **superset** (detection heuristics beyond the "Signals" section, report-template prose, decision-tree guidance the manifesto deliberately does not contain). If superset is needed, (a) requires extending the taxonomy-entry shape (systemPatterns invariant #1); (b) makes the customization the SoT and the docs a partial view; (c) adds a layer.
-  - *Constraints the decision must satisfy:* Taxonomy-entry uniformity invariant preserved. Cross-link integrity preserved (`properdocs build --strict`). Manifesto-independence invariant preserved. Resolution must be compatible with OQ1's shape decision (so OQ1 resolves first).
-
-### Question sequencing
-
-OQ1 first; OQ2 second. OQ2's candidate shapes reference specific locations within the customization shape (e.g. "`references/<slug>.md`"), which only exist once OQ1 is decided.
+- [x] **OQ2 — Docs↔customization DRY mechanism.** → **Resolved (high confidence):** Docs (`docs/taxonomy/<slug>.md`) is canonical; `references/smells/<slug>.md` carries only audit-specific augmentation and may be absent for smells that need none. SKILL.md workflow instructs the agent to read both files per in-scope smell. Structurally enforces the manifesto-independence invariant (no manifesto copy exists in the Skill tree; nothing to drift). Eliminates `pymdownx.snippets`-based options (build-time-only; doesn't work at agent-runtime or on github.com). See [`creative/creative-docs-skill-dry.md`](./creative/creative-docs-skill-dry.md).
 
 ## Test Plan (TDD)
 
-*Deferred until OQ1 and OQ2 resolve; test infrastructure choice depends on where customization files live and what shape they have. Fixture test suites under `tests/fixtures/audit/` are the anchor — specific behaviors to verify and the framework for running them will be populated after creative phases complete.*
+The audit's "code" is prompt/instruction content (SKILL.md workflow prose + per-smell augmentation), which doesn't fit the classical unit-test shape. The testable artifacts are **fixture test suites** with planted smells plus per-fixture **expected-findings documents**. The TDD discipline for Phase 1 is: author fixtures + expected-findings **before** authoring the skill content, then validate the skill against them.
+
+### Behaviors to Verify
+
+- **B1 — Fossils detected correctly.** Fixture `tests/fixtures/audit/deliverable-fossils/` contains Python tests with planted fossils (derived from the example in `docs/taxonomy/deliverable-fossils.md`). Invocation scoped to `deliverable-fossils` → audit report flags each planted fossil with a rename recommendation that encodes the test's actual behavior (not the fossil label).
+- **B2 — Naming-lies detected correctly.** Fixture `tests/fixtures/audit/naming-lies/` contains Python tests with planted naming-lies (derived from the example in `docs/taxonomy/naming-lies.md`). Invocation scoped to `naming-lies` → report flags each planted lie with one of {rename, strengthen, investigate} and rationale that cites the claimed vs verified behavior.
+- **B3 — Scoping honored.** Fixture `tests/fixtures/audit/both-smells/` contains tests exhibiting both smells (some tests may exhibit both). Invocation scoped to one smell emits findings only for that smell; invocation with no explicit scope (or scope = "all") emits findings for both.
+- **B4 — Clean suite → no false findings.** Fixture `tests/fixtures/audit/clean/` contains tests with behavior-encoded names and body-matching claims. Invocation (any scope) emits a report declaring no findings.
+- **B5 — Negative-example guards.** Each smell fixture includes a negative-example test (e.g. a test named `test_refactor_preserves_behavior` whose body actually tests refactoring behavior, not a fossil reference). Audit does not flag these.
+- **B6 — Report structure invariant.** Every finding in a report has: test location (file + identifier), smell slug, rationale citing the docs entry, and prescribed remediation. Machine-consistent enough that a future JSON extraction is mechanical.
+- **B7 — Runs in both target harnesses.** Skill is discoverable and invocable in both Cursor and Claude Code. Output across harnesses is qualitatively equivalent (same findings, not necessarily byte-identical phrasing).
+
+### Edge Cases
+
+- Cross-smell overlap: a test that is both a fossil *and* a naming-lie. Audit should flag it under each applicable smell without duplicating the finding's core rationale, consistent with the taxonomy's "Related modes" cross-links.
+- Empty suite: a directory with no tests. Report emits "no findings" cleanly.
+- Scope mismatch: an invocation requests a smell slug the skill doesn't support (e.g. `tautology-theatre` in Phase 1). Skill responds with a clear "not-in-scope" message rather than silently skipping.
+
+### Test Infrastructure
+
+- **Framework**: none exists yet; fixture suites are themselves valid Python test files (pytest-compatible shape, though they are NOT executed as part of SLOBAC's CI — they are *input* to the audit, not tests of SLOBAC).
+- **Location**: `tests/fixtures/audit/<scenario>/` — one directory per scenario. Scenarios: `deliverable-fossils/`, `naming-lies/`, `both-smells/`, `clean/`.
+- **Conventions**: each scenario dir contains (a) one or more `.py` test files embodying the scenario and (b) an `expected-findings.md` documenting what the audit should emit. The `expected-findings.md` format mirrors the report template (see implementation step 7).
+- **Runner**: manual for Phase 1 — operator invokes the skill in the target harness against a fixture path and compares output to `expected-findings.md`. A scripted eval harness (golden-file comparison or structured-pattern validation) is Phase 2+ scaffolding, explicitly deferred.
+- **Polyglot note**: Python-only fixtures are sufficient for Phase 1 MVP. The per-smell augmentation can note the ecosystems the detector is **expected** to handle (per polyglot notes in the taxonomy entries), but fixture validation is Python-only.
+
+### Integration Tests
+
+- B3 (scoping) is effectively a cross-smell integration test.
+- B7 (both harnesses) is a cross-harness integration test.
+- Both are operator-executed manual validations in Phase 1.
 
 ## Implementation Plan
 
-*Deferred until OQ1 and OQ2 resolve.*
+TDD order: fixtures + expected-findings first; then skill content; then tech-validation in each harness.
+
+1. **Establish fixture infrastructure.**
+    - Files: `tests/fixtures/audit/README.md`
+    - Changes: new; describes the fixture convention (one scenario per subdir, `expected-findings.md` per scenario, Python-only for Phase 1, scenarios are *input* to the audit not tests *of* SLOBAC).
+    - Creative ref: n/a.
+
+2. **Author deliverable-fossils fixture.**
+    - Files: `tests/fixtures/audit/deliverable-fossils/test_plugin_registry.py`, `tests/fixtures/audit/deliverable-fossils/expected-findings.md`
+    - Changes: Python file with the fossil tests from `docs/taxonomy/deliverable-fossils.md` "Before" example, plus one additional planted fossil and one negative-example test (a test named with `refactor` but whose body actually tests refactoring). `expected-findings.md` documents the expected rename recommendations citing actual behavior.
+    - Creative ref: OQ1 shape — fixtures validate the skill's per-smell output against the manifesto's prescribed fix.
+
+3. **Author naming-lies fixture.**
+    - Files: `tests/fixtures/audit/naming-lies/test_session_lifecycle.py`, `tests/fixtures/audit/naming-lies/expected-findings.md`
+    - Changes: Python file with the naming-lies test from `docs/taxonomy/naming-lies.md` "Before" example, plus one additional planted lie and one negative-example test (title matches body). `expected-findings.md` documents the expected per-finding path (rename / strengthen / investigate) with rationale.
+
+4. **Author combined-scope fixture.**
+    - Files: `tests/fixtures/audit/both-smells/test_mixed.py`, `tests/fixtures/audit/both-smells/expected-findings.md`
+    - Changes: Python file where some tests are fossils, some are naming-lies, and at least one is both. `expected-findings.md` documents per-scope expectations (fossils-only, naming-lies-only, both).
+
+5. **Author clean fixture.**
+    - Files: `tests/fixtures/audit/clean/test_example.py`, `tests/fixtures/audit/clean/expected-findings.md`
+    - Changes: Python file with behavior-encoded names, body-matching claims, no fossils or lies. `expected-findings.md` states "no findings expected for either smell at any scope."
+
+6. **Author report template.**
+    - Files: `skills/slobac-audit/references/report-template.md`
+    - Changes: markdown skeleton for the `slobac-audit.md` report. Per-finding shape: test location, smell slug, rationale (cites `docs/taxonomy/<slug>.md`), prescribed remediation, and a one-sentence "why this isn't a false positive" guard. Top-of-report: scope invoked, audit date, fixture root. Structure regular enough that a future JSON extraction is mechanical.
+    - Creative ref: OQ1 — lives under the ur-skill's `references/` tree, not a separate customization.
+
+7. **Author SKILL.md (ur-workflow).**
+    - Files: `skills/slobac-audit/SKILL.md`
+    - Changes: primitive-agnostic prose describing: (a) scope parsing — map natural-language operator intent to a list of in-scope smell slugs; (b) per-in-scope-smell workflow — read `docs/taxonomy/<slug>.md` for canonical definition + read `references/smells/<slug>.md` if present for augmentation; (c) detection prose — iterate target test files and identify candidate findings using the manifesto's Signals section; (d) report emission — use `references/report-template.md`.
+    - Creative ref: OQ1 (ur-skill shape) + OQ2 (read-both-files pattern for per-smell content).
+
+8. **Author deliverable-fossils augmentation.**
+    - Files: `skills/slobac-audit/references/smells/deliverable-fossils.md`
+    - Changes: audit-specific augmentation only. Expected contents: invocation-phrase hints ("fossils," "stale names," "checklist-shaped tests"); emission hints (rename recommendations must encode the behavior, not the fossil label); false-positive guards (e.g., tests named with `refactor` that actually test refactoring behavior).
+    - Creative ref: OQ2 — explicitly does *not* duplicate manifesto content.
+
+9. **Author naming-lies augmentation.**
+    - Files: `skills/slobac-audit/references/smells/naming-lies.md`
+    - Changes: same shape as step 8. Emission hints must distinguish which of the three fix paths applies and why; false-positive guards for "title matches body though the words differ" (semantic synonymy).
+
+10. **Tech validation: harness discovery.**
+    - Files: *none authored*; this is a verification step.
+    - Changes: confirm Cursor and Claude Code can discover `skills/slobac-audit/` (or find the path adjustment needed — e.g. symlinks from `.cursor/skills/` or `.claude/skills/` to a shared canonical location). A hello-world smoke test may precede this.
+    - Output: documented discovery path(s) in the next step's README.
+
+11. **Author operator-facing README (Phase 1 install + invocation).**
+    - Files: `skills/slobac-audit/README.md` (new), update `README.md` (repo root) to link to it.
+    - Changes: install instructions per harness (paths from step 10), invocation examples (scoping phrases), fixture-driven smoke test the operator can run to verify the install.
+
+12. **Run each fixture through the skill in each harness; validate against expected-findings.**
+    - Files: *none authored;* this is the manual validation gate.
+    - Changes: operator confirms B1–B7; any divergence is a bug to fix in step 7/8/9. Not a gate to ship — just a gate to declare Phase-1 behaviorally correct.
+
+13. **Update `memory-bank/techContext.md`.**
+    - Files: `memory-bank/techContext.md`
+    - Changes: add the `skills/slobac-audit/` directory as a now-existing component, note the canonical-docs-referenced-from-skill pattern, note the cross-harness discovery-path mapping.
+
+14. **Mid-build pivot: taxonomy-entry extension if required.**
+    - Files: `docs/taxonomy/<slug>.md` (either or both)
+    - Changes: *conditional.* If step 12 reveals the manifesto's Signals or Prescribed Fix sections are insufficient for the audit (per the OQ2 decision's "taxonomy entry extension" failure mode), extend the docs entry. Per governor rules (commit-before-refactor), land this as its own PR/commit *before* resuming audit work that depends on the extension.
+    - Creative ref: OQ2 — the audit cannot carry detection content the manifesto doesn't bless.
 
 ## Technology Validation
 
-*Deferred until OQ1 and OQ2 resolve. Minimum likely: verify `pymdownx.snippets` can include from the chosen customization location and produces byte-identical docs rendering.*
+No new runtime dependencies. The validation target is **harness discovery**: both Cursor and Claude Code must find and invoke a `SKILL.md`-format skill at whatever path we settle on.
+
+- **POC:** step 10 above. Put a minimal SKILL.md at a candidate location, invoke in each harness, confirm discovery.
+- **Expected outcome:** either (a) a shared path both harnesses can read (ideal), or (b) a canonical path plus thin per-harness symlinks/pointers (acceptable), or (c) per-harness path wrappers with a shared content root (acceptable). If none of these work, preflight FAIL.
+- **No new packages:** `uv.lock` unchanged. `properdocs.yml` unchanged (the creative decision does not use build-time snippet includes for the Skill tree).
 
 ## Challenges & Mitigations
 
-*Deferred until OQ1 and OQ2 resolve. Pre-identified challenges:*
+- **Harness discovery-path divergence.** If Cursor and Claude Code want skills in materially different locations, the canonical `skills/slobac-audit/` directory may need symlinks or wrappers. *Mitigation:* tech-validation step 10 up front; documented install path per harness in step 11; canonical source stays harness-agnostic.
+- **Prompt-engineering false positives/negatives.** The skill may misclassify. *Mitigation:* negative-example tests in every fixture (B5); augmentation files (steps 8, 9) explicitly carry false-positive guards.
+- **Cross-harness output variation.** Same skill, different harness agents, may emit subtly different report phrasing. *Mitigation:* report template (step 6) prescribes structure; Phase 1 portability is qualitative equivalence (same findings, same remediations), not byte-identical output.
+- **Taxonomy entry found insufficient mid-build.** Per OQ2, detection content the manifesto doesn't bless cannot live in the skill. *Mitigation:* step 14 is an explicit mid-build pivot branch; PR-able manifesto extensions are a normal outcome, not a blocker.
+- **Skill prompt-context bloat at scale.** Phase 1 is two smells and manageable. At Phase 2's 15 smells, the ur-SKILL.md + referenced files may overflow context budgets in the target harness. *Mitigation:* the OQ1 decision already reserves the additive Option-4 migration (Sub-Agents) if/when this emerges as a real limit.
+- **Preservation of regression-detection power (governor rule).** Phase 1 is read-only audit; nothing the audit *does* touches the regression-detection power of the target suite. *Mitigation:* Phase 1 is structurally out-of-scope for this governor rule; only the apply capability (Phase 3) carries that gate.
 
-- **Harness-primitive drift:** if Cursor or Claude Code changes their Skill/Sub-Agent API shape, the customization breaks. Mitigation direction: pick a primitive that is already stable across both; document the coupling in `techContext.md`.
-- **Cross-link integrity during any docs restructuring:** any OQ2 resolution that moves content must pass `properdocs build --strict`. Mitigation: CI gate already in place; validate locally before commit.
-- **Prompt-engineering false positives:** the audit may flag things that are not actually fossils/naming-lies. Mitigation: fixture suites with planted *and* negative-example tests; operator review of initial runs.
+## Status
+
+- [x] Component analysis complete
+- [x] Open questions resolved (OQ1, OQ2)
+- [x] Test planning complete (TDD)
+- [x] Implementation plan complete
+- [x] Technology validation complete
+- [ ] Preflight
+- [ ] Build
+- [ ] QA
 
 ## Status
 
