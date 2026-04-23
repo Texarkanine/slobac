@@ -1,0 +1,178 @@
+---
+description: 
+globs: **/*.md
+alwaysApply: false
+---
+# Markdown Styling Conventions
+
+This document describes how I like Markdown documents to be styled.
+
+## Section Headings
+
+Prefer Markdown Headings for logical sections - don't just bold some text! A section is anything that
+
+* introduces a logically a different topic
+* contains multiple instances of the same thing (a list, or examples, etc)
+
+Do not **over-use** sections by having "leaf" section headings where a *list* or simple *series of paragraphs* would do. Sections map to organization; leaf-level content that's already in a section probably doesn't need them.
+
+### Examples
+
+**Wrong** (underuses sections):
+
+	## Quick Start
+
+	Prerequisites:
+	- git
+	- POSIX-compatible shell (bash, dash, zsh, etc.)
+	- Core Unix utilities (find, grep, cat, mktemp, etc.)
+	- tree (for displaying directory structures)
+
+	Installation:
+	```
+	git clone https://github.com/yourusername/ai-rizz.git
+	cd ai-rizz
+	make install
+	```
+
+	### Common recipes
+
+	**Personal rules only (git-ignored):**
+	```bash
+	ai-rizz init https://github.com/example/rules.git --local
+	ai-rizz add rule my-personal-rule.mdc
+	ai-rizz list
+	```
+
+	**Team rules (committed to repo):**
+	```bash
+	ai-rizz init https://github.com/example/rules.git --commit
+	ai-rizz add rule team-shared-rule.mdc
+	ai-rizz list
+	```
+
+	**Mix of both:**
+	```bash
+	ai-rizz init https://github.com/example/rules.git --local
+	ai-rizz add rule personal-rule.mdc      	# goes to local
+	ai-rizz add rule shared-rule.mdc --commit   # creates commit mode
+	ai-rizz list                            	# shows: ○ ◐ ●
+	```
+
+**Correct** (fully leverages sections):
+
+	## Quick Start
+
+	### Prerequisites
+	- git
+	- POSIX-compatible shell (bash, dash, zsh, etc.)
+	- Core Unix utilities (find, grep, cat, mktemp, etc.)
+	- tree (for displaying directory structures)
+
+	### Installation
+	```
+	git clone https://github.com/yourusername/ai-rizz.git
+	cd ai-rizz
+	make install
+	```
+
+	### Common recipes
+
+	**Personal rules only (git-ignored):**
+	```bash
+	ai-rizz init https://github.com/example/rules.git --local
+	ai-rizz add rule my-personal-rule.mdc
+	ai-rizz list
+	```
+
+	**Team rules (committed to repo):**
+	```bash
+	ai-rizz init https://github.com/example/rules.git --commit
+	ai-rizz add rule team-shared-rule.mdc
+	ai-rizz list
+	```
+
+	**Mix of both:**
+	```bash
+	ai-rizz init https://github.com/example/rules.git --local
+	ai-rizz add rule personal-rule.mdc      	# goes to local
+	ai-rizz add rule shared-rule.mdc --commit   # creates commit mode
+	ai-rizz list                            	# shows: ○ ◐ ●
+	```
+
+## Markdown Code Fence Nesting
+
+### Problem
+
+When showing markdown content inside markdown code fences (like documentation examples), improper fence nesting breaks rendering and makes the content unreadable.
+
+### Rule
+
+**Always use one more backtick than the largest fence inside your content.**
+
+If your markdown content contains triple backticks (```), your outer fence must use four backticks (````).
+If your content contains four backticks, use five backticks for the outer fence, and so on.
+
+### Examples
+
+**Wrong** (breaks rendering):
+
+	```markdown
+	# Example
+	```bash
+	echo "hello"
+	```
+	```
+
+**Correct** (renders properly):
+
+	````markdown
+	# Example
+	```bash
+	echo "hello"
+	```
+	````
+
+**For content with four backticks, use five**:
+
+	`````markdown
+	````markdown
+	# Nested example
+	```bash
+	echo "hello"
+	```
+	````
+	`````
+
+### Fallback Technique: Indented Code Blocks
+
+When backtick counting gets too complex or confusing, use **indented code blocks** instead:
+
+Indent with whitespace (4 spaces or 1 tab) to create code blocks without any backticks:
+
+	This is a code block created with indentation
+	````markdown
+	# No conflicts here!
+	```bash
+	echo "works perfectly"
+	```
+	````
+
+Choose spaces or tabs based on the existing pattern in the rest of the document. If you are creating a new document or there is no existing pattern of indentation, use tabs.
+
+The content of the indented block itself must still abide by the "outer fences have one more backtick" rule.
+
+**Trade-offs:**
+- ✅ No backtick conflicts ever
+- ❌ No syntax highlighting
+- ❌ No language specification
+
+Use this when the backtick math gets unwieldy or when you need to show complex nested examples.
+
+### Quick Check
+
+Before writing your outer fence:
+1. Scan your content for the highest number of consecutive backticks
+2. Add one more backtick to that number for your outer fence
+3. Use the same number at both the opening and closing of your fence
+4. **Or**, if it's getting complex, just indent with whitespace instead
