@@ -171,22 +171,22 @@ TDD order: fixtures + expected-findings first; then skill content; then tech-val
 
 6. **Author report template.**
     - Files: `skills/slobac-audit/references/report-template.md`
-    - Changes: markdown skeleton for the `slobac-audit.md` report. Per-finding shape: test location, smell slug, rationale (cites `docs/taxonomy/<slug>.md`), prescribed remediation, and a one-sentence "why this isn't a false positive" guard. Top-of-report: scope invoked, audit date, fixture root. Structure regular enough that a future JSON extraction is mechanical.
+    - Changes: markdown skeleton for the `slobac-audit.md` report. Per-finding shape: test location, smell slug, rationale (cites `docs/taxonomy/<slug>.md`), prescribed remediation, and a one-sentence "why this isn't a false positive" guard. Top-of-report: scope invoked, audit date, target suite root. Default emission path: `./slobac-audit.md` in the operator's current working directory; SKILL.md workflow allows the operator to override per invocation. Structure regular enough that a future JSON extraction is mechanical.
     - Creative ref: OQ1 — lives under the ur-skill's `references/` tree, not a separate customization.
 
 7. **Author SKILL.md (ur-workflow).**
     - Files: `skills/slobac-audit/SKILL.md`
-    - Changes: primitive-agnostic prose describing: (a) scope parsing — map natural-language operator intent to a list of in-scope smell slugs; (b) per-in-scope-smell workflow — read `docs/taxonomy/<slug>.md` for canonical definition + read `references/smells/<slug>.md` if present for augmentation; (c) detection prose — iterate target test files and identify candidate findings using the manifesto's Signals section; (d) report emission — use `references/report-template.md`.
+    - Changes: primitive-agnostic prose describing: (a) scope parsing — map natural-language operator intent to a list of in-scope smell slugs, with explicit behavior for out-of-scope slugs (Phase 1 supports only `deliverable-fossils` and `naming-lies`); (b) per-in-scope-smell workflow — read `docs/taxonomy/<slug>.md` for canonical definition **and** read `references/smells/<slug>.md` for augmentation (always-present convention, see preflight amendment); (c) detection prose — iterate target test files and identify candidate findings using the manifesto's Signals section; (d) report emission — use `references/report-template.md`, default path `./slobac-audit.md` in operator's working directory, override path accepted per invocation.
     - Creative ref: OQ1 (ur-skill shape) + OQ2 (read-both-files pattern for per-smell content).
 
 8. **Author deliverable-fossils augmentation.**
     - Files: `skills/slobac-audit/references/smells/deliverable-fossils.md`
-    - Changes: audit-specific augmentation only. Expected contents: invocation-phrase hints ("fossils," "stale names," "checklist-shaped tests"); emission hints (rename recommendations must encode the behavior, not the fossil label); false-positive guards (e.g., tests named with `refactor` that actually test refactoring behavior).
+    - Changes: audit-specific augmentation only — always present, never a duplicate of manifesto content. Expected contents: invocation-phrase hints ("fossils," "stale names," "checklist-shaped tests"); emission hints (rename recommendations must encode the behavior, not the fossil label); false-positive guards (e.g., tests named with `refactor` that actually test refactoring behavior). If no smell-specific augmentation is needed, the file contains an explicit "no audit-specific augmentation required" marker rather than being absent — convention enforced for Phase-2 authoring consistency (see preflight amendment).
     - Creative ref: OQ2 — explicitly does *not* duplicate manifesto content.
 
 9. **Author naming-lies augmentation.**
     - Files: `skills/slobac-audit/references/smells/naming-lies.md`
-    - Changes: same shape as step 8. Emission hints must distinguish which of the three fix paths applies and why; false-positive guards for "title matches body though the words differ" (semantic synonymy).
+    - Changes: same shape as step 8 (always present). Emission hints must distinguish which of the three fix paths applies and why; false-positive guards for "title matches body though the words differ" (semantic synonymy).
 
 10. **Tech validation: harness discovery.**
     - Files: *none authored*; this is a verification step.
@@ -234,9 +234,18 @@ No new runtime dependencies. The validation target is **harness discovery**: bot
 - [x] Test planning complete (TDD)
 - [x] Implementation plan complete
 - [x] Technology validation complete
-- [ ] Preflight
+- [x] Preflight — PASS with two implementation amendments applied (report default path; always-present augmentation file) + one advisory (report versioning)
 - [ ] Build
 - [ ] QA
+
+## Preflight Amendments Applied
+
+- **Report emission path specified.** Steps 6 and 7 now pin the default output location to `./slobac-audit.md` in the operator's working directory, with override allowed per invocation. (Addresses completeness gap.)
+- **Always-present augmentation file.** The OQ2 creative decision's allowance for `references/smells/<slug>.md` to be absent is tightened at the implementation level: every smell has an augmentation file, even if its contents are an explicit "no audit-specific augmentation required" marker. Simplifies SKILL.md workflow (no if-present branch) and enforces convention consistency at Phase-2 scale.
+
+## Preflight Advisory (Not Applied)
+
+- **Audit-report versioning.** Consider stamping each emitted `slobac-audit.md` with the manifesto git ref / audit-skill version that produced it. Supports VISION §1.2's portability goal (a reviewer three months later can trace which smell definitions a finding was based on) and costs ~1 line of template. Not applied because the user explicitly did not flag VISION §5 #2 (persistence/versioning) as a Phase-1 concern; surfacing here for operator consideration before build.
 
 ## Status
 
