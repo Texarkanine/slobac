@@ -36,3 +36,23 @@ Ship a Phase 0 docs site built from `docs/` with mkdocs-material, deployed to Gi
 - **Option B chosen** (mkdocs-material + Actions workflow) over Option A (GitHub Pages built-in pointing at `/docs`). Rationale: `strict` link validation at CI time defends the single most damaging failure mode the project has (cross-link drift in `docs/`), and Phase 1+ audit portability wants URL-citeable manifesto pages.
 - **Actions `deploy-pages` deploy**, not a `gh-pages` branch. The `gh-pages` branch pattern is legacy; modern GitHub Pages deploys from the workflow artifact directly.
 - **Plugins**: `awesome-pages` + `pymdownx.snippets` requested explicitly by operator.
+
+## Rework — toolchain swap
+
+After the original task reached REFLECT COMPLETE, operator initiated a rework to swap the docs-build toolchain. No design decisions from the original scope are reopened; the goals, plugins, workflow structure, GH-compat slugifier, strict-mode gate, PR-gating, and deploy path are unchanged. Two swaps only:
+
+### Rework Scope
+
+1. **`mkdocs` → `properdocs`**. ProperDocs is a drop-in continuation of MkDocs 1.x maintained by `oprypin` (the last active MkDocs maintainer before original abandonment). Per [Discussion #33](https://github.com/orgs/ProperDocs/discussions/33): plugins keep `mkdocs-*` names, `mkdocs.yml` can keep its filename, only the command changes to `properdocs build`. Rationale: original MkDocs is abandoned and the owner plans to reuse the name for an incompatible v2 that will break every plugin/theme — switching to ProperDocs now removes that time-bomb and keeps the same dep surface.
+2. **`requirements-docs.txt` → `pyproject.toml` with `uv`**. Declare docs-build deps under PEP 735 `[dependency-groups]`. Local preview and CI both use `uv sync --group docs` + `uv run properdocs build --strict`. `uv.lock` is committed for reproducibility.
+
+### Rework Expected Side-Effects
+
+- `DISABLE_MKDOCS_2_WARNING=true` env var in the workflow likely becomes unnecessary (both the ProperDocs abandonment notice and mkdocs-material's Zensical notice stop firing on ProperDocs per upstream changes). Validate at build-time; drop the env var if silent.
+- `techContext.md` toolchain paragraph needs updating: s/mkdocs/properdocs/ and s/pip/uv/.
+- `README.md` local-preview instructions change from `pip install -r` to `uv sync --group docs` + `uv run properdocs serve`.
+
+### Rework — Out of Scope
+
+- Changing plugin selection, theme, slugifier, strict/validation config, nav ordering (`.pages`), landing page content, deploy target, or anything in `docs/` itself.
+- Renaming `mkdocs.yml` to `properdocs.yml` — explicitly optional per the announcement; skip unless there's a motivating reason.

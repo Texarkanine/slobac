@@ -1,7 +1,12 @@
 # Docs-build dependencies only. Runtime deps (Phase 1+) go elsewhere.
 # Loose-compatible pins (~= on major.minor) — reproducibility without locking out security patches.
+#
+# properdocs is oprypin's (the last active MkDocs maintainer) fork of MkDocs 1.x,
+# picking up where upstream MkDocs went unmaintained. Drop-in replacement: config
+# stays mkdocs.yml, every mkdocs-* plugin works unchanged, only the CLI command
+# changes to `properdocs build`. See: https://github.com/ProperDocs/properdocs
 
-mkdocs ~= 1.6
+properdocs ~= 1.6
 mkdocs-material ~= 9.5
 mkdocs-awesome-pages-plugin ~= 2.9
 mkdocs-redirects ~= 1.2

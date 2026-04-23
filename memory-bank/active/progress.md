@@ -14,9 +14,23 @@ Publish the `docs/` manifesto to GitHub Pages using mkdocs-material, built and d
 - QA phase complete — PASS. Two trivial fixes: YAGNI trim of 9 unused `markdown_extensions` + doc update to `systemPatterns.md` acknowledging the strict-mode CI gate. Post-fix strict build remains clean. All 8 plan behaviors verified. No substantive deficiencies, no regressions.
 - Reflect phase complete — `reflection/reflection-phase0-docs-publish.md` written. Two technical insights (mkdocs strict vs validation; GH vs python-markdown slug divergence), one process insight (plan-as-contract re: dep expansion), one million-dollar finding (day-1 CI gate would have caught three latent cross-link bugs shipped in initial manifesto commit). Persistent files reconciled.
 
-## REFLECT COMPLETE
+## REFLECT COMPLETE (superseded — see Rework below)
 
-Task is ready for archival. Operator should run `/niko-archive` when ready to finalize.
+Task was ready for archival at this point, then operator initiated rework.
+
+## Rework initiated
+
+Operator's feedback:
+
+1. **Switch `mkdocs` → `properdocs`** per the [ProperDocs #33 discussion](https://github.com/orgs/ProperDocs/discussions/33). ProperDocs is a drop-in continuation of MkDocs 1.x by the last active MkDocs maintainer (`oprypin`); original MkDocs is abandoned and the owner plans to reuse the name for an incompatible v2 that will break every existing plugin/theme. Switching now removes that time-bomb. Per the announcement:
+    - Plugins keep their `mkdocs-*` names — no renames needed.
+    - Config file can stay as `mkdocs.yml` (rename to `properdocs.yml` is optional).
+    - Command goes `mkdocs build` → `properdocs build`.
+    - `DISABLE_MKDOCS_2_WARNING` env var likely becomes unnecessary: on `properdocs`, the abandonment warning stops firing; and on non-mkdocs forks, mkdocs-material's own Zensical warning also stops firing. Validate at build-time.
+    - Note on env var rename: ProperDocs v1.6.7 changed the env var name (the old name is now `NO_MKDOCS_2_WARNING`); worth checking the release notes if the silencer is still needed for some reason.
+2. **Switch `requirements-docs.txt` → `pyproject.toml` with `uv`**. Use PEP 735 `[dependency-groups]` (clean fit — this is not a publishable package, just a docs-build toolchain). Replace pip with uv both locally and in CI. Commit `uv.lock` for reproducibility.
+
+Neither change reopens any of the design decisions settled in the original build (mkdocs-material + awesome-pages + redirects + pymdownx.snippets + GH-compat slugifier + strict-mode link validation + PR-gating + Actions deploy-pages). They are a toolchain swap.
 
 ## Operator Handoff Items (deferred to post-merge)
 

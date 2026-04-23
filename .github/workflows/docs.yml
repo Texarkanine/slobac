@@ -20,11 +20,6 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
-env:
-  # Silences the abandonment-notice propaganda that a plugin in the mkdocs ecosystem
-  # shoves into every build. Nothing to do with our site.
-  DISABLE_MKDOCS_2_WARNING: "true"
-
 jobs:
   build:
     name: Build site
@@ -44,7 +39,8 @@ jobs:
         run: pip install -r requirements-docs.txt
 
       - name: Build site (strict)
-        run: mkdocs build --strict
+        # properdocs is a drop-in for mkdocs build; config file stays mkdocs.yml.
+        run: properdocs build --strict
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
