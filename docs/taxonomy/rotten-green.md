@@ -1,4 +1,4 @@
-# Rotten Green / Dead Scaffolding
+# Rotten Green
 
 | Slug | Severity | Protects |
 |---|---|---|
@@ -7,6 +7,8 @@
 ## Summary
 
 The test reports green but never actually exercises or asserts anything. Empty bodies, TODO stubs that count as passing, dead fixtures declared and never read, debug `console.log` left behind where an assertion was meant to land.
+
+Also known as "dead scaffolding".
 
 ## Description
 
