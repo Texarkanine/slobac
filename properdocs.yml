@@ -59,17 +59,11 @@ theme:
 plugins:
   - search
   - awesome-pages
-  # mkdocs-redirects: positioned for future taxonomy renames. Empty redirect_maps
-  # until the first rename happens; at that point, add `old/path.md: new/path.md`.
-  - redirects:
-      redirect_maps: {}
 
 markdown_extensions:
   # Core structure / typography
   - admonition
-  - attr_list
   - footnotes
-  - md_in_html
   - tables
   - toc:
       permalink: true
@@ -80,11 +74,6 @@ markdown_extensions:
       slugify: !!python/object/apply:pymdownx.slugs.slugify
         kwds:
           case: lower
-  # pymdown-extensions — kept minimal; add more here when a docs page actually needs them.
-  - pymdownx.details
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
@@ -94,15 +83,7 @@ markdown_extensions:
         - .
       check_paths: true
       auto_append: []
-  - pymdownx.superfences:
-      custom_fences:
-        - name: mermaid
-          class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
-  - pymdownx.tabbed:
-      alternate_style: true
-  - pymdownx.tasklist:
-      custom_checkbox: true
+  - pymdownx.superfences
 
 extra:
   social:
