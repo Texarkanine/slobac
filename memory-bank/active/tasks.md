@@ -189,9 +189,7 @@ TDD order: fixtures + expected-findings first; then skill content; then tech-val
     - Changes: same shape as step 8 (always present). Emission hints must distinguish which of the three fix paths applies and why; false-positive guards for "title matches body though the words differ" (semantic synonymy).
 
 10. **Tech validation: harness discovery.**
-    - Files: *none authored*; this is a verification step.
-    - Changes: confirm Cursor and Claude Code can discover `skills/slobac-audit/` (or find the path adjustment needed — e.g. symlinks from `.cursor/skills/` or `.claude/skills/` to a shared canonical location). A hello-world smoke test may precede this.
-    - Output: documented discovery path(s) in the next step's README.
+    - Unneeded - an AgentSkills.io-compliant Skill is assumed to be discoverable by relevant harnesses.
 
 11. **Author operator-facing README (Phase 1 install + invocation).**
     - Files: `skills/slobac-audit/README.md` (new), update `README.md` (repo root) to link to it.
