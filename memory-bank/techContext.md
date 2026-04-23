@@ -1,8 +1,31 @@
 # Tech Context
 
-SLOBAC has no runtime source code yet — the current artifact is the `docs/` manifesto, with `planning/VISION.md` as the product brief. When implementation begins, the target packaging is **mainstream agentic-coding-harness primitives — Skills and Sub-Agents** (per `planning/VISION.md` §1.2 and §5 open question #6). The specific harness target order is deliberately unresolved.
+SLOBAC's first runtime artifact is the **audit skill** at [`skills/slobac-audit/`](../skills/slobac-audit/), an AgentSkills.io-shaped `SKILL.md` + `references/` tree that covers [`deliverable-fossils`](../docs/taxonomy/deliverable-fossils.md) and [`naming-lies`](../docs/taxonomy/naming-lies.md) in Phase 1. The manifesto at `docs/` remains canonical; the skill carries only audit-specific augmentation and reads smell definitions from `docs/taxonomy/<slug>.md` at agent-runtime. Target harnesses: Cursor and Claude Code (per `planning/VISION.md` §1.2 and §5 open question #6, resolved via the OQ1 creative phase to ur-Skill + per-smell references).
 
-The project does have a **docs publishing toolchain** (Phase 0 deliverable): the `docs/` tree is published to GitHub Pages by `.github/workflows/docs.yaml` using [ProperDocs](https://properdocs.org/) (the actively-maintained continuation of MkDocs 1.x) with the `mkdocs-material` theme, using `--strict` link validation as a CI gate. This is build-only infrastructure — it does not change the "manifesto ships as raw markdown on github.com" property.
+The project also has a **docs publishing toolchain** (Phase 0 deliverable): the `docs/` tree is published to GitHub Pages by `.github/workflows/docs.yaml` using [ProperDocs](https://properdocs.org/) (the actively-maintained continuation of MkDocs 1.x) with the `mkdocs-material` theme, using `--strict` link validation as a CI gate. This is build-only infrastructure — it does not change the "manifesto ships as raw markdown on github.com" property.
+
+## Audit skill layout and discovery
+
+The canonical source is [`skills/slobac-audit/`](../skills/slobac-audit/). Layout:
+
+- `SKILL.md` — ur-workflow: scope parsing, per-smell file loading, detection, report emission.
+- `references/report-template.md` — report shape.
+- `references/smells/<slug>.md` — audit-specific augmentation per smell. Always present per convention (even if minimal); the SKILL.md workflow reads it unconditionally.
+
+Per-harness discovery paths are operator-install concerns, not architectural ones. The canonical source stays harness-agnostic; install via symlink (`.cursor/skills/slobac-audit`, `.claude/skills/slobac-audit`) per the smoke-test in [`skills/slobac-audit/README.md`](../skills/slobac-audit/README.md).
+
+### Canonical-docs-referenced-from-skill pattern
+
+The skill **never carries a copy** of manifesto content. At runtime it reads:
+
+1. `docs/taxonomy/<slug>.md` for the canonical definition (Summary, Description, Signals, Prescribed Fix, Example, Related modes, Polyglot notes).
+2. `skills/slobac-audit/references/smells/<slug>.md` for audit-specific augmentation (invocation hints, emission hints, false-positive guards).
+
+This structurally enforces the manifesto-independence invariant from [`systemPatterns.md`](./systemPatterns.md) — nothing in the skill tree can drift from the manifesto because no copy of the manifesto lives in the skill tree. The tradeoff: the skill needs the `docs/` tree reachable at runtime. Phase 1 and 2 ship in-repo, so co-location is free. Phase 5 marketplace distribution will need to either bundle both trees or synthesize self-contained skill files at release time.
+
+## Audit fixtures
+
+Planted test suites live at [`tests/fixtures/audit/<scenario>/`](../tests/fixtures/audit/) — one directory per scenario (`deliverable-fossils/`, `naming-lies/`, `both-smells/`, `clean/`). Each contains one or more `.py` files embodying the scenario and an `expected-findings.md` documenting what the audit should emit. The fixtures are **input** to the audit skill — they are never executed by any runner SLOBAC owns. Phase-1 validation is manual: the operator invokes the skill against a fixture path and compares the emitted `slobac-audit.md` to `expected-findings.md`. A scripted eval harness is deferred to Phase 2+.
 
 ## Environment Setup
 

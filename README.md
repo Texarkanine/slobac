@@ -16,6 +16,11 @@ Entry points:
 - [Taxonomy](docs/taxonomy/README.md) — 15 named failure modes with signals, prescribed fixes, and examples.
 - [Glossary](docs/glossary.md) — shared terminology and citations.
 
+## Audit capability (Phase 1)
+
+- 🔍 **Audit skill:** [`skills/slobac-audit/`](skills/slobac-audit/) — an AgentSkills.io-shaped skill that audits a test suite for `deliverable-fossils` and `naming-lies`, then emits a portable markdown report. Install and smoke-test instructions in [`skills/slobac-audit/README.md`](skills/slobac-audit/README.md).
+- 🧪 **Fixtures:** [`tests/fixtures/audit/`](tests/fixtures/audit/) — planted test suites with documented expected findings. Use them to verify any install, and as worked examples of what the audit considers in- or out-of-scope.
+
 ## Project context
 
 - [`planning/VISION.md`](planning/VISION.md) — the product brief: what SLOBAC is, who it's for, the phased delivery plan, and the open questions.
