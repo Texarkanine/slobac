@@ -2,7 +2,7 @@
 
 **Current Task:** Phase 1 Audit MVP — `deliverable-fossils` + `naming-lies` as harness-portable agent customizations for Cursor and Claude Code.
 
-**Phase:** PREFLIGHT (rework) COMPLETE — awaiting operator `/niko-build`
+**Phase:** PLAN (second rework) COMPLETE — next phase Preflight (operator-gated per L3 workflow)
 
 ## Rework In Progress
 
@@ -82,10 +82,66 @@ OQ2-redux resolved to **Option E**: generator + drift-check CI gate, two-directo
 
 **PASS with amendments.** The plan's R4/R5/R6 undercounted cross-root references inside `skills/slobac-audit/**`; a grep surfaced six additional locations the plan did not name. Amendments applied inline: R4 split 4-way, R5 split 3-way, R5a added, R6 split 4-way, R1 and R10 clarified. All cross-root references are now covered. Three advisories not applied (scripts-dir convention, CI-job placement latitude, smells-manifest as Phase-2 entry-point candidate). Full report in `.preflight-status`.
 
-**Calibration-debt reminder for build phase:** this is the second planning pass on OQ2 and the first pass missed a constraint; the preflight's grep also surfaced plan undercounting. Build authors should grep-verify invariant #11 at every touch-point, not rely on by-inspection claims.
+## Build outcome (rework)
+
+**PASS.** All 11 authored rework steps executed:
+
+- **R1–R2** — `scripts/sync-taxonomy.py` authored (stdlib-only; no `pyproject.toml` deps added). Two modes: default (write outputs) and `--check` (diff against committed). Generator ran clean and produced 15 verbatim taxonomy copies under `skills/slobac-audit/references/taxonomy/` with a fixed "GENERATED FILE — do not hand-edit" header naming the source path and regeneration command.
+- **R3** — CI drift-check step added to `.github/workflows/docs.yaml` build job (PF4 advisory applied: colocated to reuse the bootstrapped `uv` env). Runs on every PR build per the existing `docs.yaml` triggers.
+- **R4** — SKILL.md: workflow step (4a) now reads `references/taxonomy/<slug>.md` + `references/smells/<slug>.md`, both inside the skill root; scope header (4b) intra-skill links; governor-rule cite (4c) rewritten to published URL (`https://texarkanine.github.io/slobac/principles/#preservation-of-regression-detection-power`); catch-all (4d) confirmed clean via rg.
+- **R5** — both per-smell augmentation files: preamble rewrites (5a) point at the sibling generated taxonomy file; intra-manifesto cross-refs (5b, `semantic-redundancy` from fossils, `vacuous-assertion` from naming-lies) rewritten as `../taxonomy/<slug>.md` (both exist after R2's full-manifesto walk); principle ref (5c, `behavior-articulation-before-change` from naming-lies) rewritten to a published URL.
+- **R5a** — `references/report-template.md` rationale instruction now cites `references/taxonomy/<slug>.md` for the agent-facing citation and instructs the agent to emit a published `https://texarkanine.github.io/slobac/taxonomy/<slug>/` URL in the report for human readers.
+- **R6** — `skills/slobac-audit/README.md`: scope links (6a) become `https://texarkanine.github.io/slobac/taxonomy/<slug>/`; runtime-reads paragraph (6b) replaced by a self-contained-bundle paragraph describing the generator + CI gate and updated with a new `references/taxonomy/` row in the layout tree; the user-level-install caveat paragraphs are now "no caveats"; fixture links (6c) become absolute GitHub URLs; the obsolete "skill cannot find docs/taxonomy/<slug>.md" paragraph (6d) deleted and replaced by a drift-gate troubleshooting entry.
+- **R7** — `memory-bank/techContext.md`: "Canonical-docs-referenced-from-skill pattern" section replaced by "Generator-synchronised skill-bundle pattern"; generator behavior and CI-gate mechanism documented; the new `references/taxonomy/` directory added to the layout description.
+- **R8** — `memory-bank/systemPatterns.md`: invariant #11 (Skill-root self-containment) added as a dedicated section codifying both the constraint and the post-rework discipline that produced it. The opening "How This System Works" paragraph rewritten: manifesto-independence is now described as procedural (generator + CI gate), not structural, with an explicit pointer to the techContext pattern name.
+- **R10** — structural spot-check: `rg '\]\(\.\./\.\./' skills/slobac-audit/` returns zero; SKILL.md / report-template / augmentation files / README have zero cross-root markdown links; the only `../principles.md#...` / `../glossary.md#...` references live inside generated `references/taxonomy/*.md` files and are inert verbatim content per the R1 link-handling policy, explicitly excluded from invariant-#11 enforcement.
+- **R11** — reflection insight #2 retracted inline with a calibration note; Summary section and Cross-Phase Analysis insight #2 also updated with companion retractions; other reflection insights preserved.
+- **R9** — operator-run harness validation deferred per plan; not a ship gate.
+
+**Deviations from plan:** none. PF4's "add to existing docs job vs parallel job" choice resolved in favor of same-job co-location (uv cache reuse). PF3 (scripts-dir convention) and PF5 (smells-manifest) remain unapplied per preflight; not blocking.
+
+**Artefacts created or modified during build:**
+
+- NEW: `scripts/sync-taxonomy.py` (stdlib-only generator + drift-check)
+- NEW: `skills/slobac-audit/references/taxonomy/*.md` (15 generated files, one per manifesto entry)
+- MOD: `.github/workflows/docs.yaml` (drift-check step added)
+- MOD: `skills/slobac-audit/SKILL.md` (4 edits per R4)
+- MOD: `skills/slobac-audit/references/report-template.md` (R5a)
+- MOD: `skills/slobac-audit/references/smells/deliverable-fossils.md` (R5a + R5b)
+- MOD: `skills/slobac-audit/references/smells/naming-lies.md` (R5a + R5b + R5c)
+- MOD: `skills/slobac-audit/README.md` (R6a–R6d plus install-caveat paragraphs)
+- MOD: `memory-bank/techContext.md` (R7)
+- MOD: `memory-bank/systemPatterns.md` (R8 + invariant-#11 section)
+- MOD: `memory-bank/active/reflection/reflection-phase-1-audit-mvp.md` (R11 + companion retractions)
+
+## Second Rework Context (post-build-2 re-entry)
+
+The shipped Option-E architecture from the first rework (generator + drift-check CI gate; generated `references/taxonomy/*.md` verbatim copies; hand-authored `references/smells/*.md` augmentation files) was rejected by the operator post-build on two load-bearing objections:
+
+1. Committing generated code is itself architecturally a smell — even with a drift-gate, the bundle carries derivative content and the "remember to regenerate before commit" ritual is exactly the kind of out-of-band discipline that silently rots.
+2. The augmentation files are ~35–60% restatement of the manifesto entries. An editor updating the manifesto has no structural prompt to open the augmentation file, so the restated content silently drifts.
+
+**Root cause (shared):** the first rework's creative phase (OQ2-redux) preserved the premise that `docs/taxonomy/*.md` is the authoring source of truth *while* satisfying invariant #11. The only way to satisfy both is copy-with-sync-discipline. Option E was a competent instance; the pattern itself is the problem.
+
+**Operator's corrective direction:** invert canonicality. Skill bundle holds the canonical taxonomy; `docs/taxonomy/*.md` becomes a thin `pymdownx.snippets`-include wrapper. Explicit new constraint: **nobody reads `docs/*.md` directly** — the rendered properdocs site is the reader surface. This eliminates the original OQ2 objection that had previously killed snippet-based options.
+
+## Second Rework Plan Summary (post-creative)
+
+**OQ3 resolved to Option γ — definitional canonical + discursive wrapper.** The canonical (`skills/slobac-audit/references/docs/taxonomy/<slug>.md`, 15 files) carries every section of the smell's definition: Summary, Description, Signals, **False-positive guards** (new first-class section, promoted from the augmentation files), Prescribed Fix, Example, Related modes, Polyglot notes. The wrapper (`docs/taxonomy/<slug>.md`) is usually just a snippet-include directive; optional reader-framing prose can wrap the snippet when an author consciously wants it. For Phase-1 scope (2 smells), all wrappers are bare. For the 13 non-Phase-1 smells, canonical content migrates verbatim via `git mv`; a stub False-positive guards section is added to each with a "Phase-2 per-smell work will author these" marker. Augmentation files are **deleted**; guards migrate to canonical, invocation phrases migrate to SKILL.md, restated manifesto content is dropped. See [`creative/creative-canonical-entry-shape.md`](./creative/creative-canonical-entry-shape.md).
+
+**Second-rework implementation steps (S1–S14):** S1 `git mv` migration of 15 manifesto entries to new canonical path; S2 thin snippet-include wrappers at `docs/taxonomy/*.md`; S3 Phase-1 false-positive-guards promotion; S4 stub guards for 13 non-Phase-1 entries; S5 SKILL.md workflow + scope-parsing rewrite (inline invocation vocabulary migrated from augmentation files); S6 delete `references/smells/`; S7 delete `scripts/sync-taxonomy.py` + generated `references/taxonomy/*` + CI drift-check step; S8 report-template path update; S9 README rewrites; S10–S11 memory-bank techContext + systemPatterns updates (invariant #3 wording revision; invariant #11 now structurally enforced; new "Canonical-in-bundle" pattern); S12 reflection second-retraction note; S13 operator-run harness validation; S14 `properdocs build --strict` gate.
+
+**Recurring-calibration debt:** this is the third OQ2 pass. Each prior decision met its enumerated constraints and missed a later-surfaced one. Creative doc flags this explicitly and recommends a Phase-2 creative-phase discipline hedge: "what will the operator's first reaction to the shipped artefact be, and can we surface that objection now?" as a checklist item before declaring high confidence.
+
+## Artefact impact (second rework)
+
+- **DELETE:** `scripts/sync-taxonomy.py`, `skills/slobac-audit/references/taxonomy/*.md` (15 files), `skills/slobac-audit/references/smells/*.md` (2 files), `.github/workflows/docs.yaml` drift-check step.
+- **NEW:** `skills/slobac-audit/references/docs/taxonomy/*.md` (15 files via `git mv` from `docs/taxonomy/`; Phase-1 entries gain `## False-positive guards` sections).
+- **REWRITE:** `docs/taxonomy/*.md` (15 files → thin snippet-include wrappers).
+- **MOD:** `skills/slobac-audit/SKILL.md` (workflow single-file read; inline invocation vocabulary); `skills/slobac-audit/references/report-template.md` (path update); `skills/slobac-audit/README.md` (layout, runtime paragraph, drift-gate troubleshooting removed); `memory-bank/techContext.md` (new "Canonical-in-bundle" pattern); `memory-bank/systemPatterns.md` (invariant #3 wording; invariant #11 clarified; new authoring-model subsection); `memory-bank/active/reflection/reflection-phase-1-audit-mvp.md` (second-retraction note).
 
 ## Next step
 
-**Operator input required — `/niko-build`.** Per L3 workflow Phase Mappings, preflight PASS → build is an operator-gated edge. Waiting for operator.
+Preflight (second rework) runs per operator invocation per L3 workflow.
 
-PREFLIGHT PHASE (rework) — PASS; awaiting operator gate to build
+PLAN PHASE (second rework) — PASS; awaiting operator input to enter Preflight
