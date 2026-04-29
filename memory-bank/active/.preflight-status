@@ -1,25 +1,21 @@
-PASS (second rework pass, post-OQ3)
+# Preflight Status — Third Rework
 
-Preflight validation complete for Phase 1 Audit MVP second rework (canonical-in-bundle inversion).
+**Result:** PASS with amendments
 
-Findings:
+**Date:** 2026-04-29
 
-PF1 (MAJOR, amendment applied inline to tasks.md): The plan adds `## False-positive guards` as a new first-class section to every canonical entry (S3 promotes Phase-1 guards from augmentation; S4 adds stub guards to the 13 non-Phase-1 entries) but does not update `docs/taxonomy/README.md`, which is the source of truth for taxonomy entry shape (per systemPatterns.md: "That file is the source of truth for taxonomy file shape — don't restate it elsewhere. Changes to the shape require updating every existing entry."). Completeness gap: the README's "How to read an entry" section lists every section of the taxonomy shape; the new False-positive guards section is not listed.
+## Findings
 
-Amendment applied: new step S4a added between S4 and S5. S4a updates `docs/taxonomy/README.md`'s "How to read an entry" shape description to include `False-positive guards` after `Signals`, with a brief description of the section's role.
+### PF1 (MAJOR, applied): `planning/VISION.md` has 14 `../docs/` references not covered by the plan.
 
-PF2 (MAJOR, amendment applied inline to tasks.md): S1 (`git mv` of 15 manifesto entries to the skill bundle) and S2 (creation of 15 snippet-include wrappers at `docs/taxonomy/<slug>.md`) are described as separate steps. Between them, `docs/taxonomy/<slug>.md` files don't exist: `docs/taxonomy/README.md` catalog links are broken, `properdocs build --strict` fails. If committed separately per invariant #10 (commit-before-refactor), the intermediate commit is broken.
+VISION.md is a live planning document read on GitHub. After the move, all 14 `../docs/` relative links break (`../docs/principles.md`, `../docs/taxonomy/deliverable-fossils.md`, etc.). The plan has no step addressing this.
 
-Amendment applied: S1 and S2 are combined into a single commit. The `git mv` + wrapper creation is semantically a single structural operation (move + redirect), not two independent restructuring passes. Invariant #10's spirit (revertable standalone commits) is preserved — reverting the combined commit restores the pre-migration state identically.
+**Amendment:** Add step **T5d** to T5 (repo-root README step): update `planning/VISION.md` references from `../docs/` paths to published URLs (`https://texarkanine.github.io/slobac/...`). Published URLs are stable regardless of repo layout and are the correct target for a planning document read by external stakeholders.
 
-PF3 (ADVISORY, not applied): The augmentation files' "Emission hints" sections contain genuinely unique operational heuristics not verbatim in the manifesto: `deliverable-fossils`' Phase-A-default-over-Phase-B guidance and semantic-redundancy-overlap mention; `naming-lies`' RENAME-vs-STRENGTHEN tiebreaker ("is the title's claim specific and testable?") and related-smell-citation guidance. The plan drops these under S6 ("everything else dropped per the duplication assessment"). The manifesto's Prescribed Fix and the SKILL.md Step 4 + report-template already cover the core fix arms and emission shape; the dropped content is operational refinement at decision boundaries. If agent detection quality is observed to degrade during S13 (harness validation), this content can be selectively promoted into the canonical Prescribed Fix or SKILL.md Step 4. Not blocking.
+### PF2 (advisory, not applied): `memory-bank/active/projectbrief.md` has 2 stale `../../docs/taxonomy/` references.
 
-PF4 (ADVISORY, not applied): After migration, the properdocs site's "Edit this page" link for taxonomy entries points to `docs/taxonomy/<slug>.md` (the snippet-include wrapper), not the canonical content. Contributors clicking "Edit" see a snippet directive, not prose. Consistent with the "nobody reads raw docs" premise; recommended to note this in the systemPatterns.md authoring-model section (S11d).
+These will break after the move, but the project brief is an ephemeral file scoped to the current task and will be cleaned up during the archive phase. Not worth a plan step; note for awareness during archive.
 
-PF5 (ADVISORY, not applied): `pymdownx.snippets` is configured with `base_path: [.]` (project root) and `check_paths: true`. Snippet paths to `skills/slobac-audit/references/docs/taxonomy/<slug>.md` should resolve correctly since the path is within the project root. No `restrict_base_path` override is needed. This is a new usage pattern (snippets from outside `docs_dir`); verify during S14 (`properdocs build --strict`) as a smoke check.
+### PF3 (advisory, not applied): `pymdownx.snippets` config is no longer load-bearing.
 
-All gates clear: prerequisites verified (OQ3 resolved, plan complete, creative doc exists); convention compliance confirmed (snippet config adequate, `.pages` nav unaffected, path naming matches operator preference); dependency impact traced (README catalog links, properdocs build, SKILL.md, CI workflow all covered by explicit steps); conflict detection found the two MAJOR items above (both fixable); completeness precheck confirmed all requirements mapped to concrete steps after amendments.
-
-Calibration-debt from three OQ2 passes is carried forward: each prior "high confidence" decision satisfied its stated constraints and missed a later-surfaced one. The operator's recurring-calibration instruction — "what will the operator's first reaction to the shipped artefact be?" — is logged and should be applied during the build phase's verification steps.
-
-Transition: Preflight PASS with amendments → requires operator input (`/niko-build`) per L3 workflow Phase Mappings.
+The `pymdownx.snippets` extension in `properdocs.yml` (`base_path: [.]`, `check_paths: true`) was the mechanism for the snippet-include wrappers. After the move, no files use `--8<--` directives. The config is harmless and may be useful for future content. No action needed.

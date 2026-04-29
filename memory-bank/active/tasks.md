@@ -672,13 +672,14 @@ TDD order: execute the structural move first (so the build gate is authoritative
   - **T4a.** Layout section: add non-taxonomy docs files (`index.md`, `principles.md`, `glossary.md`, `workflows.md`, `taxonomy/README.md`, `.pages`).
   - **T4b.** "Canonical smell definitions" paragraph: broaden to describe the full manifesto living in the bundle. Remove snippet-include language ("The rendered SLOBAC site (properdocs) consumes these files via `pymdownx.snippets` at build time" → "The rendered SLOBAC site (properdocs) is built directly from this directory (`docs_dir` in `properdocs.yml` points here). No indirection, no snippet includes, no wrappers.").
 
-**T5. Update repo-root README.md.**
+**T5. Update repo-root README.md and planning references.**
 
-- Files: `README.md`.
+- Files: `README.md`, `planning/VISION.md`.
 - Changes:
   - **T5a.** "Read the manifesto" entry-point links: update `docs/principles.md` → `skills/slobac-audit/references/docs/principles.md` (and similarly for workflows, taxonomy/README, glossary).
   - **T5b.** "Raw markdown" line: update the `docs/` reference. The raw markdown still renders on GitHub — it just lives at a different path.
   - **T5c.** "Docs publishing" section: update "The `docs/` manifesto is published…" to name the new path.
+  - **T5d. (Preflight amendment PF1.)** `planning/VISION.md` has 14 `../docs/` relative references that break after the move. Update all to published URLs (`https://texarkanine.github.io/slobac/...`). Published URLs are stable regardless of repo layout and correct for a planning document.
 
 **T6. Update `memory-bank/techContext.md`.**
 
@@ -732,6 +733,6 @@ TDD order: execute the structural move first (so the build gate is authoritative
 - [x] Test plan re-verified (B10 updated, B11 removed, B13 added)
 - [x] Implementation plan authored (T1–T10)
 - [x] Technology validation re-assessed (no new deps; config-only change)
-- [ ] Preflight
+- [x] Preflight — **PASS with amendments** (PF1 MAJOR, applied: T5d added for `planning/VISION.md` references) + two advisories (PF2 projectbrief stale refs, PF3 snippets config). See `.preflight-status`.
 - [ ] Build
 - [ ] QA
