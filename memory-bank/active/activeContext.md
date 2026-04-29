@@ -2,28 +2,25 @@
 
 **Current Task:** Phase 1 Audit MVP — `deliverable-fossils` + `naming-lies` as harness-portable agent customizations for Cursor and Claude Code.
 
-**Phase:** REFLECT (second rework) COMPLETE — next phase Archive
+**Phase:** PLAN (third rework) — IN-PROGRESS
 
-## Reflect Summary
+## What Triggered This Rework
 
-Reflection covered the full second-rework lifecycle (Preflight → Build → QA → Reflect). Key observations:
+Pre-merge review of the second-rework artefacts surfaced two remaining seams:
 
-- **Requirements vs Outcome:** All requirements met. 15 entries migrated, snippet wrappers created, false-positive guards promoted/stubbed, augmentation files deleted, SKILL.md rewritten, `properdocs build --strict` passes. S7 was a no-op (first-rework artifacts never committed).
-- **Plan accuracy:** The 14-step plan (S1–S14) was accurate as amended by preflight (PF1: S4a for README shape spec, PF2: S1+S2 combined commit). No reordering or splitting needed.
-- **Creative phase:** OQ3 Option γ held up perfectly. The calibration discipline (asking "what will the operator's reaction be?") was not stress-tested but remains worth carrying forward.
-- **Build/QA:** One trivial QA fix (stale "augmentation file" reference in SKILL.md Constraints). Shell connectivity glitch mid-session caused one phantom commit but no data loss.
+1. SKILL.md Constraints section uses stale pre-inversion language ("audit cites the manifesto; it does not fork it") — architecturally wrong under the canonical-in-bundle model where the skill *is* the manifesto's home.
+2. The 15 snippet-include wrappers at `docs/taxonomy/*.md` are pure routing indirection. They exist because `properdocs.yml` has `docs_dir: docs` but the canonical content lives inside the skill. If properdocs points directly at the skill's content, the wrappers evaporate.
 
-### Persistent file reconciliation
+Operator's direction: move the entire `docs/` tree into `skills/slobac-audit/references/docs/`, point `properdocs.yml` at it, and delete the now-empty `docs/`. Also includes: the operator's already-made SKILL.md edit (intro removal, heading flattening).
 
-- `productContext.md`: fixed stale `references/smells/<slug>.md` reference → `references/docs/taxonomy/<slug>.md`
-- `systemPatterns.md`: clean (updated during S11)
-- `techContext.md`: clean (updated during S10)
+## What This Preserves
 
-### Key insights
+- All fixtures and expected-findings files (content unchanged; path references updated)
+- The skill workflow (Steps 1–6), detection logic, report template, all unchanged in behavior
+- The taxonomy entry shape (all 15 canonical entries untouched in content)
+- Invariant #11 (structurally stronger — full manifesto inside the skill root)
+- `properdocs build --strict` as the CI integrity gate
 
-- **Technical:** Snippet-include (`pymdownx.snippets` + `check_paths: true` + `strict: true`) inverts the authoring surface without losing the reader surface. Zero-maintenance sync mechanism — no generator, no CI drift step. Future skills needing canonical content consumed by a rendered site should use this pattern. `git mv` preserves blame history across the inversion.
-- **Process:** When multiple creative-phase passes fail at the same architectural boundary, the constraint itself may be wrong — escalate to the operator before the next attempt. Uncommitted build artifacts from a superseded rework are a *feature* (they evaporate cleanly when the workflow's phase-gating prevents the rework from reaching commit).
+## Next Step
 
-## Next step
-
-Run `/niko-archive` to create the archive document and finalize the current project.
+Write the implementation plan to `tasks.md`.

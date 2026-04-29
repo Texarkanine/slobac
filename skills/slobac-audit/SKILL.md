@@ -3,30 +3,13 @@ name: slobac-audit
 description: Audit a test suite for SLOBAC manifesto smells and emit a portable markdown report. Phase 1 supports `deliverable-fossils` and `naming-lies`. Use when a human asks for a smell audit of test code, a review of test names/assertions against the behavior they claim to protect, or a SLOBAC report.
 ---
 
-# SLOBAC audit
+# Test Suite Audit Workflow
 
-`slobac-audit` reads a test suite, compares it against the [SLOBAC manifesto](https://github.com/Texarkanine/slobac) taxonomy, and emits a markdown report naming every test that exhibits an in-scope smell. It is **read-only** — it never modifies test code. The output is a portable artifact: a different agent or a human can execute the recommendations without rereading the manifesto.
-
-Phase 1 scope is deliberate and tight. Two smells are supported: [`deliverable-fossils`](references/docs/taxonomy/deliverable-fossils.md) and [`naming-lies`](references/docs/taxonomy/naming-lies.md). Any other smell slug is **not in scope** and must be refused with a clear message, not silently ignored.
-
-## When to invoke
-
-The operator says something like:
-
-- "audit my suite for fossils"
-- "check these tests for naming-lies"
-- "run the SLOBAC audit over `path/to/tests/`"
-- "which of my tests have titles that don't match their bodies"
-
-Natural-language invocation is the intended UX. Parse intent; don't demand exact syntax.
-
-## Workflow
-
-### Step 1 — determine the target suite root
+## Step 1 — determine the target suite root
 
 The operator names a directory (explicitly or implicitly: "these tests", "my suite", a path in their message). If no target is identifiable, ask for one. Do not audit the whole repo by default; that is almost never what the operator wants and will produce an unreadably long report.
 
-### Step 2 — parse scope
+## Step 2 — parse scope
 
 From the operator's request, resolve a list of **in-scope smell slugs** drawn from the Phase-1 supported set: `{deliverable-fossils, naming-lies}`.
 
@@ -37,13 +20,13 @@ From the operator's request, resolve a list of **in-scope smell slugs** drawn fr
 - If the operator names a smell the Phase-1 skill does not support (e.g. `tautology-theatre`, `vacuous-assertion`, any other taxonomy slug), **refuse that slug**. Acknowledge it by name, state it is not in Phase-1 scope, list the supported slugs, and proceed with only the supported slugs from the operator's request. Do not audit the out-of-scope slug anyway; do not silently drop it.
 - If the operator's intent is ambiguous between a supported and unsupported slug, ask rather than guess.
 
-### Step 3 — load per-smell content, for each in-scope smell
+## Step 3 — load per-smell content, for each in-scope smell
 
 For each slug in the resolved scope, read **`references/docs/taxonomy/<slug>.md`** (relative to this `SKILL.md`) — the canonical smell definition. Contains the Summary, Description, Signals, False-positive guards, Prescribed Fix, Example, Related modes, and Polyglot notes. This is the single source of truth for what the smell is, how to detect it, what the common over-triggers are, and how to fix it; do not paraphrase it, do not substitute other definitions.
 
 If a smell's canonical entry turns out to need additional detection content (e.g. a new signal, a missing guard), stop and raise that as a manifesto gap — extend the canonical entry, do not carry detection content outside it.
 
-### Step 4 — walk the target suite and emit candidate findings
+## Step 4 — walk the target suite and emit candidate findings
 
 For each test file under the target suite root:
 
@@ -58,7 +41,7 @@ For each test file under the target suite root:
 
 If a single test exhibits more than one in-scope smell, emit **one finding per smell**, each with its own remediation. Do not collapse — each smell prescribes a different fix, and the operator needs to see both.
 
-### Step 5 — emit the report
+## Step 5 — emit the report
 
 Write the report using the shape in [`references/report-template.md`](./references/report-template.md).
 
@@ -68,7 +51,7 @@ Write the report using the shape in [`references/report-template.md`](./referenc
 - Include a "Tests considered but not flagged" section for any test the audit inspected that looked smell-adjacent but cleared on close reading. This is how the audit shows its work; it is also how a reviewer can disagree without re-running.
 - Include an explicit "No findings for scope `<slug>`" line when a requested in-scope smell produces zero findings. A zero-finding result is an outcome; silence is not.
 
-### Step 6 — close
+## Step 6 — close
 
 Tell the operator where the report was written and which scopes were covered. Do not summarize the findings in chat — the report is the deliverable. If out-of-scope slugs were requested, remind the operator which were skipped and why.
 
