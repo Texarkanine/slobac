@@ -12,14 +12,20 @@ skills/slobac-audit/
 ├── README.md                             # this file
 └── references/
     ├── report-template.md                # audit report shape
-    └── docs/
+    └── docs/                             # the full SLOBAC manifesto
+        ├── .pages                        # properdocs nav ordering
+        ├── index.md                      # site landing page
+        ├── principles.md                 # test principles + governor rules
+        ├── glossary.md                   # shared terminology + citations
+        ├── workflows.md                  # RED-GREEN-MUTATE-KILL-REFACTOR cycle
         └── taxonomy/
+            ├── README.md                 # taxonomy shape SoT + entry catalog
             ├── deliverable-fossils.md    # canonical smell definition (Phase 1)
             ├── naming-lies.md            # canonical smell definition (Phase 1)
             └── ... (13 more entries)     # canonical smell definitions (Phase 2+)
 ```
 
-The canonical smell definitions live in `references/docs/taxonomy/<slug>.md` — hand-authored, single source of truth. The rendered SLOBAC site ([properdocs](https://texarkanine.github.io/slobac/)) consumes these files via `pymdownx.snippets` at build time. The skill reads the same files at agent-runtime; no generator, no drift-check, no external paths, no network fetches, no harness-cwd assumptions. The skill bundle is fully self-contained and installable anywhere.
+The full SLOBAC manifesto lives in `references/docs/` — hand-authored, single source of truth. The rendered SLOBAC site ([properdocs](https://texarkanine.github.io/slobac/)) is built directly from this directory (`docs_dir` in `properdocs.yml` points here). No indirection, no snippet includes, no wrappers. The skill reads the same files at agent-runtime; no generator, no drift-check, no external paths, no network fetches, no harness-cwd assumptions. The skill bundle is fully self-contained and installable anywhere.
 
 ## Install
 

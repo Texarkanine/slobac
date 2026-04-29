@@ -13,7 +13,7 @@ Shape mirrors the audit report template. The three findings exercise each arm of
 - **Location:** `test_session_lifecycle.py` → module level
 - **Smell:** `naming-lies`
 - **Rationale:** Title claims "default to zero" — a schema-level invariant about newly-inserted rows with no `token_count` provided. The body inserts a row with `token_count = 5` and asserts `> 0`. The body does not verify the default; neither does it verify anything especially strong. The audit cannot tell from the test alone whether the operator meant to guard the schema default or the post-insert value.
-- **Prescribed remediation:** **Investigate.** Apply [describe-before-edit](../../../../docs/principles.md#behavior-articulation-before-change): ask what the test is supposed to prove. Then pick rename or strengthen per the resolved intent. Audit report must surface the ambiguity rather than silently picking a path.
+- **Prescribed remediation:** **Investigate.** Apply [describe-before-edit](https://texarkanine.github.io/slobac/principles/#behavior-articulation-before-change): ask what the test is supposed to prove. Then pick rename or strengthen per the resolved intent. Audit report must surface the ambiguity rather than silently picking a path.
 - **Why this isn't a false positive:** Title nouns (`default`, `zero`) do not appear as surface in the body's assertion (`> 0`). Semantically, `> 0` contradicts `default to zero`, not strengthens or weakens it.
 
 ### 2. `test_should_use_cyan_blue_styling_for_descriptions` — path: RENAME
@@ -29,7 +29,7 @@ Shape mirrors the audit report template. The three findings exercise each arm of
 - **Location:** `test_session_lifecycle.py` → module level
 - **Smell:** `naming-lies`
 - **Rationale:** Title captures a specific derivation rule: the slug is the last path segment of the repo path. Body inserts `'some-project'` (which happens to have no path separator) and asserts only `len > 0`. The assertion does not verify the derivation rule — a row with slug `'/absolute/path/no-last-segment-match'` would pass the assertion without satisfying the title.
-- **Prescribed remediation:** **Strengthen.** The title is the real intent. Hand off to [`vacuous-assertion`](../../../../docs/taxonomy/vacuous-assertion.md): replace the `len > 0` assertion with an equality check that verifies the slug equals the last path segment of a representative repo path (e.g. insert with slug derived from `/home/x/proj/some-project` and assert `slug == 'some-project'`). Preservation gate: mutation kill-set delta ≥ 0 after strengthening.
+- **Prescribed remediation:** **Strengthen.** The title is the real intent. Hand off to [`vacuous-assertion`](https://texarkanine.github.io/slobac/taxonomy/vacuous-assertion/): replace the `len > 0` assertion with an equality check that verifies the slug equals the last path segment of a representative repo path (e.g. insert with slug derived from `/home/x/proj/some-project` and assert `slug == 'some-project'`). Preservation gate: mutation kill-set delta ≥ 0 after strengthening.
 - **Why this isn't a false positive:** Title nouns (`last`, `path`, `segment`, `repo`) have no surface in the assertion `len(row[0]) > 0`. Title makes a derivation claim the body does not verify.
 
 ## Tests that must NOT be flagged
@@ -38,7 +38,7 @@ Shape mirrors the audit report template. The three findings exercise each arm of
 
 - **Location:** `test_session_lifecycle.py` → module level
 - **Why not a lie:** Title uses "deletes"; body executes `DELETE FROM sessions` and asserts the row is gone. Surface tokens differ (English verb vs SQL keyword) but the semantic match is exact. The audit must resolve synonymy, not just tokenize.
-- **False-positive guard:** See `skills/slobac-audit/references/smells/naming-lies.md` — naive title/body tokenization will miss cross-language synonyms (English-verb ↔ SQL-keyword, English-adjective ↔ CSS-property, etc.). Semantic equivalence must be considered before flagging.
+- **False-positive guard:** See the [naming-lies](https://texarkanine.github.io/slobac/taxonomy/naming-lies/) canonical entry's False-positive guards section — naive title/body tokenization will miss cross-language synonyms (English-verb ↔ SQL-keyword, English-adjective ↔ CSS-property, etc.). Semantic equivalence must be considered before flagging.
 
 ## Notes
 

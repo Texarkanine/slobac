@@ -140,3 +140,13 @@ OQ3 (Option γ — definitional canonical + discursive wrapper) held up perfectl
 
 - **The "nobody reads raw" operator constraint was a load-bearing unlock.** The original OQ2 (and OQ2-redux) both failed because they preserved the premise that `docs/*.md` must render correctly as raw markdown on github.com. The operator's clarification that the rendered site is the only reader surface eliminated that constraint and opened the snippet-include option that had been structurally killed twice. Lesson: when multiple creative-phase passes fail at the same architectural boundary, the constraint itself may be the wrong constraint — escalate to the operator before the next attempt.
 - **Uncommitted first-rework artifacts simplify the second rework.** Because the first rework's build changes were never committed (QA was superseded before it ran), the second rework started from a clean HEAD. No revert commits, no tangled git history. This was accidental (the workflow's phase-gating prevented the first rework from reaching the commit-worthy QA phase), but it's a good outcome. The lesson is that uncommitted build artifacts from a superseded rework are a *feature*, not a hazard — they evaporate cleanly.
+
+---
+
+## Third Rework Note (2026-04-29)
+
+The second rework's snippet-include architecture was correct under its stated constraints and passed QA cleanly. During pre-merge review, two remaining architectural seams were identified: (1) SKILL.md Constraints still used pre-inversion "audit cites the manifesto" language, and (2) the 15 snippet-include wrappers at `docs/taxonomy/*.md` were pure indirection — each file contained a single `--8<--` directive and no content. The wrappers existed solely to bridge properdocs's `docs_dir: docs` expectation with the canonical content living inside the skill.
+
+The corrective action was to complete the inversion: move the **entire** `docs/` tree (principles, glossary, workflows, taxonomy/README, .pages) into `skills/slobac-audit/references/docs/` and point `properdocs.yml` `docs_dir` there. This eliminated the wrappers, the `docs/` directory, and the link-path footgun (canonical files' relative links now resolve at their actual filesystem location). The full manifesto now lives inside the skill root, satisfying invariant #11 for all manifesto content — not just taxonomy entries.
+
+This is not a retraction of the second rework's approach — the snippet-include architecture was correct at the time and would have shipped fine. It is an evolution: once the operator saw that the wrappers added zero content, the simpler architecture (no wrappers, no indirection) was strictly preferable.

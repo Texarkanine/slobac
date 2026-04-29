@@ -12,7 +12,7 @@ Shape mirrors the audit report template. Each finding below must appear in the e
 
 - **Location:** `test_plugin_registry.py` → class `TestSourceTrackingRefactor`
 - **Smell:** `deliverable-fossils`
-- **Rationale:** Test title references a refactor ("source tracking refactor") rather than the behavior it verifies (the plugin registry's `get_plugin(id)` contract). See [`docs/taxonomy/deliverable-fossils.md`](../../../../docs/taxonomy/deliverable-fossils.md) signals list — "test titles containing `refactor`, `after X migration`".
+- **Rationale:** Test title references a refactor ("source tracking refactor") rather than the behavior it verifies (the plugin registry's `get_plugin(id)` contract). See [deliverable-fossils](https://texarkanine.github.io/slobac/taxonomy/deliverable-fossils/) signals list — "test titles containing `refactor`, `after X migration`".
 - **Prescribed remediation:** Rename to encode the behavior the body actually verifies, e.g. `test_get_plugin_returns_registered_plugin_by_id`. Preserve the call graph (rename-only; no body changes).
 - **Why this isn't a false positive:** The body asserts the identity of the returned plugin, not any property of the refactor. The refactor vocabulary adds no information about what the test guards.
 
@@ -21,7 +21,7 @@ Shape mirrors the audit report template. Each finding below must appear in the e
 - **Location:** `test_plugin_registry.py` → class `TestSourceTrackingRefactor`
 - **Smell:** `deliverable-fossils`
 - **Rationale:** Title references a sprint checklist (`MS-4 checklist item 3`) rather than the behavior. Canonical fossil shape.
-- **Prescribed remediation:** Rename to express the contract, e.g. `test_get_plugin_returns_plugin_whose_name_matches_registration`. Note under [`semantic-redundancy`](../../../../docs/taxonomy/semantic-redundancy.md) that finding #1 and #2 verify adjacent properties of the same lookup — a follow-up regroup (Phase B of the prescribed fix) may fold them into one stronger assertion.
+- **Prescribed remediation:** Rename to express the contract, e.g. `test_get_plugin_returns_plugin_whose_name_matches_registration`. Note under [`semantic-redundancy`](https://texarkanine.github.io/slobac/taxonomy/semantic-redundancy/) that finding #1 and #2 verify adjacent properties of the same lookup — a follow-up regroup (Phase B of the prescribed fix) may fold them into one stronger assertion.
 - **Why this isn't a false positive:** The checklist reference does not describe what the test proves. The body asserts a name-exposure property.
 
 ### 3. `test_slob_42_list_plugins_returns_registered_entries`
@@ -46,7 +46,7 @@ Shape mirrors the audit report template. Each finding below must appear in the e
 
 - **Location:** `test_plugin_registry.py` → module level
 - **Why not a fossil:** The title contains the word `refactor`, but the body genuinely verifies a refactor-safety property (that rename-only transforms preserve lookup semantics). The refactor vocabulary here *is* the behavior — dropping it would make the test's intent less clear, not more.
-- **False-positive guard:** See `skills/slobac-audit/references/smells/deliverable-fossils.md` — the word `refactor` is a signal, not a verdict; the audit must verify the body is *about* history before flagging.
+- **False-positive guard:** See the [deliverable-fossils](https://texarkanine.github.io/slobac/taxonomy/deliverable-fossils/) canonical entry's False-positive guards section — the word `refactor` is a signal, not a verdict; the audit must verify the body is *about* history before flagging.
 
 ## Notes
 

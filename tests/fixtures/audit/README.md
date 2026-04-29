@@ -22,8 +22,8 @@ Phase 1 validation is **manual**. The operator invokes the audit skill against a
 
 ## Polyglot note
 
-Fixtures are Python-only. The per-smell augmentation files in `skills/slobac-audit/references/smells/<slug>.md` may describe polyglot detection surface, but the fixtures here are not the place to exercise it. Add ecosystem-specific fixtures when the audit's polyglot claims are being tested in anger — not before.
+Fixtures are Python-only. The canonical smell entries in `skills/slobac-audit/references/docs/taxonomy/<slug>.md` may describe polyglot detection surface, but the fixtures here are not the place to exercise it. Add ecosystem-specific fixtures when the audit's polyglot claims are being tested in anger — not before.
 
 ## Negative examples
 
-Every scenario except `clean/` contains at least one **negative-example** test: a test whose shape would trip a naive detector (e.g. a test named `test_refactor_preserves_behavior` that actually tests refactoring behavior). The audit must not flag these. If it does, the fix goes in the per-smell augmentation file under `skills/slobac-audit/references/smells/`, not in the fixture.
+Every scenario except `clean/` contains at least one **negative-example** test: a test whose shape would trip a naive detector (e.g. a test named `test_refactor_preserves_behavior` that actually tests refactoring behavior). The audit must not flag these. If it does, the fix goes in the canonical smell entry under `skills/slobac-audit/references/docs/taxonomy/`, not in the fixture.
