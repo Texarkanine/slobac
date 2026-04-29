@@ -575,3 +575,163 @@ TDD order: migrate canonical first (so the test of "does the canonical exist at 
 - **No new CI jobs.** `docs.yaml` loses a step (drift-check) rather than gaining one.
 - **No new scripts.** `scripts/sync-taxonomy.py` is deleted; no replacement.
 - **Snippet-include semantics validated at S14.** `properdocs build --strict` passing over the 15 new wrappers is the validation.
+
+---
+
+## Third Rework Context (pre-merge cleanup)
+
+Pre-merge review of the second-rework artefacts identified two remaining architectural seams, both artifacts of the same root cause: the `docs/` directory still exists as a routing layer between properdocs and the canonical content that now lives inside the skill.
+
+1. **SKILL.md Constraints section uses stale pre-inversion language.** "The audit cites the manifesto; it does not fork it" — architecturally wrong when the skill *is* the manifesto's home. The intro (also operator-facing, not agent-facing) was already removed by the operator. The Constraints need the same treatment.
+2. **15 snippet-include wrappers are pure indirection.** `docs/taxonomy/<slug>.md` files each contain a single `--8<-- ` directive pointing into the skill. They exist solely because `properdocs.yml` has `docs_dir: docs`. If properdocs points directly at the skill's content directory, the wrappers — and the `docs/` directory itself — evaporate.
+
+**Root cause:** the second rework inverted canonicality for taxonomy entries but left the non-taxonomy manifesto files (`principles.md`, `glossary.md`, `workflows.md`, `index.md`, `taxonomy/README.md`) at `docs/` and used snippet-include wrappers to bridge the taxonomy split. This was pragmatic but left a half-inverted architecture: taxonomy canonical inside the skill, everything else outside it.
+
+**Operator's corrective direction:** complete the inversion. Move the entire `docs/` tree into `skills/slobac-audit/references/docs/` and point `properdocs.yml` `docs_dir` at it. The skill bundle then contains the full manifesto. `docs/` at repo root disappears.
+
+**What this eliminates:**
+
+- All 15 snippet-include wrappers (pure indirection, zero content)
+- The `pymdownx.snippets` dependency for content composition (extension stays configured; no longer load-bearing)
+- The "link-path footgun" from the second rework — canonical files' relative links (`../principles.md#anchor`) now resolve at their actual filesystem location because properdocs renders from that location
+- The published-URL workaround in SKILL.md's governor-rule cite — `principles.md` is now inside the skill root
+- The stale "audit cites the manifesto" framing — the manifesto IS in the skill
+
+**What this preserves:**
+
+- Invariant #11 (structurally stronger — full manifesto inside skill root, not just taxonomy)
+- All 15 canonical taxonomy entries (content unchanged; already at `references/docs/taxonomy/`)
+- All fixtures and expected-findings files (content unchanged; path references updated)
+- The SKILL.md workflow behavior (Steps 1–6), detection logic, report template shape
+- `properdocs build --strict` as the CI integrity gate
+- `.github/workflows/docs.yaml` (unchanged — it runs `properdocs build --strict` which reads `properdocs.yml`)
+
+**What this changes (invariant/pattern updates):**
+
+- Invariant #3 wording (manifesto-independence): now structurally absolute — the skill doesn't reference the manifesto, it IS the manifesto's home. Forking is structurally impossible by construction.
+- The "canonical-in-bundle authoring model" in `systemPatterns.md`: updated to say the full manifesto lives in the skill, not just taxonomy entries. The snippet-include bridge is gone.
+- The "link-path footgun" discussion in `techContext.md`: deleted — links resolve natively at their filesystem location.
+
+## Open Questions (Third Rework)
+
+None. The approach is unambiguous: `git mv` the remaining docs files, point properdocs at the new location, delete the indirection layer. No creative phase required.
+
+## Test Plan Updates (Third Rework)
+
+**Preserved:** B1–B7 (original), B9 (invariant #11 spot-check).
+
+**Updated:**
+
+- **B10 (updated) — Docs build under new `docs_dir`.** `properdocs build --strict` passes with `docs_dir: skills/slobac-audit/references/docs`. All 15 taxonomy pages + principles + glossary + workflows + index render correctly. Anchor validation catches any broken cross-links from the move.
+
+**Removed:**
+
+- **B11 (removed) — Zero duplication between canonical and wrapper.** No wrappers exist; check is structurally impossible to fail.
+
+**Added:**
+
+- **B13 — Relative links resolve at filesystem location.** After the move, `../principles.md#anchor` links in taxonomy entries resolve to `skills/slobac-audit/references/docs/principles.md` both at properdocs build time AND at the raw-GitHub-rendering level. The "link-path footgun" from the second rework is gone. Verified by B10 (`properdocs build --strict`).
+
+## Implementation Plan (Third Rework)
+
+TDD order: execute the structural move first (so the build gate is authoritative), then fix prose/references that the move makes stale.
+
+**T1. Move remaining docs files + delete wrappers + update config (single atomic commit).**
+
+- Files moved (`git mv`):
+  - `docs/index.md` → `skills/slobac-audit/references/docs/index.md`
+  - `docs/principles.md` → `skills/slobac-audit/references/docs/principles.md`
+  - `docs/glossary.md` → `skills/slobac-audit/references/docs/glossary.md`
+  - `docs/workflows.md` → `skills/slobac-audit/references/docs/workflows.md`
+  - `docs/taxonomy/README.md` → `skills/slobac-audit/references/docs/taxonomy/README.md`
+  - `docs/.pages` → `skills/slobac-audit/references/docs/.pages`
+- Files deleted: 15 snippet-include wrappers at `docs/taxonomy/<slug>.md`.
+- Directories deleted: `docs/taxonomy/`, then `docs/`.
+- Config updated: `properdocs.yml` — `docs_dir: skills/slobac-audit/references/docs`, `edit_uri: edit/main/skills/slobac-audit/references/docs/`.
+- **Rationale for single commit:** between the `git mv` and the wrapper deletion + config update, `properdocs build --strict` would fail (missing files or double-rendered files). Same S1+S2 combined-commit pattern from the second rework.
+- Verification: `properdocs build --strict` passes (B10, B13).
+
+**T2. Fix SKILL.md Constraints section + governor-rule cite.**
+
+- Files: `skills/slobac-audit/SKILL.md`.
+- Changes:
+  - **T2a.** "Manifesto is canonical" constraint: rewrite. The canonical smell definitions are the single source of truth; the manifesto content lives inside this skill bundle. If a detection needs a signal the canonical entry doesn't cover, extend the canonical entry.
+  - **T2b.** Governor-rule cite: change from published URL `https://texarkanine.github.io/slobac/principles/#preservation-of-regression-detection-power` to intra-skill path `references/docs/principles.md#preservation-of-regression-detection-power` — the file is now inside the skill root.
+  - **T2c.** Step 3 reference to `references/docs/taxonomy/<slug>.md`: unchanged (path is already correct).
+- Note: the operator's intro-removal and heading-flattening changes are already committed. This step is additive.
+
+**T3. Update fixture expected-findings path references.**
+
+- Files: `tests/fixtures/audit/deliverable-fossils/expected-findings.md`, `tests/fixtures/audit/naming-lies/expected-findings.md`.
+- Changes: relative links `../../../../docs/taxonomy/<slug>.md` → published URLs `https://texarkanine.github.io/slobac/taxonomy/<slug>/`. Fixtures live outside the skill; they reference the manifesto for human readers. Published URLs are stable and don't depend on repo layout.
+
+**T4. Update skill README.md.**
+
+- Files: `skills/slobac-audit/README.md`.
+- Changes:
+  - **T4a.** Layout section: add non-taxonomy docs files (`index.md`, `principles.md`, `glossary.md`, `workflows.md`, `taxonomy/README.md`, `.pages`).
+  - **T4b.** "Canonical smell definitions" paragraph: broaden to describe the full manifesto living in the bundle. Remove snippet-include language ("The rendered SLOBAC site (properdocs) consumes these files via `pymdownx.snippets` at build time" → "The rendered SLOBAC site (properdocs) is built directly from this directory (`docs_dir` in `properdocs.yml` points here). No indirection, no snippet includes, no wrappers.").
+
+**T5. Update repo-root README.md.**
+
+- Files: `README.md`.
+- Changes:
+  - **T5a.** "Read the manifesto" entry-point links: update `docs/principles.md` → `skills/slobac-audit/references/docs/principles.md` (and similarly for workflows, taxonomy/README, glossary).
+  - **T5b.** "Raw markdown" line: update the `docs/` reference. The raw markdown still renders on GitHub — it just lives at a different path.
+  - **T5c.** "Docs publishing" section: update "The `docs/` manifesto is published…" to name the new path.
+
+**T6. Update `memory-bank/techContext.md`.**
+
+- Files: `memory-bank/techContext.md`.
+- Changes:
+  - **T6a.** Remove the "Canonical-in-bundle, site-rendered-via-snippet pattern" section. Replace with "Full-manifesto-in-bundle pattern": the entire `docs/` site lives at `skills/slobac-audit/references/docs/`; `properdocs.yml` `docs_dir` points there; no snippet indirection; relative links in canonical files resolve at their actual filesystem location.
+  - **T6b.** Environment setup "editing the manifesto" paragraph: update path from `skills/slobac-audit/references/docs/taxonomy/<slug>.md` to the broader `skills/slobac-audit/references/docs/` and note that non-taxonomy files (`principles.md`, `glossary.md`, etc.) also live there now.
+  - **T6c.** Remove the "link-path footgun" discussion — links now resolve natively.
+
+**T7. Update `memory-bank/systemPatterns.md`.**
+
+- Files: `memory-bank/systemPatterns.md`.
+- Changes:
+  - **T7a.** Opening paragraph: update to say the skill bundle contains the full manifesto (not just per-smell content). Remove "and `docs/taxonomy/*.md` are `pymdownx.snippets`-composed rendering wrappers" — no wrappers.
+  - **T7b.** "Three deliverables layer" paragraph: update manifesto location from "canonical per-smell content lives at `skills/slobac-audit/references/docs/taxonomy/<slug>.md`" to "the manifesto lives at `skills/slobac-audit/references/docs/`" (broader).
+  - **T7c.** Cross-link references: update `../docs/taxonomy/` and `../docs/principles.md` etc. to `../skills/slobac-audit/references/docs/` paths.
+  - **T7d.** "Canonical-in-bundle authoring model" subsection: simplify. Remove snippet-include language. The `properdocs.yml` `docs_dir` points directly at the skill's content; no `--8<-- ` directives; no wrapper files. Contributors edit files in `skills/slobac-audit/references/docs/` and that's both the skill's runtime content and the site source.
+  - **T7e.** Invariant #11 section: update to note that the full manifesto (not just taxonomy) is inside the skill root. Remove the "inert verbatim text at agent-runtime" hedging about relative links — they resolve correctly at their filesystem location now.
+
+**T8. Amend reflection with third-rework note.**
+
+- Files: `memory-bank/active/reflection/reflection-phase-1-audit-mvp.md`.
+- Changes: add a brief third-rework note acknowledging the snippet-include indirection's elimination. Not a retraction (the second rework's approach was correct at the time); an evolution note.
+
+**T9. Verify `properdocs build --strict` (final gate).**
+
+- Files: *none authored.* Run `uv run properdocs build --strict` and confirm clean output.
+
+**T10. Invariant #11 spot-check.**
+
+- Files: *none authored.* `rg '(\.\./\.\./|^\s*docs/)' skills/slobac-audit/` confirms no cross-root references. With the full manifesto inside the skill, there should be zero `../` escapes from the skill root in agent-runtime files.
+
+## Challenges & Mitigations (Third Rework)
+
+- **`docs_dir` pointing deep into a subdirectory is unusual.** `properdocs.yml` with `docs_dir: skills/slobac-audit/references/docs` is a longer path than convention, but properdocs/mkdocs has no restriction on `docs_dir` depth. *Mitigation:* verified structurally equivalent to any other `docs_dir` path; `properdocs build --strict` is the gate.
+- **Repo-root README entry-point links get longer.** `[Principles](skills/slobac-audit/references/docs/principles.md)` is verbose. *Mitigation:* the published-site link is the primary entry point (already the first bullet); raw-markdown links are the secondary path for contributors who prefer GitHub rendering.
+- **The skill bundle is now the full manifesto, not just audit-relevant content.** An agent loading this skill has access to `principles.md`, `glossary.md`, `workflows.md`, etc. — content it doesn't need for the audit workflow. *Mitigation:* the SKILL.md uses progressive disclosure — it only instructs the agent to read `references/docs/taxonomy/<slug>.md` for in-scope smells. Other files sit inert unless explicitly referenced. Context budget impact is zero for unreferenced files.
+- **`edit_uri` now points deep into the skill tree.** Contributors clicking "Edit this page" on the properdocs site land at `skills/slobac-audit/references/docs/taxonomy/<slug>.md` on GitHub. *Mitigation:* this is the actual file to edit — no more landing on a snippet-include wrapper and wondering where the content is. Strictly better contributor UX.
+
+## Technology Validation (Third Rework)
+
+- **No new runtime dependencies.** `uv.lock` unchanged.
+- **No new CI jobs or steps.** `.github/workflows/docs.yaml` is unchanged (runs `properdocs build --strict` which reads `properdocs.yml`).
+- **`docs_dir` change is the only config edit.** Validated at T9 (`properdocs build --strict`).
+- **`pymdownx.snippets` config stays.** It's no longer load-bearing for content composition but remains available and harmless. `check_paths: true` only triggers on files with `--8<-- ` directives.
+
+### Third rework (re-entry from plan)
+
+- [x] Component analysis re-assessed (full-manifesto-in-bundle; `docs/` evaporates; snippet wrappers deleted; properdocs points at skill content; invariant #11 strengthened; link-path footgun eliminated)
+- [x] No open questions (approach is unambiguous; no creative phase)
+- [x] Test plan re-verified (B10 updated, B11 removed, B13 added)
+- [x] Implementation plan authored (T1–T10)
+- [x] Technology validation re-assessed (no new deps; config-only change)
+- [ ] Preflight
+- [ ] Build
+- [ ] QA
