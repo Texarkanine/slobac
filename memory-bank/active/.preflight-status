@@ -1,39 +1,25 @@
-PASS (rework pass, post-OQ2-redux)
+PASS (second rework pass, post-OQ3)
 
-Preflight validation complete for Phase 1 Audit MVP rework.
+Preflight validation complete for Phase 1 Audit MVP second rework (canonical-in-bundle inversion).
 
 Findings:
 
-PF1 (MAJOR, amendments applied inline to tasks.md): The initial R4/R5/R6 scopes in the plan undercounted cross-root references inside the skill tree. A grep over `skills/slobac-audit/**` surfaced cross-root references in files and at line-locations the plan did not name:
+PF1 (MAJOR, amendment applied inline to tasks.md): The plan adds `## False-positive guards` as a new first-class section to every canonical entry (S3 promotes Phase-1 guards from augmentation; S4 adds stub guards to the 13 non-Phase-1 entries) but does not update `docs/taxonomy/README.md`, which is the source of truth for taxonomy entry shape (per systemPatterns.md: "That file is the source of truth for taxonomy file shape — don't restate it elsewhere. Changes to the shape require updating every existing entry."). Completeness gap: the README's "How to read an entry" section lists every section of the taxonomy shape; the new False-positive guards section is not listed.
 
-- SKILL.md line 10 (Phase-1 scope header), line 41 (per-smell workflow step), line 79 (governor-rule cite).
-- references/smells/naming-lies.md line 3 (primary preamble), line 21 (vacuous-assertion cross-reference), line 22 (describe-before-edit principle cite).
-- references/smells/deliverable-fossils.md line 3 (primary preamble), line 24 (semantic-redundancy cross-reference).
-- references/report-template.md line 32 (agent-facing citation instruction).
-- README.md lines 3, 20, 71, 74, 90, 91 (operator-facing scope links, runtime-reads paragraph, fixture links, docs-taxonomy link, obsolete failure-mode paragraph).
+Amendment applied: new step S4a added between S4 and S5. S4a updates `docs/taxonomy/README.md`'s "How to read an entry" shape description to include `False-positive guards` after `Signals`, with a brief description of the section's role.
 
-Amendments applied:
-- R4 split into R4a/R4b/R4c/R4d; each rewrites a specific category of cross-root reference with a specific target shape (intra-skill link, published URL, or removal).
-- R5 split into R5a/R5b/R5c; R5b preserves intra-manifesto cross-references as intra-skill links (`../taxonomy/<other>.md`) which is sound because R2 ships all 15 taxonomy entries.
-- R5a (new step) rewrites the report template's citation instruction to name `references/taxonomy/` as the canonical source and instruct the agent to emit published URLs in report output for human readers.
-- R6 split into R6a/R6b/R6c/R6d; fixes manifesto scope links, the runtime-reads paragraph, fixture links, and deletes the obsolete "skill cannot find docs/taxonomy/<slug>.md" paragraph.
-- R1 amended with an explicit "link-handling policy" clause: generator output preserves source content verbatim; intra-manifesto relative links inside generated files are inert text at runtime, not cross-root-reference violations.
-- R10 amended to exclude the generated `references/taxonomy/` files' inert intra-manifesto links from the invariant-#11 spot-check, and to separate agent-runtime checks (SKILL.md, references/**) from operator-UX checks (README).
+PF2 (MAJOR, amendment applied inline to tasks.md): S1 (`git mv` of 15 manifesto entries to the skill bundle) and S2 (creation of 15 snippet-include wrappers at `docs/taxonomy/<slug>.md`) are described as separate steps. Between them, `docs/taxonomy/<slug>.md` files don't exist: `docs/taxonomy/README.md` catalog links are broken, `properdocs build --strict` fails. If committed separately per invariant #10 (commit-before-refactor), the intermediate commit is broken.
 
-After these amendments, R4/R5/R5a/R6 between them cover every cross-root reference found in the grep. Verification clauses are included in each step (post-amendment grep commands that must return empty).
+Amendment applied: S1 and S2 are combined into a single commit. The `git mv` + wrapper creation is semantically a single structural operation (move + redirect), not two independent restructuring passes. Invariant #10's spirit (revertable standalone commits) is preserved — reverting the combined commit restores the pre-migration state identically.
 
-PF2 (MODERATE, clarification recorded in R6 and R10): The README is operator-facing, not agent-runtime. Invariant #11 (skill-root self-containment) strictly applies to agent-runtime files only. But the README ships with the skill bundle to external installers, who see broken relative links. R6 fixes the README unconditionally (rewrites to absolute GitHub/published URLs) as operator UX, not invariant-#11 compliance. This separation of concerns is recorded in R10 so the invariant-#11 spot-check does not conflate the two.
+PF3 (ADVISORY, not applied): The augmentation files' "Emission hints" sections contain genuinely unique operational heuristics not verbatim in the manifesto: `deliverable-fossils`' Phase-A-default-over-Phase-B guidance and semantic-redundancy-overlap mention; `naming-lies`' RENAME-vs-STRENGTHEN tiebreaker ("is the title's claim specific and testable?") and related-smell-citation guidance. The plan drops these under S6 ("everything else dropped per the duplication assessment"). The manifesto's Prescribed Fix and the SKILL.md Step 4 + report-template already cover the core fix arms and emission shape; the dropped content is operational refinement at decision boundaries. If agent detection quality is observed to degrade during S13 (harness validation), this content can be selectively promoted into the canonical Prescribed Fix or SKILL.md Step 4. Not blocking.
 
-PF3 (MINOR): The rework introduces a new top-level `scripts/` directory. `pyproject.toml` notes "There is no runtime code here yet" and reserves future runtime code for a "separate group — or a proper [project] package shape." `scripts/sync-taxonomy.py` is build/tooling code (stdlib only, no new deps). Top-level `scripts/` is a common Python repo convention. Not blocking; noted for operator awareness.
+PF4 (ADVISORY, not applied): After migration, the properdocs site's "Edit this page" link for taxonomy entries points to `docs/taxonomy/<slug>.md` (the snippet-include wrapper), not the canonical content. Contributors clicking "Edit" see a snippet directive, not prose. Consistent with the "nobody reads raw docs" premise; recommended to note this in the systemPatterns.md authoring-model section (S11d).
 
-PF4 (MINOR): R3's CI-job placement latitude ("addition to the existing docs workflow or a sibling workflow") is preserved. Recommended placement: add a step to the existing `build` job in `.github/workflows/docs.yaml` after the `uv sync` step, reusing the uv cache. A parallel job would also work but adds a cold-start cost for a ~second-scale script. Not blocking; decision deferred to build phase.
+PF5 (ADVISORY, not applied): `pymdownx.snippets` is configured with `base_path: [.]` (project root) and `check_paths: true`. Snippet paths to `skills/slobac-audit/references/docs/taxonomy/<slug>.md` should resolve correctly since the path is within the project root. No `restrict_base_path` override is needed. This is a new usage pattern (snippets from outside `docs_dir`); verify during S14 (`properdocs build --strict`) as a smoke check.
 
-PF5 (ADVISORY, not applied): Consider replacing SKILL.md's hardcoded Phase-1 slug list (currently baked into scope-parsing prose: "this skill recognizes deliverable-fossils and naming-lies") with a `references/smells-manifest.yaml` (or similar) declaring the active slugs as data. Phase-2 additions would become manifest edits rather than SKILL.md prose edits; SKILL.md's scope-parsing language could reference the manifest generically. Cost: small config-loading instruction in SKILL.md prose; scope-parsing language becomes less concrete for Phase-1. Benefit: Phase-2 entry point is data-driven. Out of Phase-1 rework scope (SKILL.md scope-parsing was not itself broken by the invariant #11 rework). Surfaced for operator consideration as a Phase-2 candidate.
+All gates clear: prerequisites verified (OQ3 resolved, plan complete, creative doc exists); convention compliance confirmed (snippet config adequate, `.pages` nav unaffected, path naming matches operator preference); dependency impact traced (README catalog links, properdocs build, SKILL.md, CI workflow all covered by explicit steps); conflict detection found the two MAJOR items above (both fixable); completeness precheck confirmed all requirements mapped to concrete steps after amendments.
 
-PF6 (INFORMATIONAL, no action): The Phase-1 reflection document's insight #2 ("OQ2 held up cleanly") is retroactively invalidated. R11 is the step that amends it. The amendment is calibration work — a surgical retraction with a note, not a rewrite of the reflection. Kept in the implementation plan rather than handled separately so the rework's audit trail remains single-threaded.
+Calibration-debt from three OQ2 passes is carried forward: each prior "high confidence" decision satisfied its stated constraints and missed a later-surfaced one. The operator's recurring-calibration instruction — "what will the operator's first reaction to the shipped artefact be?" — is logged and should be applied during the build phase's verification steps.
 
-All gates clear: prerequisites, convention compliance, dependency impact, conflict detection, completeness precheck. Rework scope is now complete; no remaining cross-root references can be added to R4/R5/R5a/R6 without a new plan phase.
-
-Calibration-debt from the prior OQ2 pass is carried forward to the build phase as a reminder: this rework is the second planning pass on essentially the same architectural question, and the first pass missed a constraint. Build-phase authors should treat each file-level change against invariant #11 with concrete grep verification, not by-inspection claims.
-
-Transition: Preflight PASS with advisories → requires operator input (`/niko-build`) per L3 workflow Phase Mappings.
+Transition: Preflight PASS with amendments → requires operator input (`/niko-build`) per L3 workflow Phase Mappings.

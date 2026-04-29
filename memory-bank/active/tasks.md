@@ -380,7 +380,7 @@ No new runtime dependencies. The validation target is **harness discovery**: bot
 - [x] Test plan re-verified (B8 drift-gate removed — no generator; B10 added — `properdocs build --strict` passes under the new snippet-include shape; B11 added — no content duplicated between canonical and wrapper)
 - [x] Implementation plan authored (S1–S14)
 - [x] Technology validation re-assessed (pymdownx.snippets already enabled; no new runtime deps; generator + CI step removed)
-- [ ] Preflight (second rework)
+- [x] Preflight (second rework) — **PASS with amendments** (PF1 MAJOR, applied: S4a added for README shape update; PF2 MAJOR, applied: S1+S2 combined into single commit) + three advisories (PF3 emission-hints content loss, PF4 edit_uri contributor UX, PF5 snippet path resolution verification)
 - [ ] Build (second rework)
 - [ ] QA (second rework)
 - [ ] Reflect (second rework; must correct the twice-invalidated reflection insight #2)
@@ -460,14 +460,15 @@ TDD order: migrate canonical first (so the test of "does the canonical exist at 
 **S1. Migrate the 15 manifesto entries to the new canonical path.**
 
 - Files: `git mv docs/taxonomy/<slug>.md skills/slobac-audit/references/docs/taxonomy/<slug>.md` for each of the 15 slugs (excludes `docs/taxonomy/README.md`).
-- Preserves git history via `git mv`. All 15 moves in a single commit.
-- No content changes at this step — just a path migration.
+- Preserves git history via `git mv`. **Preflight amendment (PF2):** S1 and S2 are combined into a single commit — between them, `docs/taxonomy/<slug>.md` files would not exist, breaking `docs/taxonomy/README.md` catalog links and `properdocs build --strict`. The combined commit is a single structural operation (move + redirect) and is fully revertable as a unit; invariant #10 (commit-before-refactor) is preserved in spirit.
+- No content changes to the migrated files at this step — just a path migration plus the new wrapper files at the original locations.
 - Creative ref: OQ3 decision; implementation notes "Migration path" step 1.
 
 **S2. Replace each `docs/taxonomy/<slug>.md` wrapper with a bare snippet-include.**
 
 - Files: write new `docs/taxonomy/<slug>.md` (15 files) each containing exactly the snippet-include directive: `--8<-- "skills/slobac-audit/references/docs/taxonomy/<slug>.md"`.
-- `docs/taxonomy/README.md` is not affected (it's the shape-spec reference document, not a smell entry).
+- `docs/taxonomy/README.md` is not affected by this step (it's the shape-spec reference document, not a smell entry; it is updated by S4a).
+- **Preflight amendment (PF2):** Executed in the same commit as S1 (see S1 amendment).
 - Creative ref: OQ3 decision; implementation notes "Wrapper shape (concrete)".
 
 **S3. Reshape the two Phase-1 canonical entries: promote false-positive guards from augmentation into canonical.**
@@ -481,6 +482,12 @@ TDD order: migrate canonical first (so the test of "does the canonical exist at 
 - Files: the 13 non-Phase-1 `skills/slobac-audit/references/docs/taxonomy/<slug>.md` files.
 - Changes: add `## False-positive guards` section after `## Signals` with content: `No audit-specific guards yet; Phase-2 per-smell work will author these.` One paragraph, each file.
 - Rationale: preserves taxonomy-entry uniformity (invariant #1). Marks the section's existence without claiming detection content that hasn't been thought through.
+
+**S4a. Update `docs/taxonomy/README.md` shape spec to include `## False-positive guards`. (Preflight amendment PF1.)**
+
+- Files: `docs/taxonomy/README.md`.
+- Changes: add `False-positive guards` to the "How to read an entry" section's shape description, positioned after `Signals`. Brief description: common over-triggers and why they aren't the smell — calibrates both human readers and agent consumers. This section is new in the second rework; S3 and S4 add it to every canonical entry, so the shape SoT must document it.
+- Rationale: `docs/taxonomy/README.md` is the source of truth for taxonomy entry shape (per systemPatterns.md: "That file is the source of truth for taxonomy file shape"). Adding a new first-class section to all 15 entries without updating the shape documentation is a completeness gap.
 
 **S5. Rewrite `skills/slobac-audit/SKILL.md` for the new canonical path and inline invocation vocabulary.**
 
@@ -550,6 +557,17 @@ TDD order: migrate canonical first (so the test of "does the canonical exist at 
 - **Invariant #3 wording revision may confuse readers of earlier memory-bank versions.** The "manifesto-independence" invariant is now structurally stronger (forking is impossible) but the authoring surface has moved. *Mitigation:* S11a–S11d record the clarification explicitly and mark it as wording-update, not architectural change. The invariant's spirit is preserved.
 - **Recurring-calibration debt from three OQ2 passes.** Each prior "high confidence" creative phase decision met its enumerated constraints and missed a later-surfaced one. *Mitigation:* creative doc's "Calibration note" records this explicitly and proposes the Phase-2 discipline hedge ("what will the operator's first reaction to the shipped artefact be, and can we surface that objection now?"). Future SLOBAC creative phases should use this as a checklist item.
 - **The `references/docs/taxonomy/` directory name is unusual.** The nested `docs/` inside a `references/` subtree is ergonomic for preserving intuition (these files *are* docs; they live in a skill) but looks quirky. *Mitigation:* named explicitly by the operator; matched the operator's pathing preference; techContext.md documents the choice. Alternative `references/taxonomy/` was taken by the first rework and carries the wrong semantic association (generated copies). Path is accepted.
+
+## Preflight Amendments Applied (second rework)
+
+- **S1+S2 combined into a single commit (PF2).** The `git mv` of 15 manifesto entries (S1) and the creation of 15 snippet-include wrappers (S2) must land in the same commit. Between them, `docs/taxonomy/<slug>.md` files would not exist, breaking the README catalog links and `properdocs build --strict`. The combined operation is semantically a single structural change (move + redirect) and is fully revertable.
+- **S4a added (PF1).** New step to update `docs/taxonomy/README.md`'s "How to read an entry" shape spec to include the new `## False-positive guards` section. The README is the source of truth for taxonomy entry shape; S3 and S4 add the section to every entry without documenting it in the README. Completeness gap fixed by adding S4a between S4 and S5.
+
+## Preflight Advisories (second rework, not applied)
+
+- **PF3 — Emission hints content loss.** The augmentation files' "Emission hints" sections contain genuinely unique operational heuristics not verbatim in the manifesto: `deliverable-fossils`' Phase-A default and semantic-redundancy-overlap mention; `naming-lies`' RENAME-vs-STRENGTHEN tiebreaker ("is the title's claim specific and testable?") and related-smell-citation guidance. The plan drops these under "restated manifesto content" (S6). The manifesto's Prescribed Fix and SKILL.md Step 4 + report-template already cover the core fix arms and emission shape; the dropped content is operational refinement at decision boundaries. If agent detection quality is observed to degrade on edge cases during S13 (harness validation), this content can be selectively promoted into the canonical Prescribed Fix or SKILL.md Step 4. Not blocking; agent can derive similar heuristics from the canonical.
+- **PF4 — `edit_uri` contributor UX.** After migration, the properdocs site's "Edit this page" link for taxonomy entries points to `docs/taxonomy/<slug>.md` (the snippet-include wrapper), not the canonical content. Contributors clicking "Edit" see a snippet directive, not prose. Consistent with the "nobody reads raw docs" premise and documented in systemPatterns.md / techContext.md (S10–S11), but may confuse first-time contributors to the canonical-in-bundle architecture. Consider adding a note in the systemPatterns.md authoring-model section (S11d).
+- **PF5 — Snippet path resolution outside `docs_dir`.** `pymdownx.snippets` is configured with `base_path: [.]` (project root). Snippet paths to `skills/slobac-audit/references/docs/taxonomy/<slug>.md` should resolve correctly since the file is under the project root. No `restrict_base_path` override is needed (the default `true` restricts to within `base_path` entries, and `.` covers everything). Verify during S14 (`properdocs build --strict`) as a new-usage-pattern smoke check.
 
 ## Technology Validation (Second Rework)
 
