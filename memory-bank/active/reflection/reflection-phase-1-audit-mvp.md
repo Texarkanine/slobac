@@ -8,7 +8,7 @@ complexity_level: 3
 
 ## Summary
 
-Shipped a harness-portable audit skill at `skills/slobac-audit/` covering the two Phase-1 smells, plus four fixture scenarios with expected-findings documentation. The ur-Skill + per-smell references shape held up through both fix-shape stress tests (two-phase for fossils, three-way for naming-lies). Manifesto-independence was preserved structurally: zero manifesto copy in the skill tree.
+Shipped a harness-portable audit skill at `skills/slobac-audit/` covering the two Phase-1 smells, plus four fixture scenarios with expected-findings documentation. The ur-Skill + per-smell references shape held up through both fix-shape stress tests (two-phase for fossils, three-way for naming-lies). ~~Manifesto-independence was preserved structurally: zero manifesto copy in the skill tree.~~ *Amended (second rework): under the canonical-in-bundle architecture, the skill bundle IS the manifesto's authoring surface. Manifesto-independence is now structurally enforced by construction — there is one document per smell, and forking is impossible.*
 
 ## Requirements vs Outcome
 
@@ -37,9 +37,9 @@ One small build-phase surprise: four `expected-findings.md` files in the fixture
 
 **OQ1 (ur-Skill + per-smell references) held up cleanly.** The ur-SKILL.md workflow accommodated both fix-shape decision trees (two-phase rename/regroup for fossils; three-way rename/strengthen/investigate for naming-lies) without special-casing either. The mechanism: the ur-workflow describes the *detection loop* generically; per-smell augmentation files carry the *fix-shape decision rules* specific to each smell. Adding a third smell at Phase 2 would be: add an augmentation file, add the slug to the supported-slugs list in SKILL.md Step 2. No architectural changes.
 
-**OQ2 (docs canonical; skill carries augmentation only) held up cleanly.** The structural-enforcement property was load-bearing during QA: there was literally no place in the skill tree where manifesto content could have drifted, because no manifesto content exists in the skill tree. QA's `DRY` check collapsed to a one-line verdict. Option E's generator + drift check would have added a build-time gate QA would have had to verify was healthy.
+~~**OQ2 (docs canonical; skill carries augmentation only) held up cleanly.**~~ *Retracted (first rework): the "high confidence" rating was misplaced. OQ2's creative phase conflated filesystem co-location (the files live in the same tree in this repo) with runtime co-location (the path is reachable from the skill's install root). The former held; the latter did not. Invariant #11 (skill-root self-containment) was codified as a result.* *Retracted again (second rework): the OQ2-redux (Option E: generator + CI drift-gate) decision was itself invalidated — the operator rejected committed generated content and augmentation-file drift as architecturally a smell. The recurring failure mode — each creative phase satisfies its enumerated constraints and misses a later-surfaced one — is calibration-bearing and flagged for Phase-2 creative-phase discipline. The final architecture (OQ3, Option γ: canonical-in-bundle, site-rendered-via-snippet) resolves all three passes' concerns: invariant #11 is satisfied structurally, no generated content, no augmentation-file drift, and manifesto-independence holds by construction.*
 
-No friction points from either creative decision surfaced during build.
+No friction points from the OQ1 creative decision surfaced during build.
 
 Sub-Agents-migration path (Option 4 from OQ1 analysis) is still untouched; Phase 1 scope was too small to exercise the prompt-context bloat failure mode that would motivate it. Noted for Phase 2 re-assessment.
 
@@ -63,7 +63,7 @@ Three causal chains worth recording:
 
 1. **Preflight amendments → build-phase uniformity.** Preflight tightened "augmentation may be absent" to "augmentation file is always present, even if minimal," and pinned the report's default output path. Without those amendments, build would have authored conditional logic in SKILL.md ("if augmentation exists, read it") and would have had to decide the default path on the fly. Amendments converted a future build-phase decision into a structural convention — precisely what preflight is for.
 
-2. **OQ2 creative decision → QA DRY check was trivial.** The decision to structurally enforce manifesto-independence (no manifesto copy in the skill tree) meant QA had no drift to check. Option E (generator + drift check) would have required QA to inspect the generator's output and confirm the CI gate was healthy. Structural enforcement pays off at review time.
+2. ~~**OQ2 creative decision → QA DRY check was trivial.**~~ *Retracted (second rework): the original observation remains locally true for the initial build, but the architecture it described (no copy in the skill tree) was invalid under the runtime-root constraint. The second rework's canonical-in-bundle architecture achieves a stronger form of the same property: there is literally one document per smell, no copy, no drift surface, and no QA work to validate coherence.*
 
 3. **Preflight advisory that was "not applied" → QA scope-creep catch.** The `Skill version` field was raised in preflight as "consider this; costs 1 line; not applied because operator didn't flag §5 #2." During build, "not applied" did not feel equivalent to "forbidden" — the line was easy to slip in. QA caught it. This is a latent weakness of the "advisory raised but not applied" pattern, noted under Insights → Process.
 
@@ -73,7 +73,7 @@ Three causal chains worth recording:
 
 - **Prompt-artifact TDD is real and worth doing.** Writing expected findings before writing the detection prose reshapes the detection prose. Worth codifying the fixture-expected-findings convention for Phase 2's 13 additional smells rather than leaving it as ad-hoc per-smell practice.
 - **The five-field per-finding invariant is the quality lever.** Location + smell slug + rationale + remediation + false-positive guard. The single most important of the five is the false-positive guard — it forces the audit to show its work and gives the reader a disagreement handle without re-running the audit.
-- **Structural enforcement beats procedural enforcement whenever it's available.** OQ2's "no manifesto copy in skill tree" is the cleanest example in this task: an invariant that cannot be violated because there's nothing to violate.
+- **Structural enforcement beats procedural enforcement whenever it's available.** ~~OQ2's "no manifesto copy in skill tree" is the cleanest example in this task.~~ *Amended (second rework): the canonical-in-bundle architecture is the real example — there is one document per smell, the skill reads it, the site renders it. Structural enforcement went through three iterations (OQ2 → OQ2-redux → OQ3) before landing on an architecture where the invariant holds by construction rather than by discipline.*
 
 ### Process
 

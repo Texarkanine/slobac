@@ -1,27 +1,28 @@
 # Tech Context
 
-SLOBAC's first runtime artifact is the **audit skill** at [`skills/slobac-audit/`](../skills/slobac-audit/), an AgentSkills.io-shaped `SKILL.md` + `references/` tree that covers [`deliverable-fossils`](../docs/taxonomy/deliverable-fossils.md) and [`naming-lies`](../docs/taxonomy/naming-lies.md) in Phase 1. The manifesto at `docs/` remains canonical; the skill carries only audit-specific augmentation and reads smell definitions from `docs/taxonomy/<slug>.md` at agent-runtime. Target harnesses: Cursor and Claude Code (per `planning/VISION.md` §1.2 and §5 open question #6, resolved via the OQ1 creative phase to ur-Skill + per-smell references).
+SLOBAC's first runtime artifact is the **audit skill** at [`skills/slobac-audit/`](../skills/slobac-audit/), an AgentSkills.io-shaped `SKILL.md` + `references/` tree that covers [`deliverable-fossils`](../skills/slobac-audit/references/docs/taxonomy/deliverable-fossils.md) and [`naming-lies`](../skills/slobac-audit/references/docs/taxonomy/naming-lies.md) in Phase 1. The canonical per-smell definitions live **inside the skill bundle** at `skills/slobac-audit/references/docs/taxonomy/<slug>.md` — hand-authored, single source of truth. `docs/taxonomy/<slug>.md` files are `pymdownx.snippets`-composed rendering wrappers that the properdocs site consumes at build time. Target harnesses: Cursor and Claude Code (per `planning/VISION.md` §1.2 and §5 open question #6, resolved via the OQ1 creative phase to ur-Skill + per-smell references).
 
-The project also has a **docs publishing toolchain** (Phase 0 deliverable): the `docs/` tree is published to GitHub Pages by `.github/workflows/docs.yaml` using [ProperDocs](https://properdocs.org/) (the actively-maintained continuation of MkDocs 1.x) with the `mkdocs-material` theme, using `--strict` link validation as a CI gate. This is build-only infrastructure — it does not change the "manifesto ships as raw markdown on github.com" property.
+The project also has a **docs publishing toolchain** (Phase 0 deliverable): the `docs/` tree is published to GitHub Pages by `.github/workflows/docs.yaml` using [ProperDocs](https://properdocs.org/) (the actively-maintained continuation of MkDocs 1.x) with the `mkdocs-material` theme, using `--strict` link validation as a CI gate. Taxonomy entries are rendered via `pymdownx.snippets` inline from the canonical skill-bundle content.
 
 ## Audit skill layout and discovery
 
 The canonical source is [`skills/slobac-audit/`](../skills/slobac-audit/). Layout:
 
-- `SKILL.md` — ur-workflow: scope parsing, per-smell file loading, detection, report emission.
+- `SKILL.md` — ur-workflow: scope parsing (with inline invocation vocabulary), per-smell canonical loading, detection, report emission.
 - `references/report-template.md` — report shape.
-- `references/smells/<slug>.md` — audit-specific augmentation per smell. Always present per convention (even if minimal); the SKILL.md workflow reads it unconditionally.
+- `references/docs/taxonomy/<slug>.md` — **canonical** smell definitions (15 files, one per manifesto entry). Hand-authored; includes Summary, Description, Signals, False-positive guards, Prescribed Fix, Example, Related modes, Polyglot notes. The SKILL.md workflow reads one file per in-scope smell at runtime — no second file, no augmentation layer.
 
 Per-harness discovery paths are operator-install concerns, not architectural ones. The canonical source stays harness-agnostic; install via symlink (`.cursor/skills/slobac-audit`, `.claude/skills/slobac-audit`) per the smoke-test in [`skills/slobac-audit/README.md`](../skills/slobac-audit/README.md).
 
-### Canonical-docs-referenced-from-skill pattern
+### Canonical-in-bundle, site-rendered-via-snippet pattern
 
-The skill **never carries a copy** of manifesto content. At runtime it reads:
+The skill bundle holds the canonical per-smell content at `references/docs/taxonomy/<slug>.md`. At agent-runtime the skill reads only files inside its own root — invariant #11 (skill-root self-containment) is satisfied architecturally, not procedurally.
 
-1. `docs/taxonomy/<slug>.md` for the canonical definition (Summary, Description, Signals, Prescribed Fix, Example, Related modes, Polyglot notes).
-2. `skills/slobac-audit/references/smells/<slug>.md` for audit-specific augmentation (invocation hints, emission hints, false-positive guards).
+The rendered SLOBAC site consumes the same content via `pymdownx.snippets` at build time. Each `docs/taxonomy/<slug>.md` is a thin wrapper containing a single snippet-include directive (`--8<-- "skills/slobac-audit/references/docs/taxonomy/<slug>.md"`). `pymdownx.snippets` is configured with `base_path: [.]` (project root), `check_paths: true`, and properdocs `strict: true` — so any missing or mispathed snippet target fails the build.
 
-This structurally enforces the manifesto-independence invariant from [`systemPatterns.md`](./systemPatterns.md) — nothing in the skill tree can drift from the manifesto because no copy of the manifesto lives in the skill tree. The tradeoff: the skill needs the `docs/` tree reachable at runtime. Phase 1 and 2 ship in-repo, so co-location is free. Phase 5 marketplace distribution will need to either bundle both trees or synthesize self-contained skill files at release time.
+Relative links inside the canonical files (e.g. `[Understandable](../principles.md#understandable)`) resolve at the *wrapper's* render location (`docs/taxonomy/`), not at the canonical's filesystem location. This is a conscious tradeoff: nobody reads the raw canonical files; readers go through the rendered site. The agent treats these links as inert text at runtime.
+
+No generator, no CI drift-check, no copy-with-sync discipline. There is one document per smell; forking is structurally impossible. Phase-5 marketplace distribution is trivially supported: the committed layout is the install layout.
 
 ## Audit fixtures
 
@@ -29,7 +30,7 @@ Planted test suites live at [`tests/fixtures/audit/<scenario>/`](../tests/fixtur
 
 ## Environment Setup
 
-**To read/edit the manifesto:** a Markdown-capable editor is sufficient. Anchor-aware preview is helpful because `docs/taxonomy/*.md` entries rely heavily on cross-linked anchors to `docs/principles.md` and `docs/glossary.md`.
+**To read/edit the manifesto:** a Markdown-capable editor is sufficient. Per-smell canonical entries live at `skills/slobac-audit/references/docs/taxonomy/<slug>.md` — this is the authoring surface. `docs/taxonomy/<slug>.md` files are snippet-include wrappers; editing them directly has no effect on canonical content. Anchor-aware preview is helpful because canonical entries cross-link to `docs/principles.md` and `docs/glossary.md` anchors (resolved at the wrapper's render location).
 
 **To preview the built docs site locally:** `uv` (which auto-provisions Python per `pyproject.toml`), then `uv sync --group docs` + `uv run properdocs serve`.
 
