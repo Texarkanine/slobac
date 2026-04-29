@@ -1,17 +1,26 @@
-PASS (second rework build)
+# QA Validation Status — Third Rework Build
 
-QA validation complete for Phase 1 Audit MVP second rework build (canonical-in-bundle architecture).
+**Result:** PASS
 
-Findings:
+**Date:** 2026-04-29
 
-1. (TRIVIAL, fixed) SKILL.md line 78 Constraints section: stale reference "do not add the detection to the augmentation file" — augmentation files no longer exist under the canonical-in-bundle architecture. Fixed to "do not carry detection content outside the canonical entry."
+## Findings
 
-No substantive issues. No YAGNI violations. No DRY violations. No KISS violations. No incomplete implementations.
+### 1. Stale heading in `systemPatterns.md` (trivial, fixed)
 
-Verification gates confirmed:
-- B9 (invariant #11 spot-check): zero root-escaping links in the skill tree.
-- B10 (snippet-include rendering): `properdocs build --strict` passes clean.
-- B11 (zero content duplication): no section headers in wrapper files.
-- All 15 canonical entries have the correct section ordering per README shape spec.
-- No stale references to `references/smells/`, `augmentation file`, or `docs/taxonomy/<slug>.md` as runtime paths in agent-facing files.
-- Fixture expected-findings files preserved as-is per plan; their `../../../../docs/taxonomy/` links resolve to the wrapper files which is acceptable per the "nobody reads raw" premise.
+The "three load-bearing facts" section heading #2 still read `The 'docs/' tree is a tightly cross-linked web` after the build. There is no `docs/` tree at repo root. Fixed to `The manifesto tree is a tightly cross-linked web`.
+
+### 2. Stale `docs/` reference in `productContext.md` (trivial, fixed)
+
+Use case #1 read "Ships as the `docs/` tree and stands alone as a reference." Fixed to reference the manifesto's current location at `skills/slobac-audit/references/docs/`.
+
+## Verification
+
+- `properdocs build --strict` passes clean (B10)
+- Invariant #11 spot-check passes: zero `../../` or `docs/` escapes in agent-runtime files (B9)
+- All plan steps (T1–T10) implemented as specified; no deviations
+- No YAGNI, DRY, or KISS violations
+- No debug artifacts, magic numbers, or placeholder content
+- No stale cross-root references in agent-runtime files (SKILL.md, report-template, README)
+- CI workflow unchanged and reads from `properdocs.yml` (which is updated)
+- Historical/ephemeral files (progress.md, tasks.md, creative docs, projectbrief.md) not updated for stale refs — those are cleaned during archive per PF2 advisory

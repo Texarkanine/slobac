@@ -14,7 +14,7 @@ A contributor who wants to modify SLOBAC safely needs to hold three load-bearing
 
 If a change would weaken the manifesto, it transitively weakens everything downstream. If a change would couple audit or apply to implementation details the manifesto hasn't blessed, it has broken the layering. This is the chief integrity constraint of the project.
 
-**2. The `docs/` tree is a tightly cross-linked web. Treat renames and anchor changes as ripple events.**
+**2. The manifesto tree is a tightly cross-linked web. Treat renames and anchor changes as ripple events.**
 
 - Taxonomy entries cross-link to [`principles.md`](../skills/slobac-audit/references/docs/principles.md) anchors (e.g., `#maintainable`, `#preservation-of-regression-detection-power`) and [`glossary.md`](../skills/slobac-audit/references/docs/glossary.md) anchors. Renaming an anchor breaks every citation of it.
 - [`taxonomy/README.md`](../skills/slobac-audit/references/docs/taxonomy/README.md) defines the uniform entry shape (header table, summary, description, signals, false-positive guards, prescribed fix, example, related, polyglot notes). **That file is the source of truth for taxonomy file shape** — don't restate it elsewhere. Changes to the shape require updating every existing entry.

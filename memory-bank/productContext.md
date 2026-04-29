@@ -15,7 +15,7 @@ SLOBAC — **S**uite-**L**ife **O**f **B**obs **A**nd **C**ode — is a test-sui
 
 ## Use Cases
 
-1. **Self-education.** Read the manifesto end-to-end; adopt its vocabulary; audit a personal or team suite by hand. Ships as the `docs/` tree and stands alone as a reference.
+1. **Self-education.** Read the manifesto end-to-end; adopt its vocabulary; audit a personal or team suite by hand. Ships as the manifesto at `skills/slobac-audit/references/docs/` and stands alone as a reference.
 2. **Full-suite audit.** Point the audit at a test suite and get back a portable report: per-test, per-smell recommendations with rationale, suitable for hand-execution, hand-off to another agent, a PR comment, or the bin.
 3. **Scoped audit.** Run the audit against a chosen subset of the taxonomy (e.g., "only `tautology-theatre` and `rotten-green`") when a full sweep is more than the user wants.
 4. **End-to-end remediation.** Hand the audit report to the apply capability, which executes the recommended transforms with guardrails (per-edit commit, rationale in commit message, non-regression verification).
