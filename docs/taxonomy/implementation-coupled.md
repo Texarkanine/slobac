@@ -1,1 +1,0 @@
---8<-- "skills/slobac-audit/references/docs/taxonomy/implementation-coupled.md"

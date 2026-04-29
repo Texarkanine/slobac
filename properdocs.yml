@@ -7,9 +7,9 @@ site_author: Texarkanine
 
 repo_url: https://github.com/Texarkanine/slobac
 repo_name: Texarkanine/slobac
-edit_uri: edit/main/docs/
+edit_uri: edit/main/skills/slobac-audit/references/docs/
 
-docs_dir: docs
+docs_dir: skills/slobac-audit/references/docs
 site_dir: site
 
 # Strict mode = warnings become errors. Combined with the explicit `validation:` block
