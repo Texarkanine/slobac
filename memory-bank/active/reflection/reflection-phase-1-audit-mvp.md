@@ -82,3 +82,61 @@ Three causal chains worth recording:
   2. Unapplied advisories are recorded in `tasks.md` under a "Forbidden during build absent operator approval" section, which build must explicitly check.
   The former is cleaner but may over-collapse the advisory pattern's value. The latter is more bureaucratic but preserves the "raise but defer" affordance. Worth raising with the operator on the next L3 cycle.
 - **Niko's phase-mapping ritual (progress update + pre-phase commit) is load-bearing when multiple phase boundaries are crossed in one session.** This task crossed build → QA → reflect in a single operator-driven session; the explicit commit between phases is what keeps the memory bank auditable rather than a smear of uncommitted state.
+
+---
+
+## Second Rework Addendum (2026-04-29)
+
+### Requirements vs Outcome (second rework)
+
+The second rework's scope was narrow and precise: invert canonicality so the skill bundle holds the canonical taxonomy, and `docs/taxonomy/*.md` becomes snippet-include wrappers. Every requirement was met:
+
+- 15 manifesto entries migrated via `git mv` (preserving git history) to `skills/slobac-audit/references/docs/taxonomy/`.
+- 15 `pymdownx.snippets` wrappers created at `docs/taxonomy/`.
+- False-positive guards promoted from augmentation files into canonical entries (Phase-1 smells) or stubbed (non-Phase-1 smells).
+- Augmentation files deleted; invocation vocabulary inlined into SKILL.md; restated manifesto content dropped.
+- `properdocs build --strict` passes under the new layout.
+- No generator, no CI drift-check, no committed derived content.
+
+No requirements were dropped or reinterpreted. S7 (delete first-rework generator artifacts) was a no-op because those artifacts were never committed — they existed as uncommitted working-tree changes from the superseded first rework and were discarded at session start.
+
+### Plan Accuracy (second rework)
+
+The 14-step plan (S1–S14) was accurate. PF2's amendment (combine S1+S2 into a single commit) correctly prevented a broken intermediate state. PF1's amendment (S4a for README shape spec) correctly caught a completeness gap. No steps needed reordering or splitting beyond the preflight amendments.
+
+One non-obvious moment: the first attempt at S4 (scripting the 13-file stub insertion) silently succeeded on file writes but crashed on a print statement, then a re-run doubled the insertions. Caught and fixed immediately. The lesson: when scripting multi-file edits in a loop, verify the file state after the loop completes, not just the script's exit code.
+
+### Creative Phase Review (second rework)
+
+OQ3 (Option γ — definitional canonical + discursive wrapper) held up perfectly. The operator's framing ("there might not be ANY wrapping" + "tight description") mapped cleanly to the empty-wrapper-as-default + canonical-carries-everything design. The calibration note ("what will the operator's first reaction to the shipped artefact be?") was not stress-tested this time — the architecture is simple enough that no hidden constraint is likely to surface, but the discipline is worth carrying forward.
+
+### Build & QA Observations (second rework)
+
+**Went smoothly:**
+
+- The `git mv` + wrapper approach is mechanically simple and fully reversible. The combined commit (PF2) was the right call — no broken intermediate state.
+- `properdocs build --strict` with `check_paths: true` is an excellent structural integrity gate for snippet-include layouts. It caught nothing (because the implementation was correct), but it *would* catch a typo in any wrapper path.
+
+**Iterated on:**
+
+- Shell connectivity glitch mid-session (commands returning empty output with 0ms duration). Worked around by retrying after a brief pause. One phantom commit (the S10+S11+S12 memory-bank commit) appeared to succeed but was actually lost; re-committed successfully after the glitch resolved.
+
+**QA caught:** one stale "augmentation file" reference in SKILL.md's Constraints section. Trivial fix. The same class of issue as the original QA's scope-creep catch — stale language from a superseded architecture surviving into the shipped artifact.
+
+### Cross-Phase Analysis (second rework)
+
+1. **Preflight amendments → build correctness.** PF2 (combine S1+S2) prevented what would have been a broken intermediate commit. PF1 (S4a) ensured the README shape spec stayed in sync with the new section. Both are pure preflight wins — issues that would have required post-hoc fixup if not caught.
+
+2. **Three-pass calibration debt → disciplined creative phase.** The OQ3 creative doc explicitly carries the calibration note from three prior passes. This is the first decision that shipped without a post-build rejection. Whether that's because the architecture is genuinely simpler (likely) or because the calibration discipline is working (possible), the pattern is worth continuing.
+
+### Insights (second rework)
+
+#### Technical
+
+- **Snippet-include inverts the authoring surface without losing the reader surface.** The key insight from this rework is that `pymdownx.snippets` + `check_paths: true` + `strict: true` gives structural integrity on the link between canonical and wrapper. It's a zero-maintenance sync mechanism — no generator, no CI step, no "remember to regenerate." Future skills that need to own canonical content consumed by a rendered site should use this pattern.
+- **`git mv` preserves history across the inversion.** The 15-file migration kept full git blame for every taxonomy entry. This matters for tracing when a detection signal was added or a guard was authored.
+
+#### Process
+
+- **The "nobody reads raw" operator constraint was a load-bearing unlock.** The original OQ2 (and OQ2-redux) both failed because they preserved the premise that `docs/*.md` must render correctly as raw markdown on github.com. The operator's clarification that the rendered site is the only reader surface eliminated that constraint and opened the snippet-include option that had been structurally killed twice. Lesson: when multiple creative-phase passes fail at the same architectural boundary, the constraint itself may be the wrong constraint — escalate to the operator before the next attempt.
+- **Uncommitted first-rework artifacts simplify the second rework.** Because the first rework's build changes were never committed (QA was superseded before it ran), the second rework started from a clean HEAD. No revert commits, no tangled git history. This was accidental (the workflow's phase-gating prevented the first rework from reaching the commit-worthy QA phase), but it's a good outcome. The lesson is that uncommitted build artifacts from a superseded rework are a *feature*, not a hazard — they evaporate cleanly.
