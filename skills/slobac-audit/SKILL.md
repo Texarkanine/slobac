@@ -7,7 +7,7 @@ description: Audit a test suite for SLOBAC manifesto smells and emit a portable 
 
 `slobac-audit` reads a test suite, compares it against the [SLOBAC manifesto](https://github.com/Texarkanine/slobac) taxonomy, and emits a markdown report naming every test that exhibits an in-scope smell. It is **read-only** — it never modifies test code. The output is a portable artifact: a different agent or a human can execute the recommendations without rereading the manifesto.
 
-Phase 1 scope is deliberate and tight. Two smells are supported: [`deliverable-fossils`](../../docs/taxonomy/deliverable-fossils.md) and [`naming-lies`](../../docs/taxonomy/naming-lies.md). Any other smell slug is **not in scope** and must be refused with a clear message, not silently ignored.
+Phase 1 scope is deliberate and tight. Two smells are supported: [`deliverable-fossils`](references/docs/taxonomy/deliverable-fossils.md) and [`naming-lies`](references/docs/taxonomy/naming-lies.md). Any other smell slug is **not in scope** and must be refused with a clear message, not silently ignored.
 
 ## When to invoke
 
@@ -30,25 +30,25 @@ The operator names a directory (explicitly or implicitly: "these tests", "my sui
 
 From the operator's request, resolve a list of **in-scope smell slugs** drawn from the Phase-1 supported set: `{deliverable-fossils, naming-lies}`.
 
-- Natural phrases map to slugs by meaning, not string match. "fossils", "stale names", "checklist-shaped tests", "sprint-vocab tests" all resolve to `deliverable-fossils`. "naming-lies", "titles that lie", "names that don't match the body" resolve to `naming-lies`. "audit everything", "all smells", unscoped — resolve to the full Phase-1 set.
+- Natural phrases map to slugs by meaning, not string match. Map operator intent to slugs:
+    - `deliverable-fossils` — "fossils", "deliverable fossils", "fossil tests", "stale names", "dead names", "sprint-shaped tests", "checklist tests", "checklist-shaped", "one test per AC", "tests named after tickets", "ticket-id vocabulary", "names that describe who wrote them, not what they prove", "sprint-vocab tests"
+    - `naming-lies` — "naming-lies", "naming lies", "lying names", "lying titles", "titles that lie", "docstrings that lie", "names that don't match the body", "title/body mismatch", "tests whose names overpromise"
+    - "audit everything", "all smells", unscoped — resolve to the full Phase-1 set.
 - If the operator names a smell the Phase-1 skill does not support (e.g. `tautology-theatre`, `vacuous-assertion`, any other taxonomy slug), **refuse that slug**. Acknowledge it by name, state it is not in Phase-1 scope, list the supported slugs, and proceed with only the supported slugs from the operator's request. Do not audit the out-of-scope slug anyway; do not silently drop it.
 - If the operator's intent is ambiguous between a supported and unsupported slug, ask rather than guess.
 
 ### Step 3 — load per-smell content, for each in-scope smell
 
-For each slug in the resolved scope, read **both** files:
+For each slug in the resolved scope, read **`references/docs/taxonomy/<slug>.md`** (relative to this `SKILL.md`) — the canonical smell definition. Contains the Summary, Description, Signals, False-positive guards, Prescribed Fix, Example, Related modes, and Polyglot notes. This is the single source of truth for what the smell is, how to detect it, what the common over-triggers are, and how to fix it; do not paraphrase it, do not substitute other definitions.
 
-1. **`docs/taxonomy/<slug>.md`** — canonical manifesto entry. Contains the Summary, Description, Signals, Prescribed Fix, Example, Related modes, and Polyglot notes. This is the single source of truth for what the smell is and how it is fixed; do not paraphrase it, do not substitute other definitions.
-2. **`references/smells/<slug>.md`** (relative to this `SKILL.md`) — audit-specific augmentation: invocation-phrase hints, emission hints, false-positive guards. Always present, even if the content is a short "no audit-specific augmentation required" marker — read it unconditionally.
-
-The split is structural: the manifesto never carries audit-specific content, and the skill never carries a copy of the manifesto. If a smell's augmentation turns out to need manifesto-level content (e.g. a new detection signal), stop and raise that as a manifesto gap — do not patch it into the augmentation file.
+If a smell's canonical entry turns out to need additional detection content (e.g. a new signal, a missing guard), stop and raise that as a manifesto gap — extend the canonical entry, do not carry detection content outside it.
 
 ### Step 4 — walk the target suite and emit candidate findings
 
 For each test file under the target suite root:
 
 1. For each test function, class, or method identified in the file: read the test identifier, any grouping context (class or `describe` equivalent), the docstring if present, and the body's assertions.
-2. For each in-scope smell, evaluate whether the test matches the smell's Signals from the canonical docs entry, refined by the augmentation file's emission hints and false-positive guards. Matching is **semantic**, not keyword: a test mentioning "refactor" is not automatically a fossil; a test whose title nouns don't appear literally in the body is not automatically a naming-lie.
+2. For each in-scope smell, evaluate whether the test matches the smell's Signals from the canonical entry, refined by the False-positive guards in the same entry. Matching is **semantic**, not keyword: a test mentioning "refactor" is not automatically a fossil; a test whose title nouns don't appear literally in the body is not automatically a naming-lie.
 3. When a candidate match surfaces, formulate the four load-bearing pieces that every finding carries:
    - Rationale: what the test claims vs. what the body verifies, citing the specific Signal that matched.
    - Prescribed remediation: concrete action per the manifesto's Prescribed Fix section, encoded in terms of the test's actual behavior.
@@ -76,6 +76,6 @@ Tell the operator where the report was written and which scopes were covered. Do
 
 - **Read-only.** This skill does not modify test code. If the operator asks the skill to apply fixes, that is a Phase-3 capability that does not exist yet — decline and direct them to treat the report as input to a separate, manual or future-automated apply step.
 - **Manifesto is canonical.** The audit cites the manifesto; it does not fork it. If a detection feels right but the manifesto's Signals don't cover it, that is a signal the manifesto needs extending — stop and surface it as a manifesto gap, do not add the detection to the augmentation file.
-- **Preserve regression-detection power.** Every prescribed remediation in a finding is bounded by the [preservation-of-regression-detection-power](../../docs/principles.md#preservation-of-regression-detection-power) governor rule. A rename-only fix must not change the call graph; a strengthen fix must not shrink the mutation kill-set. If the audit cannot defend a remediation under this gate, reconsider the remediation.
-- **Fossil vocabulary is a signal, not a verdict.** The word "refactor" in a title does not make a fossil; a ticket ID in a docstring does not make a fossil. The judgment is whether the vocabulary describes the test's reason-for-existence vs. the behavior it verifies. The augmentation file carries the specific false-positive guards per smell.
-- **Naming-lie detection is semantic.** Title/body tokenization is a first pass, not a verdict. `deletes` in a title matching `DELETE` in the body is a match; `cyan` in a title with no color handling in the body is not. Cross-language synonymy is the common over-trigger, and the augmentation file calls it out.
+- **Preserve regression-detection power.** Every prescribed remediation in a finding is bounded by the [preservation-of-regression-detection-power](https://texarkanine.github.io/slobac/principles/#preservation-of-regression-detection-power) governor rule. A rename-only fix must not change the call graph; a strengthen fix must not shrink the mutation kill-set. If the audit cannot defend a remediation under this gate, reconsider the remediation.
+- **Fossil vocabulary is a signal, not a verdict.** The word "refactor" in a title does not make a fossil; a ticket ID in a docstring does not make a fossil. The judgment is whether the vocabulary describes the test's reason-for-existence vs. the behavior it verifies. The canonical entry's False-positive guards section carries the specific over-triggers per smell.
+- **Naming-lie detection is semantic.** Title/body tokenization is a first pass, not a verdict. `deletes` in a title matching `DELETE` in the body is a match; `cyan` in a title with no color handling in the body is not. Cross-language synonymy is the common over-trigger, and the canonical entry's False-positive guards section calls it out.

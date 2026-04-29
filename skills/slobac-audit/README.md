@@ -1,6 +1,6 @@
 # SLOBAC audit skill
 
-An [AgentSkills.io](https://agentskills.io/)-shaped skill that audits a test suite against the [SLOBAC manifesto](https://github.com/Texarkanine/slobac) and emits a portable markdown report. Phase 1 covers two smells: [`deliverable-fossils`](../../docs/taxonomy/deliverable-fossils.md) and [`naming-lies`](../../docs/taxonomy/naming-lies.md).
+An [AgentSkills.io](https://agentskills.io/)-shaped skill that audits a test suite against the [SLOBAC manifesto](https://github.com/Texarkanine/slobac) and emits a portable markdown report. Phase 1 covers two smells: [`deliverable-fossils`](https://texarkanine.github.io/slobac/taxonomy/deliverable-fossils/) and [`naming-lies`](https://texarkanine.github.io/slobac/taxonomy/naming-lies/).
 
 This is the **canonical source** for the skill. The layout is harness-agnostic; the install step per harness is described below.
 
@@ -12,12 +12,14 @@ skills/slobac-audit/
 ├── README.md                             # this file
 └── references/
     ├── report-template.md                # audit report shape
-    └── smells/
-        ├── deliverable-fossils.md        # audit-specific augmentation
-        └── naming-lies.md                # audit-specific augmentation
+    └── docs/
+        └── taxonomy/
+            ├── deliverable-fossils.md    # canonical smell definition (Phase 1)
+            ├── naming-lies.md            # canonical smell definition (Phase 1)
+            └── ... (13 more entries)     # canonical smell definitions (Phase 2+)
 ```
 
-The skill reads canonical smell definitions from [`docs/taxonomy/<slug>.md`](../../docs/taxonomy/) at runtime. That path must resolve from wherever the skill is installed — if the install detaches the skill from the `docs/` tree, the skill will not be able to load smell definitions. This is a Phase-1 constraint; later phases may bundle the needed taxonomy entries alongside the skill for distribution.
+The canonical smell definitions live in `references/docs/taxonomy/<slug>.md` — hand-authored, single source of truth. The rendered SLOBAC site ([properdocs](https://texarkanine.github.io/slobac/)) consumes these files via `pymdownx.snippets` at build time. The skill reads the same files at agent-runtime; no generator, no drift-check, no external paths, no network fetches, no harness-cwd assumptions. The skill bundle is fully self-contained and installable anywhere.
 
 ## Install
 
@@ -37,8 +39,6 @@ To make it available across all projects:
 ln -s "$PWD/skills/slobac-audit" ~/.cursor/skills/slobac-audit
 ```
 
-Caveat: user-level install detaches the skill from the `docs/` tree in this repo. The skill will not be able to load smell definitions unless the `docs/` tree is also reachable from wherever Cursor invokes it. Repo-level install is the Phase-1-recommended path.
-
 ### Claude Code
 
 Claude Code discovers skills under `.claude/skills/` (repo-level) or `~/.claude/skills/` (user-level). The install pattern mirrors Cursor:
@@ -46,8 +46,6 @@ Claude Code discovers skills under `.claude/skills/` (repo-level) or `~/.claude/
 ```bash
 ln -s "$PWD/skills/slobac-audit" .claude/skills/slobac-audit
 ```
-
-Same caveat applies for user-level install.
 
 ### Other harnesses
 
@@ -68,10 +66,10 @@ The skill scopes the audit from the phrasing, reads the target suite, and writes
 
 ## Smoke test
 
-The repo ships fixture suites under [`tests/fixtures/audit/`](../../tests/fixtures/audit/) with documented expected findings. Use them to verify the install:
+The repo ships fixture suites under [`tests/fixtures/audit/`](https://github.com/Texarkanine/slobac/tree/main/tests/fixtures/audit) with documented expected findings. Use them to verify the install:
 
 1. In Cursor or Claude Code, run: **"Audit `tests/fixtures/audit/deliverable-fossils/` for fossils."**
-2. Compare the emitted `slobac-audit.md` against [`tests/fixtures/audit/deliverable-fossils/expected-findings.md`](../../tests/fixtures/audit/deliverable-fossils/expected-findings.md).
+2. Compare the emitted `slobac-audit.md` against [`tests/fixtures/audit/deliverable-fossils/expected-findings.md`](https://github.com/Texarkanine/slobac/blob/main/tests/fixtures/audit/deliverable-fossils/expected-findings.md).
 3. Every flagged test in the expected file should appear in the audit report with a matching remediation arm. The negative-example test (`test_refactor_preserving_rename_does_not_change_lookup_results`) must not be flagged.
 
 Repeat with `tests/fixtures/audit/naming-lies/`, `tests/fixtures/audit/both-smells/` (exercise scope), and `tests/fixtures/audit/clean/` (expect no findings) to cover the full Phase-1 behavior matrix.
@@ -86,6 +84,5 @@ Phrasing of the emitted report need not be byte-identical to `expected-findings.
 
 ## Troubleshooting
 
-- **The skill emits a finding but the rationale is vague ("this test has fossil-shaped vocabulary").** The augmentation file's false-positive guards exist specifically to prevent this. If the skill cannot cite a specific signal from the manifesto's Signals list, the finding should not emit — reconsider.
-- **The skill misses a finding.** Re-read the manifesto entry and the augmentation file's detection priorities. If the missed case is not covered by any signal in the manifesto, that is a manifesto gap, not a skill bug — raise it as a PR to [`docs/taxonomy/<slug>.md`](../../docs/taxonomy/).
-- **The skill cannot find `docs/taxonomy/<slug>.md` at runtime.** The install detached the skill from the `docs/` tree. Switch to a repo-level install, or (if user-level install is a hard requirement) keep a copy of the `docs/taxonomy/` tree reachable from the skill's working directory.
+- **The skill emits a finding but the rationale is vague ("this test has fossil-shaped vocabulary").** The canonical entry's False-positive guards section exists specifically to prevent this. If the skill cannot cite a specific signal from the Signals section, the finding should not emit — reconsider.
+- **The skill misses a finding.** Re-read the canonical entry (`references/docs/taxonomy/<slug>.md`). If the missed case is not covered by any signal, that is a manifesto gap, not a skill bug — raise it as a PR to the canonical entry.

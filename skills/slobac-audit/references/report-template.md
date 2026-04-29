@@ -29,7 +29,7 @@ audit does not silently skip a requested smell.>
 
 - **Location:** <file relative to target suite root> → <test identifier: function name, or class.method>
 - **Smell:** `<slug>`
-- **Rationale:** <One or two sentences. State what the title/grouping claims vs. what the body actually verifies. Cite the specific signal from docs/taxonomy/<slug>.md that matched. Link to the docs entry so the reader can audit the auditor.>
+- **Rationale:** <One or two sentences. State what the title/grouping claims vs. what the body actually verifies. Cite the specific signal from references/docs/taxonomy/<slug>.md (the skill's canonical smell definition) that matched. Include a link to the published manifesto URL (https://texarkanine.github.io/slobac/taxonomy/<slug>/) so the reader can audit the auditor.>
 - **Prescribed remediation:** <Concrete next action. For naming-lies, name the fix arm explicitly (rename / strengthen / investigate). For deliverable-fossils, name the phase (rename-only, or rename + regroup). Encode the *behavior* in any rename suggestion, not the fossil label.>
 - **Why this isn't a false positive:** <One sentence. The guard against the specific over-trigger this finding could be mistaken for. If no principled guard applies, the finding itself is suspect — reconsider before emitting.>
 
