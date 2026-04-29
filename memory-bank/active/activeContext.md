@@ -2,12 +2,14 @@
 
 **Current Task:** Phase 1 Audit MVP — `deliverable-fossils` + `naming-lies` as harness-portable agent customizations for Cursor and Claude Code.
 
-**Phase:** QA (third rework) — COMPLETE; next phase Reflect (auto-transition)
+**Phase:** REFLECT (third rework) — COMPLETE
 
-## QA Summary
+## Reflect Summary
 
-PASS with two trivial fixes: stale `docs/` heading in systemPatterns.md; stale `docs/` ref in productContext.md. No substantive issues.
+Third-rework lifecycle review written. Key insight: four architecture passes on the same question (OQ2 → OQ2-redux → OQ3 → third rework) each eliminated a mechanism the prior one introduced. The final architecture — direct `docs_dir` pointer, no sync, no wrappers — is the simplest and the one that survived operator review.
+
+Persistent files clean — all three were updated during build (T6, T7) and QA (productContext). No reconciliation changes needed.
 
 ## Next Step
 
-Reflect phase runs automatically per L3 workflow.
+Run `/niko-archive` to create the archive document and finalize the current project.

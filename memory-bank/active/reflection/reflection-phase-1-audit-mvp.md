@@ -143,10 +143,53 @@ OQ3 (Option γ — definitional canonical + discursive wrapper) held up perfectl
 
 ---
 
-## Third Rework Note (2026-04-29)
+## Third Rework Addendum (2026-04-29)
 
-The second rework's snippet-include architecture was correct under its stated constraints and passed QA cleanly. During pre-merge review, two remaining architectural seams were identified: (1) SKILL.md Constraints still used pre-inversion "audit cites the manifesto" language, and (2) the 15 snippet-include wrappers at `docs/taxonomy/*.md` were pure indirection — each file contained a single `--8<--` directive and no content. The wrappers existed solely to bridge properdocs's `docs_dir: docs` expectation with the canonical content living inside the skill.
+### Requirements vs Outcome (third rework)
 
-The corrective action was to complete the inversion: move the **entire** `docs/` tree (principles, glossary, workflows, taxonomy/README, .pages) into `skills/slobac-audit/references/docs/` and point `properdocs.yml` `docs_dir` there. This eliminated the wrappers, the `docs/` directory, and the link-path footgun (canonical files' relative links now resolve at their actual filesystem location). The full manifesto now lives inside the skill root, satisfying invariant #11 for all manifesto content — not just taxonomy entries.
+The third rework's scope was narrow and unambiguous: eliminate the snippet-include indirection layer by moving the remaining `docs/` files (principles, glossary, workflows, taxonomy/README, .pages, index) into the skill bundle and pointing properdocs directly at them. Every requirement was met:
 
-This is not a retraction of the second rework's approach — the snippet-include architecture was correct at the time and would have shipped fine. It is an evolution: once the operator saw that the wrappers added zero content, the simpler architecture (no wrappers, no indirection) was strictly preferable.
+- 6 remaining docs files migrated via `git mv` (preserving git history) to `skills/slobac-audit/references/docs/`.
+- 15 snippet-include wrappers deleted. `docs/` directory eliminated.
+- `properdocs.yml` `docs_dir` and `edit_uri` updated to point at the skill's content directory.
+- SKILL.md Constraints section rewritten to reflect the skill-as-manifesto-home architecture. Governor-rule cite changed from published URL to intra-skill path (file is now inside the skill root).
+- `properdocs build --strict` passes under the new layout.
+- Invariant #11 spot-check passes — zero cross-root escapes.
+
+No requirements were dropped or reinterpreted. One fix beyond plan scope: fixture `README.md` had two stale `references/smells/` references from the second rework; fixed during T3 alongside the planned expected-findings updates.
+
+### Plan Accuracy (third rework)
+
+The 10-step plan (T1–T10) was accurate. No steps needed reordering, splitting, or adding. The PF1 amendment (T5d for VISION.md's 14 `../docs/` references) correctly caught a completeness gap at preflight time.
+
+### Creative Phase Review (third rework)
+
+No creative phase was required. The approach was unambiguous: `git mv`, delete wrappers, update config. This is the simplest of the four architecture passes (OQ2, OQ2-redux, OQ3, third rework), and the only one that required no creative exploration.
+
+### Build & QA Observations (third rework)
+
+**Went smoothly:**
+
+- The structural move was mechanically simple. `git mv` + wrapper deletion + config edit in a single commit. No broken intermediate state.
+- `properdocs build --strict` passed on the first attempt — the `docs_dir` change is structurally equivalent to any other `docs_dir` path.
+- The link-path footgun from the second rework is gone: relative links in canonical files now resolve at their actual filesystem location because properdocs renders from that location. This is the cleanest the architecture has been.
+
+**QA caught:** two stale `docs/` references in persistent memory-bank files (systemPatterns.md heading, productContext.md use case). Both trivial string fixes. Same class of issue as every prior QA — stale language from a superseded architecture surviving into the shipped artifact.
+
+### Cross-Phase Analysis (third rework)
+
+1. **Preflight amendment → build completeness.** PF1 (VISION.md's 14 `../docs/` references) would have been discovered during post-build review if not caught at preflight. The amendment converted a post-hoc fixup into a planned step.
+
+2. **QA as persistent-file audit.** Both QA findings were in memory-bank persistent files, not in the shipped product artifacts. The pattern from prior reworks repeats: persistent files lag behind structural changes because they describe the system at a higher level of abstraction. The QA sweep's `docs/` grep is the mechanism that catches them.
+
+3. **Four-pass calibration.** The full journey — OQ2 → OQ2-redux → OQ3 → third rework — is the most instructive cross-phase chain in this task. Each pass met its stated constraints and either missed a later-surfaced constraint (OQ2: runtime-root; OQ2-redux: committed generated content is a smell) or left an indirection layer the operator eliminated on review (OQ3: snippet-include wrappers → third rework: move everything). The final architecture is the simplest of all four — it has fewer moving parts than any of the intermediate ones. This suggests that for SLOBAC's scale and constraints, the simplest structural approach (one directory, one `docs_dir` pointer, no sync mechanism) was always the right answer; the creative-phase exploration was the process of ruling out the alternatives that looked necessary but weren't.
+
+### Insights (third rework)
+
+#### Technical
+
+- **`docs_dir` pointing deep into a subdirectory works fine.** `properdocs.yml` with `docs_dir: skills/slobac-audit/references/docs` is unusual but properdocs/mkdocs has no restriction on path depth. The rendered site, `edit_uri`, nav ordering — everything works identically. This is worth knowing for future SLOBAC skills or other projects where the site source isn't at the repo root.
+
+#### Process
+
+- **The simplest architecture often survives multiple creative passes.** Four passes on the same question, each incrementally simpler, each eliminating a mechanism the prior one introduced (external reads → generator → snippet-includes → direct `docs_dir`). The process insight is not "we should have skipped to the simplest answer" — each intermediate was necessary to understand why it was unnecessary — but rather "when the operator signals dissatisfaction with complexity, the corrective direction is almost always toward fewer moving parts, not different moving parts."
