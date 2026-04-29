@@ -27,6 +27,10 @@ This is the lowest-risk, highest-readability entry in the catalog; the transform
 - Test imports a fixture module but shadows part of its contents silently.
 - Magic constant (`6`, `"abc123"`) compared against parsed fixture output.
 
+## False-positive guards
+
+No audit-specific guards yet; Phase-2 per-smell work will author these.
+
 ## Prescribed Fix
 
 1. [Describe-before-edit](../principles.md#behavior-articulation-before-change): identify which fixture property the assertion really depends on.

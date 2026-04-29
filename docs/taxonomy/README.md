@@ -21,6 +21,7 @@ Every taxonomy file follows the same shape:
 - **Summary** — one-line TL;DR.
 - **Description** — what the smell is, why it matters, and what semantic judgment is required (i.e. what a linter cannot do).
 - **Signals** — concrete detection heuristics, static and semantic.
+- **False-positive guards** — common over-triggers and why they aren't the smell. Calibrates both human readers and agent consumers against pattern-matching false positives.
 - **Prescribed Fix** — the mechanical move and the preservation gate the transform must clear.
 - **Example** — a "before / after" mock in some representative language.
 - **Related** — how this mode differs from adjacent ones.

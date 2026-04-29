@@ -21,6 +21,10 @@ Do *not* try to enforce a global layer policy across repos — read the repo's e
 - A "unit" test mocks every dependency and asserts on `toHaveBeenCalledWith(...)` — it's actually a contract test, mis-named.
 - A spec `send`s to private methods (`described_class.send(:foo, x)`) — should either become a public-API test or extract the private helper as a pure function with its own unit test file. See [`implementation-coupled`](./implementation-coupled.md) for the related reach-through smell.
 
+## False-positive guards
+
+No audit-specific guards yet; Phase-2 per-smell work will author these.
+
 ## Prescribed Fix
 
 1. Classify each test as unit / component / integration via [describe-before-edit](../principles.md#behavior-articulation-before-change) plus the signals above.

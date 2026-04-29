@@ -31,6 +31,10 @@ Fix bias: **strengthen, don't multiply.** One strong check beats three weak ones
 - `expect { ... }.not_to raise_error` as the whole `it` body when the real claim is "does not *do* Y" (a side-effect absence).
 - `assert "12" in out` as the only check on multi-line structured output.
 
+## False-positive guards
+
+No audit-specific guards yet; Phase-2 per-smell work will author these.
+
 ## Prescribed Fix
 
 1. Identify the real claim via [describe-before-edit](../principles.md#behavior-articulation-before-change).

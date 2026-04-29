@@ -31,6 +31,10 @@ Semantic signals:
 - Python: `sut._internal_dict['some_key']` instead of a public getter.
 - Tests calling private helpers via `(sut as any).helper()` and asserting on the helper's return directly.
 
+## False-positive guards
+
+No audit-specific guards yet; Phase-2 per-smell work will author these.
+
 ## Prescribed Fix
 
 1. Drive the library's public API instead of reaching for internals (`program.helpInformation()` rather than `(cmd as any).options`).

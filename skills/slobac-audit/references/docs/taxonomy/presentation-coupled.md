@@ -25,6 +25,10 @@ Distinct from [`over-specified-mock`](./over-specified-mock.md): presentation co
 - Assertions on structured data via string matching instead of parsing (`assert "status: ok" in resp.text` where `resp.json()` is available).
 - Heavy prose fixtures asserted whole, where only one field is load-bearing.
 
+## False-positive guards
+
+No audit-specific guards yet; Phase-2 per-smell work will author these.
+
 ## Prescribed Fix
 
 1. Identify the semantic layer: DOM tree, parsed JSON, AST, normalized-whitespace canonical form.

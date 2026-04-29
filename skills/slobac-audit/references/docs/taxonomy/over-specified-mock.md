@@ -29,6 +29,10 @@ This is distinct from [`tautology-theatre`](./tautology-theatre.md): there the S
 - `have_received(:generate)` tail after a stub block that already asserts on the input.
 - Mock-verification duplicating an expectation already inside a stub's callback.
 
+## False-positive guards
+
+No audit-specific guards yet; Phase-2 per-smell work will author these.
+
 ## Prescribed Fix
 
 1. Identify whether the collaboration is contract-relevant (e.g. "must call `paymentClient` exactly once per invoice") or incidental ("happens to call `logger.debug` three times").

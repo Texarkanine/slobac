@@ -25,6 +25,13 @@ A linter cannot do any of the three. Embedding-based clustering can do some of t
 - Test names that are verbs in the imperative tense against the developer (`it('should add the new validation after we moved parsing')`) rather than claims against the product (`it('rejects trailing garbage')`).
 - Clusters of two or more tests in the same file whose bodies verify the same behavior but whose names reference different checklist items. Often co-occurs with [`semantic-redundancy`](./semantic-redundancy.md).
 
+## False-positive guards
+
+Fossil vocabulary is a **signal**, not a **verdict**. The following are common over-triggers — the audit must not flag them:
+
+- **The word `refactor` in a test whose body genuinely tests refactor safety.** Example: `test_refactor_preserves_lookup_semantics` whose body verifies that a rename-only transform does not change the call graph. "Refactor" here is the behavior under test, not the test's reason-for-existence. Rule: before flagging a test with `refactor`/`refactored`/`post-refactor` in the title, check whether the body is *about* a refactor property. If yes, do not flag.
+- **Domain vocabulary that looks like fossil vocabulary.** A test about a legal `checklist` feature, a test about a product's `milestone` entity, a test about version-`M2`-of-the-API-contract — all use fossil-adjacent words as first-class domain terms. Before flagging, check whether the word is product vocabulary (appears in the SUT) or work vocabulary (only appears in the test name). Flag only work vocabulary.
+
 ## Prescribed Fix
 
 A two-phase move. Phase A (rename) is safe and reversible. Phase B (regroup) is the full fix but risks merge conflicts and reviewer confusion if done all at once.

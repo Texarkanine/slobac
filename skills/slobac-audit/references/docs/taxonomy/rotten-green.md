@@ -23,6 +23,10 @@ Covered in spirit by [`vacuous-assertion`](./vacuous-assertion.md), [`pseudo-tes
 - Variables computed and discarded (`const toDir = ...` never used).
 - Linter `expect-expect` / `@typescript-eslint/no-unused-vars` flagging the case.
 
+## False-positive guards
+
+No audit-specific guards yet; Phase-2 per-smell work will author these.
+
 ## Prescribed Fix
 
 Two transforms, depending on intent:

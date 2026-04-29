@@ -24,6 +24,10 @@ Includes unused shared setup (dead `@temp_dir`, unused `let(:doc)`) — syntacti
 - Temp directories created at suite-level and never cleaned.
 - Test passes in isolation but fails under randomized ordering (`pytest-randomly`,[^pyrandomly] `jest --testSequencer=random`, `--shuffle`).
 
+## False-positive guards
+
+No audit-specific guards yet; Phase-2 per-smell work will author these.
+
 ## Prescribed Fix
 
 1. Move setup into `beforeEach` or a per-test factory; accept the small perf cost.

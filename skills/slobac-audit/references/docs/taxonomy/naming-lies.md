@@ -22,6 +22,15 @@ The fix is either *rename the test* (cheaper, when the body is already strong) o
 - Docstring claims a derivation rule ("last path segment of the workspace slug") but the assertion is `len(x) > 0`.
 - Title contains `random`, but no distribution or variance check; only prefix and length.
 
+## False-positive guards
+
+Token-level title/body comparison is a first pass. The following over-triggers must be suppressed:
+
+- **Cross-language synonymy.** The title says `deletes`, the body uses `DELETE FROM` in SQL. Title says `waits`, the body uses `time.sleep` or `asyncio.sleep`. Title says `colored`, the body checks CSS class names for `.text-danger`. These are semantic matches even though the surface tokens differ. Rule: before flagging on a missing-token basis, consider whether a sibling ecosystem (SQL, HTTP status codes, CSS classes, shell exit codes, HTTP methods, ANSI codes) carries the semantic equivalent of the title's token.
+- **Domain synonymy.** The title uses a product term; the body uses the underlying implementation name. Example: title `test_session_is_expired`, body checks `row["state"] == "TERMINATED"`. The audit must recognize that the product-layer term and the storage-layer term denote the same state. This is the hardest class of false positive; when in doubt, **note the ambiguity in the rationale and lean toward INVESTIGATE** rather than RENAME.
+- **Under-specified titles.** Pytest, JUnit, and RSpec encourage terse test titles. A title `test_price_math` whose body verifies a specific rounding rule is not lying — it is under-specified. The audit's remediation should be to suggest a more specific name, not flag it as a lie. Distinguish **under-specified** (title leaves room, body is a correct subset of what a fuller title would claim) from **lying** (title claims X, body verifies not-X or unrelated-to-X). Under-specified titles are outside Phase-1 scope.
+- **Failure-case tests.** A test titled `rejects_invalid_input` whose body runs the invalid input and asserts an exception was raised is a match, not a lie. Titles that name a **negative** behavior and bodies that verify the negative behavior (via exception, error code, sentinel value) belong to the same semantic class.
+
 ## Prescribed Fix
 
 For each flagged test, the LLM decides among three paths:

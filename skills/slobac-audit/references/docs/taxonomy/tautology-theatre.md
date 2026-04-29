@@ -30,6 +30,10 @@ Severity is Critical because these tests produce the worst false-confidence sign
 - `assertTrue(true)`, `assertEquals(1, 1)`, `assertNotNull(new Object())` — trivial-tautology variant.
 - Assertions on framework guarantees (`assertNotNull(mock(Foo.class))`) rather than app behavior — "framework test" variant.
 
+## False-positive guards
+
+No audit-specific guards yet; Phase-2 per-smell work will author these.
+
 ## Prescribed Fix
 
 ### Preferred: delete

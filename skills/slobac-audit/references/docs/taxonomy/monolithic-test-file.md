@@ -23,6 +23,10 @@ The semantic judgment: cluster the file's tests by behavior domain ([describe-be
 - `//`, `#`, or block-comment section headers dividing the file (`// ===== SYNC =====`, `# --- FIXTURES ---`) — an author's tell.
 - High duplication score within the file (jscpd, `flay`).
 
+## False-positive guards
+
+No audit-specific guards yet; Phase-2 per-smell work will author these.
+
 ## Prescribed Fix
 
 1. [Describe-before-edit](../principles.md#behavior-articulation-before-change) over every test in the file.

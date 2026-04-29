@@ -24,6 +24,10 @@ A reader can *conjecture* without running a mutator: "if `short_digest` returned
 - A file-touching SUT is tested by checking a file exists, not its content.
 - Confirmatory cross-check: run [Descartes](../glossary.md#descartes) / `mutmut --simple-mutations` / equivalent; any surviving no-op mutant is evidence for this mode.
 
+## False-positive guards
+
+No audit-specific guards yet; Phase-2 per-smell work will author these.
+
 ## Prescribed Fix
 
 1. For the canonical test in the cluster, identify the SUT's actual output contract.

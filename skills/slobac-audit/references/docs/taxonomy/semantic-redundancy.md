@@ -26,6 +26,10 @@ This entry respects the [knowledge-DRY governor rule](../principles.md#knowledge
 - Mirrored suites across near-isomorphic components (`plugin-cursor.test.ts` vs `plugin-claude.test.ts`) with identical scenario matrices and only plugin-specific fixtures differing.
 - Repeated mock data or shared fixture literals across N tests in the same describe block.
 
+## False-positive guards
+
+No audit-specific guards yet; Phase-2 per-smell work will author these.
+
 ## Prescribed Fix
 
 1. [Describe-before-edit](../principles.md#behavior-articulation-before-change): emit a one-sentence behavior docstring for every test in scope.

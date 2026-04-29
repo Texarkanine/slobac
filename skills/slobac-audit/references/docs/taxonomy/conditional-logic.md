@@ -22,6 +22,10 @@ Platform-skip branches (`if process.platform === 'win32'`) are a distinct subcas
 - `if (graphData.edges.length > 0) { expect(...) }` paired with `toBeGreaterThanOrEqual(0)` — passes vacuously on empty input.
 - Loops that assert inside but never on the loop's exit condition.
 
+## False-positive guards
+
+No audit-specific guards yet; Phase-2 per-smell work will author these.
+
 ## Prescribed Fix
 
 | Shape | Transform |
