@@ -48,9 +48,10 @@ without re-running it.>
 
 ## Out-of-scope requests
 
-<Always include this section. If the operator named a smell slug the Phase-1
-audit does not support (anything other than `deliverable-fossils` or
-`naming-lies`), name it here and state explicitly that it was not audited. Do
+<Always include this section. If the operator named a smell slug the audit
+does not support (anything other than `deliverable-fossils`, `naming-lies`,
+`shared-state`, `monolithic-test-file`, `semantic-redundancy`, or
+`wrong-level`), name it here and state explicitly that it was not audited. Do
 not silently drop it; do not audit it anyway. If no out-of-scope slugs were
 requested, write `None.`>
 ~~~
