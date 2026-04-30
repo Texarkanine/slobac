@@ -17,7 +17,7 @@ See also [`../workflows.md`](../workflows.md) for the RED-GREEN-MUTATE-KILL-REFA
 
 Every taxonomy file follows the same shape:
 
-- **Header table** — slug, severity, and the [principles](../principles.md) the smell violates.
+- **Header table** — slug, severity, detection scope (`per-test`, `per-file`, or `cross-suite` — which agent type handles detection), and the [principles](../principles.md) the smell violates.
 - **Summary** — one-line TL;DR.
 - **Description** — what the smell is, why it matters, and what semantic judgment is required (i.e. what a linter cannot do).
 - **Signals** — concrete detection heuristics, static and semantic.
@@ -31,23 +31,23 @@ Every taxonomy file follows the same shape:
 
 Ordered roughly by how much semantic reasoning the required judgment demands. Higher-numbered entries lean on mechanical signals; lower-numbered entries need reasoning a linter cannot do.
 
-| # | Slug | Core move | Severity |
-|---|---|---|---|
-| 1 | [`deliverable-fossils`](./deliverable-fossils.md) | rename + regroup per product behavior | High |
-| 2 | [`semantic-redundancy`](./semantic-redundancy.md) | cluster, pick canonical, fold/delete the rest | High |
-| 3 | [`wrong-level`](./wrong-level.md) | relocate to correct pyramid tier | Medium |
-| 4 | [`naming-lies`](./naming-lies.md) | rename test or strengthen body to match the claim | Medium |
-| 5 | [`vacuous-assertion`](./vacuous-assertion.md) | strengthen the oracle | High |
-| 6 | [`pseudo-tested`](./pseudo-tested.md) | add assertion that kills the no-op mutant | High |
-| 7 | [`tautology-theatre`](./tautology-theatre.md) | delete or rewrite to exercise real SUT | Critical |
-| 8 | [`over-specified-mock`](./over-specified-mock.md) | relax to behavior-relevant interaction only | High |
-| 9 | [`implementation-coupled`](./implementation-coupled.md) | drive through public API instead | High |
-| 10 | [`presentation-coupled`](./presentation-coupled.md) | parse then assert semantics, not formatting | Medium |
-| 11 | [`conditional-logic`](./conditional-logic.md) | split or pin the precondition | Medium |
-| 12 | [`shared-state`](./shared-state.md) | move setup to per-test factory / restore globals | Medium |
-| 13 | [`mystery-guest`](./mystery-guest.md) | inline a 1–3 line summary of relevant fixture shape | Low |
-| 14 | [`rotten-green`](./rotten-green.md) | delete the empty/dead scaffold or add the missing assertion | Low |
-| 15 | [`monolithic-test-file`](./monolithic-test-file.md) | split file by behavior domain | Medium |
+| # | Slug | Core move | Severity | Detection Scope |
+|---|---|---|---|---|
+| 1 | [`deliverable-fossils`](./deliverable-fossils.md) | rename + regroup per product behavior | High | per-test, cross-suite |
+| 2 | [`semantic-redundancy`](./semantic-redundancy.md) | cluster, pick canonical, fold/delete the rest | High | cross-suite |
+| 3 | [`wrong-level`](./wrong-level.md) | relocate to correct pyramid tier | Medium | cross-suite |
+| 4 | [`naming-lies`](./naming-lies.md) | rename test or strengthen body to match the claim | Medium | per-test |
+| 5 | [`vacuous-assertion`](./vacuous-assertion.md) | strengthen the oracle | High | per-test |
+| 6 | [`pseudo-tested`](./pseudo-tested.md) | add assertion that kills the no-op mutant | High | per-test |
+| 7 | [`tautology-theatre`](./tautology-theatre.md) | delete or rewrite to exercise real SUT | Critical | per-test |
+| 8 | [`over-specified-mock`](./over-specified-mock.md) | relax to behavior-relevant interaction only | High | per-test |
+| 9 | [`implementation-coupled`](./implementation-coupled.md) | drive through public API instead | High | per-test |
+| 10 | [`presentation-coupled`](./presentation-coupled.md) | parse then assert semantics, not formatting | Medium | per-test |
+| 11 | [`conditional-logic`](./conditional-logic.md) | split or pin the precondition | Medium | per-test |
+| 12 | [`shared-state`](./shared-state.md) | move setup to per-test factory / restore globals | Medium | per-file |
+| 13 | [`mystery-guest`](./mystery-guest.md) | inline a 1–3 line summary of relevant fixture shape | Low | per-test |
+| 14 | [`rotten-green`](./rotten-green.md) | delete the empty/dead scaffold or add the missing assertion | Low | per-test |
+| 15 | [`monolithic-test-file`](./monolithic-test-file.md) | split file by behavior domain | Medium | per-file |
 
 **Severity** is a relative-harm/safety hint: how bad the smell is for the suite, weighted by how safe the canonical fix is. Critical smells can usually be deleted outright because they were killing no mutants. Lower severities need transforms and correspondingly more reviewer attention. No severity is a mandate to act; it is input to prioritization.
 

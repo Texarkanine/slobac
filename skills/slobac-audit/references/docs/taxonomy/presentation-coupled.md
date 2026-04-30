@@ -1,8 +1,8 @@
 # Presentation-Coupled
 
-| Slug | Severity | Protects |
-|---|---|---|
-| `presentation-coupled` | Medium | [Maintainable](../principles.md#maintainable), [Independent of implementation](../principles.md#independent-of-implementation) |
+| Slug | Severity | Detection Scope | Protects |
+|---|---|---|---|
+| `presentation-coupled` | Medium | per-test | [Maintainable](../principles.md#maintainable), [Independent of implementation](../principles.md#independent-of-implementation) |
 
 ## Summary
 

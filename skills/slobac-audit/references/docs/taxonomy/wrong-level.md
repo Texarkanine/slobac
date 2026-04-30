@@ -1,8 +1,8 @@
 # Wrong Level
 
-| Slug | Severity | Protects |
-|---|---|---|
-| `wrong-level` | Medium | [Fast](../principles.md#fast), [Maintainable](../principles.md#maintainable) |
+| Slug | Severity | Detection Scope | Protects |
+|---|---|---|---|
+| `wrong-level` | Medium | cross-suite | [Fast](../principles.md#fast), [Maintainable](../principles.md#maintainable) |
 
 ## Summary
 

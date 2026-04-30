@@ -1,8 +1,8 @@
 # Deliverable Fossils
 
-| Slug | Severity | Protects |
-|---|---|---|
-| `deliverable-fossils` | High | [Understandable](../principles.md#understandable), [Necessary](../principles.md#necessary), [Well-named](../principles.md#well-named) |
+| Slug | Severity | Detection Scope | Protects |
+|---|---|---|---|
+| `deliverable-fossils` | High | per-test, cross-suite | [Understandable](../principles.md#understandable), [Necessary](../principles.md#necessary), [Well-named](../principles.md#well-named) |
 
 ## Summary
 

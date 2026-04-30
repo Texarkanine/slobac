@@ -1,8 +1,8 @@
 # Pseudo-Tested
 
-| Slug | Severity | Protects |
-|---|---|---|
-| `pseudo-tested` | High | [Necessary](../principles.md#necessary), [Granular](../principles.md#granular) |
+| Slug | Severity | Detection Scope | Protects |
+|---|---|---|---|
+| `pseudo-tested` | High | per-test | [Necessary](../principles.md#necessary), [Granular](../principles.md#granular) |
 
 ## Summary
 

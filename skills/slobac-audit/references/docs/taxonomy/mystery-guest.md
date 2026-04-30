@@ -1,8 +1,8 @@
 # Mystery Guest
 
-| Slug | Severity | Protects |
-|---|---|---|
-| `mystery-guest` | Low | [Understandable](../principles.md#understandable), [Clear failure message](../principles.md#clear-failure-message) |
+| Slug | Severity | Detection Scope | Protects |
+|---|---|---|---|
+| `mystery-guest` | Low | per-test | [Understandable](../principles.md#understandable), [Clear failure message](../principles.md#clear-failure-message) |
 
 ## Summary
 

@@ -1,8 +1,8 @@
 # Rotten Green
 
-| Slug | Severity | Protects |
-|---|---|---|
-| `rotten-green` | Low | [Necessary](../principles.md#necessary), [Granular](../principles.md#granular) |
+| Slug | Severity | Detection Scope | Protects |
+|---|---|---|---|
+| `rotten-green` | Low | per-test | [Necessary](../principles.md#necessary), [Granular](../principles.md#granular) |
 
 ## Summary
 

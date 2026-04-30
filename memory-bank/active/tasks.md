@@ -103,7 +103,7 @@ Which smells go to which agent type. The 6 in-scope smells for this build are **
 
 ### Invariants & Constraints
 
-1. **Skill-root self-containment** (invariant #11): sub-skills reach into `slobac-audit/references/` via `../slobac-audit/references/...`. Assumes co-installation.
+1. **Skill-root self-containment** (invariant #11): sub-skills reach into `slobac-audit/references/` via `../slobac-audit/references/...`. Assumes co-installation. Skills may have their own references if they need - but references and resources outside the slobac-audit skill must only be used by their containing skill.
 2. **Slug → path is a direct mapping**: `taxonomy/<slug>.md`. No on-disk hierarchy change.
 3. **Taxonomy entry shape uniformity**: `Detection Scope` column added to ALL 15 entries, not just the 6 in scope.
 4. **Cross-link integrity**: `properdocs build --strict` must pass.
@@ -220,7 +220,8 @@ Which smells go to which agent type. The 6 in-scope smells for this build are **
 - Files:
     - `skills/slobac-scout/SKILL.md` (new) — AgentSkills.io frontmatter + workflow
     - `skills/slobac-scout/README.md` (new) — minimal: purpose, relationship to slobac-audit, invocation
-- Changes: SKILL.md workflow: (1) receive target directory, (2) enumerate test files by language-appropriate patterns, (3) per file: count test functions/methods, measure line count and char count, detect tier conventions from directory structure, (4) compute totals, (5) emit Suite Manifest per `../slobac-audit/references/suite-manifest-format.md`.
+    - `skills/slobac-scout/references/exploration-commands.md` (new) — ready-made shell command templates for efficient test-suite exploration: `rg` patterns for test-file discovery and per-file test counting across ecosystems, `wc`/`stat` for size measurement, `find` for directory-structure detection (tier conventions). Organized by task (enumerate → count → measure → detect tiers) with per-language variants (Python, JS/TS, Go, Ruby, JVM). The scout loads this reference and adapts the commands to the target suite's ecosystem rather than reinventing the wheel each invocation.
+- Changes: SKILL.md workflow: (1) receive target directory, (2) load `references/exploration-commands.md` for command templates, (3) detect ecosystem from file extensions, (4) enumerate test files using ecosystem-appropriate patterns, (5) per file: count test functions/methods, measure line count and char count, (6) detect tier conventions from directory structure, (7) compute totals, (8) emit Suite Manifest per `../slobac-audit/references/suite-manifest-format.md`.
 - Cross-skill refs: reads `../slobac-audit/references/suite-manifest-format.md`
 
 #### 10. Create `slobac-batch` skill
