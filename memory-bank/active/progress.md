@@ -8,3 +8,4 @@ Implement the Hybrid Scout + Batch + Cross-Suite audit orchestration architectur
 
 - **Complexity Analysis** — Complete. Level 3 determined. Creative phase already done (creative-audit-orchestration.md).
 - **Plan** — Complete. 14-step implementation plan across 5 phases. All 4 open questions from creative doc pre-resolved by operator. No creative phase needed.
+- **Preflight** — PASS. All checks passed. One plan amendment: eliminated dual code paths (batch assessor is universal audit engine, single-agent path is 1-batch degenerate case). One advisory: no multi-scope fixture for new smells (not blocking).

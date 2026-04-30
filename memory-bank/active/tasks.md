@@ -47,16 +47,16 @@ The decision logic inside the orchestrator — when to shard and when to run sin
 flowchart TD
     A["Operator invokes audit"] --> B["Parse scope + target"]
     B --> C["Launch slobac-scout"]
-    C --> D{"Suite fits in<br/>one context budget?"}
-    D -->|"Yes"| E["Single-agent audit<br/>(current behavior)"]
-    D -->|"No"| F["Partition into batches"]
+    C --> D{"Suite size?"}
+    D -->|"Small"| E["1 batch assessor<br/>(all files)"]
+    D -->|"Large"| F["Partition into N batches"]
     F --> G["Launch slobac-batch #times;N<br/>in parallel"]
-    G --> H["Collect findings +<br/>behavior summaries"]
+    E --> H["Collect findings +<br/>behavior summaries"]
+    G --> H
     H --> I{"Cross-suite smells<br/>in scope?"}
     I -->|"Yes"| J["Launch slobac-cross-suite"]
     I -->|"No"| K["Merge + write report"]
     J --> K
-    E --> K
 ```
 
 ### Detection Scope Routing
@@ -245,14 +245,15 @@ Which smells go to which agent type. The 6 in-scope smells for this build are **
     - Step 1: determine target suite root (unchanged)
     - Step 2: parse scope — expand supported set to 6 smells, classify each by `detection_scope` from taxonomy headers, partition into per-test/per-file vs cross-suite sets
     - Step 3: launch `slobac-scout` subagent with target directory → receive Suite Manifest
-    - Step 4: evaluate size — if suite fits in one context budget, run single-agent audit (current behavior: load smell defs, walk suite, emit findings) for all in-scope smells
-    - Step 5 (multi-agent path): partition files into batches per heuristic (greedy bin-packing by char count, directory-cohesive), compute summary richness level, launch `slobac-batch` subagents in parallel with per-test + per-file smell slugs
+    - Step 4: partition files into batches per heuristic (greedy bin-packing by char count, directory-cohesive), compute summary richness level. Small suite → 1 batch. Large suite → N batches.
+    - Step 5: launch `slobac-batch` subagent(s) — always, even for small suites. 1 batch assessor with all files for small suites; N in parallel for large. This eliminates the dual code path between inline single-agent audit and batch assessors. The batch assessor IS the universal audit engine for per-test/per-file smells — the "single-agent path" is simply the degenerate case of 1 batch.
     - Step 6: collect batch results — merge findings, merge behavior summaries
     - Step 7: if cross-suite smells in scope → launch `slobac-cross-suite` subagent with all behavior summaries + cross-suite smell slugs
     - Step 8: merge all findings (batch + cross-suite), deduplicate, write report per `references/report-template.md`
     - Step 9: close (unchanged intent, updated scope list)
     - Constraints and guards section: update Phase-1 references, add failure handling (retry failed batches, ignore garbage), add context-budget handshake logic
 - Creative ref: `memory-bank/active/creative/creative-audit-orchestration.md` — Option D, §Implementation Notes
+- Preflight innovation: eliminated dual code paths per preflight finding #8
 
 #### 13. Update report template + audit README
 - Files:
