@@ -16,12 +16,12 @@ SLOBAC has three coupled deliverables. They layer: each one is useful on its own
 
 ### 1.1 A manifesto
 
-The [`docs/`](../docs/) tree is the manifesto — **what tests should be, what test suites should be, and the taxonomy of how they go wrong.** Users engage with SLOBAC by being educated into this view; a user who doesn't understand why their test is in the catalog will push back on the tool's recommendations for the wrong reasons. Composed of:
+The [manifesto](https://texarkanine.github.io/slobac/) is **what tests should be, what test suites should be, and the taxonomy of how they go wrong.** Users engage with SLOBAC by being educated into this view; a user who doesn't understand why their test is in the catalog will push back on the tool's recommendations for the wrong reasons. Composed of:
 
-- [`docs/principles.md`](../docs/principles.md) — properties of good tests and principles of disciplined test-suite refactoring.
-- [`docs/taxonomy/`](../docs/taxonomy/) — the smell catalog: one entry per named failure mode, each with signals, a prescribed fix, and a worked example.
-- [`docs/glossary.md`](../docs/glossary.md) — shared terminology.
-- [`docs/workflows.md`](../docs/workflows.md) — the cycles (notably RED-GREEN-MUTATE-KILL-REFACTOR) the manifesto assumes.
+- [Principles](https://texarkanine.github.io/slobac/principles/) — properties of good tests and principles of disciplined test-suite refactoring.
+- [Taxonomy](https://texarkanine.github.io/slobac/taxonomy/) — the smell catalog: one entry per named failure mode, each with signals, a prescribed fix, and a worked example.
+- [Glossary](https://texarkanine.github.io/slobac/glossary/) — shared terminology.
+- [Workflows](https://texarkanine.github.io/slobac/workflows/) — the cycles (notably RED-GREEN-MUTATE-KILL-REFACTOR) the manifesto assumes.
 
 The manifesto ships as a self-contained read. A user with no intention of ever running the audit capability should still be able to come away with a clearer picture of what their suite should look like.
 
@@ -50,12 +50,12 @@ Scope control: the user chooses which subset of the audit to apply. Default is "
 - Not a SaaS dashboard.
 - Not a linter — repos pick their own.
 - Not a mutation engine, codemod runner, or test generator — all mature; if SLOBAC ever calls any, it is as an orchestrated tool, not as an implementation.
-- Not a smell-count scoreboard. The EMSE 2023 "Test Smells 20 Years Later" finding is load-bearing: optimizing for raw smell counts is explicitly anti-goal, and already called out as such in [`docs/taxonomy/README.md`](../docs/taxonomy/README.md).
+- Not a smell-count scoreboard. The EMSE 2023 "Test Smells 20 Years Later" finding is load-bearing: optimizing for raw smell counts is explicitly anti-goal, and already called out as such in the [taxonomy overview](https://texarkanine.github.io/slobac/taxonomy/).
 - Not opinionated about *which* agentic harness the user runs. Skills and Sub-Agents are the target packaging; any harness that supports those is valid.
 
 ## 3. Who it's for
 
-The primary user is the maintainer of a mature test suite that has accumulated six to sixty months of [deliverable-fossil](../docs/taxonomy/deliverable-fossils.md) drift — tests named per gone checklists, files sized per gone tickets, assertions written per gone acceptance criteria. They do not want a new test generator. They want an adult in the room to walk the existing suite and tell them, in plain English, what's wrong and what to do about it.
+The primary user is the maintainer of a mature test suite that has accumulated six to sixty months of [deliverable-fossil](https://texarkanine.github.io/slobac/taxonomy/deliverable-fossils/) drift — tests named per gone checklists, files sized per gone tickets, assertions written per gone acceptance criteria. They do not want a new test generator. They want an adult in the room to walk the existing suite and tell them, in plain English, what's wrong and what to do about it.
 
 Secondary users:
 
@@ -70,7 +70,7 @@ Each phase is a shippable milestone. A user should be able to stop at phase N an
 
 ### Phase 0 — Manifesto
 
-**Ship:** the [`docs/`](../docs/) tree, as-is, as a self-contained reference.
+**Ship:** the [manifesto](https://texarkanine.github.io/slobac/), as-is, as a self-contained reference.
 
 **Value:** a reader can learn the principles, adopt the vocabulary, and audit their own suite by hand. No software required.
 
@@ -78,7 +78,7 @@ Each phase is a shippable milestone. A user should be able to stop at phase N an
 
 **Ship:** an audit Skill/Sub-Agent bundle that detects one taxonomy entry and emits a portable recommendation report for it.
 
-**First smell:** [`deliverable-fossils`](../docs/taxonomy/deliverable-fossils.md). It's the highest-visibility, highest-reader-value smell; the audit output ("rename this, because the body verifies Y not X") is self-explanatory; and the detection signals are syntactic enough to prototype quickly.
+**First smell:** [`deliverable-fossils`](https://texarkanine.github.io/slobac/taxonomy/deliverable-fossils/). It's the highest-visibility, highest-reader-value smell; the audit output ("rename this, because the body verifies Y not X") is self-explanatory; and the detection signals are syntactic enough to prototype quickly.
 
 **Value:** a user installs the bundle, points it at their suite, and gets back a markdown (or similar) report saying which tests are fossils and what each should be renamed to. They can take it anywhere.
 
@@ -92,7 +92,7 @@ Each phase is a shippable milestone. A user should be able to stop at phase N an
 
 **Ship:** a thin apply layer that consumes Phase 1's audit output and applies the recommended renames with guardrails (per-edit commit, rationale in commit message, verification that the transform didn't break anything).
 
-**First smell:** [`deliverable-fossils`](../docs/taxonomy/deliverable-fossils.md) again — narrowed further to rename-only. This is the safest transform in the catalog (call graph unchanged; only the test identifier changes) and validates the apply pattern on the lowest-risk surface.
+**First smell:** [`deliverable-fossils`](https://texarkanine.github.io/slobac/taxonomy/deliverable-fossils/) again — narrowed further to rename-only. This is the safest transform in the catalog (call graph unchanged; only the test identifier changes) and validates the apply pattern on the lowest-risk surface.
 
 **Value:** the user can run audit → apply end-to-end for fossil-named tests.
 
@@ -115,7 +115,7 @@ Things that shape Phase 1+ and that we haven't yet decided:
 1. **Audit output format.** Markdown report? Structured JSON? Both (markdown for readers, JSON for the apply layer)? This decides the audit-to-apply handoff shape.
 2. **Audit report persistence.** Transient chat output, or a committed artifact at e.g. `slobac-audit.md`? The committed-artifact version is more portable and re-reviewable; the transient version is simpler.
 3. **Subset-selection UX.** How does the user say "audit against only these five smells"? Skill argument? CLI flag? Naming convention?
-4. **Apply guardrail shape.** Per-edit commit is the obvious default; what additional verification does apply perform (re-run tests? coverage check? mutation check? just compile?)? This ties back to the [preservation principle](../docs/principles.md#preservation-of-regression-detection-power) but the specific implementation is open.
+4. **Apply guardrail shape.** Per-edit commit is the obvious default; what additional verification does apply perform (re-run tests? coverage check? mutation check? just compile?)? This ties back to the [preservation principle](https://texarkanine.github.io/slobac/principles/#preservation-of-regression-detection-power) but the specific implementation is open.
 5. **Skill granularity.** One Skill per smell, one Skill per fix-shape, or one Skill per audit-stage (scan / triage / recommend)? Leaning per-smell for audit (each smell has distinct detection logic and recommendation template), per-fix-shape for apply (rename, delete, strengthen, split, relocate, annotate are a shared vocabulary).
 6. **Harness target order.** Which agentic harness gets first-class packaging in Phase 1? Claude Code Skills are the shape most clearly in the brief; Cursor, Copilot, Cline, Continue, Zed all support adjacent primitives with varying fidelity.
 7. **License.** Prior draft proposed AGPL-3.0 on the grounds that the copyleft slot is empty in the research-surveyed prior art. Open until confirmed.
@@ -123,7 +123,7 @@ Things that shape Phase 1+ and that we haven't yet decided:
 
 ## 6. Success criteria
 
-Per the [principles](../docs/principles.md), none of these are smell counts.
+Per the [principles](https://texarkanine.github.io/slobac/principles/), none of these are smell counts.
 
 ### Manifesto (Phase 0)
 
@@ -137,14 +137,14 @@ Per the [principles](../docs/principles.md), none of these are smell counts.
 
 ### Apply (Phases 3–4)
 
-- **Preservation.** [Regression-detection power](../docs/principles.md#preservation-of-regression-detection-power) is not reduced — hard gate.
+- **Preservation.** [Regression-detection power](https://texarkanine.github.io/slobac/principles/#preservation-of-regression-detection-power) is not reduced — hard gate.
 - **Commit review acceptance.** Fraction of per-edit commits that reviewers merge without edits to the rationale paragraph.
 - **Round-trip parity.** What the apply layer produces matches what the audit recommended, without drift.
 
 ### Anti-signals (do not optimize)
 
 - Raw test count (up or down).
-- Coverage percentage (can legitimately drop when tautologies are deleted — [principles § preservation](../docs/principles.md#preservation-of-regression-detection-power) already frames the acceptable case).
+- Coverage percentage (can legitimately drop when tautologies are deleted — [principles § preservation](https://texarkanine.github.io/slobac/principles/#preservation-of-regression-detection-power) already frames the acceptable case).
 - Smell count as a KPI.
 
 ## 7. Positioning

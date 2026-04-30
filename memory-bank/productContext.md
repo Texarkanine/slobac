@@ -15,7 +15,7 @@ SLOBAC — **S**uite-**L**ife **O**f **B**obs **A**nd **C**ode — is a test-sui
 
 ## Use Cases
 
-1. **Self-education.** Read the manifesto end-to-end; adopt its vocabulary; audit a personal or team suite by hand. Ships as the `docs/` tree and stands alone as a reference.
+1. **Self-education.** Read the manifesto end-to-end; adopt its vocabulary; audit a personal or team suite by hand. Ships as the manifesto at `skills/slobac-audit/references/docs/` and stands alone as a reference.
 2. **Full-suite audit.** Point the audit at a test suite and get back a portable report: per-test, per-smell recommendations with rationale, suitable for hand-execution, hand-off to another agent, a PR comment, or the bin.
 3. **Scoped audit.** Run the audit against a chosen subset of the taxonomy (e.g., "only `tautology-theatre` and `rotten-green`") when a full sweep is more than the user wants.
 4. **End-to-end remediation.** Hand the audit report to the apply capability, which executes the recommended transforms with guardrails (per-edit commit, rationale in commit message, non-regression verification).
@@ -74,4 +74,4 @@ Explicitly **not** smell counts. Success is measured per layer:
 - Commit-before-refactor.
 - A refactor must not reduce regression-detection power without a named absorber in the rationale.
 
-**Open questions shaping scope** (tracked in `planning/VISION.md` §5, not yet decided): audit output format; report persistence (transient vs committed artifact); subset-selection UX; apply-layer verification depth; Skill granularity (per-smell vs per-fix-shape); first-class harness target; license; name for the audit artifact.
+**Open questions shaping scope** (tracked in `planning/VISION.md` §5). Phase 1 resolved or pre-answered several: audit output format (markdown-only for Phase 1; JSON deferred to Phase 3); subset-selection UX (natural-language invocation); Skill granularity (ur-Skill + per-smell canonical definitions in `references/docs/taxonomy/<slug>.md`, per the OQ1/OQ3 creative decisions); first-class harness target (Cursor + Claude Code jointly via portable `SKILL.md` + `references/` primitive); audit-artifact name (`slobac-audit.md`). Still open: report persistence (transient vs committed artifact); apply-layer verification depth; license.
