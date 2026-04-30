@@ -63,7 +63,7 @@ def test_slob_99_uses_cyan_for_error_messages():
 # --- clean: behavior-encoded name, body verifies the claim directly.       -
 #     Audit must NOT flag this under either smell at any scope.             -
 
-def test_keys_returns_values_in_sorted_order():
+def test_keys_returns_entries_in_sorted_order():
     cfg = Config()
     cfg.set("zebra", 1)
     cfg.set("apple", 2)

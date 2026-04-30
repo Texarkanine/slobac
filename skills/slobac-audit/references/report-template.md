@@ -39,18 +39,20 @@ finding has its own remediation because each smell prescribes a different fix.>
 
 ## Tests considered but not flagged
 
-<Only include this section if the audit examined tests that looked smell-adjacent
-but were verified clean on closer reading. For each such test, record one line:
-test location + one-sentence reason the audit decided not to flag. This section
-is how the audit shows its work; it is how a future reviewer can disagree with
-the auditor without re-running it.>
+<Always include this section. If the audit examined tests that looked
+smell-adjacent but were verified clean on closer reading, record one line per
+test: test location + one-sentence reason the audit decided not to flag. If no
+tests were considered and cleared, write `None.` This section is how the audit
+shows its work; it is how a future reviewer can disagree with the auditor
+without re-running it.>
 
 ## Out-of-scope requests
 
-<If the operator named a smell slug the Phase-1 audit does not support
-(anything other than `deliverable-fossils` or `naming-lies`), name it here and
-state explicitly that it was not audited. Do not silently drop it; do not audit
-it anyway.>
+<Always include this section. If the operator named a smell slug the Phase-1
+audit does not support (anything other than `deliverable-fossils` or
+`naming-lies`), name it here and state explicitly that it was not audited. Do
+not silently drop it; do not audit it anyway. If no out-of-scope slugs were
+requested, write `None.`>
 ~~~
 
 ## Field-level contracts

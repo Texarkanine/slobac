@@ -32,12 +32,13 @@ For each test file under the target suite root:
 
 1. For each test function, class, or method identified in the file: read the test identifier, any grouping context (class or `describe` equivalent), the docstring if present, and the body's assertions.
 2. For each in-scope smell, evaluate whether the test matches the smell's Signals from the canonical entry, refined by the False-positive guards in the same entry. Matching is **semantic**, not keyword: a test mentioning "refactor" is not automatically a fossil; a test whose title nouns don't appear literally in the body is not automatically a naming-lie.
-3. When a candidate match surfaces, formulate the four load-bearing pieces that every finding carries:
+3. When a candidate match surfaces, formulate the five load-bearing pieces that every finding carries:
+   - Location: file path and test identifier (function/method name).
    - Rationale: what the test claims vs. what the body verifies, citing the specific Signal that matched.
    - Prescribed remediation: concrete action per the manifesto's Prescribed Fix section, encoded in terms of the test's actual behavior.
    - False-positive guard: one sentence naming the over-trigger this finding could be confused for, and why this case isn't it.
    - Smell slug.
-4. If any of the four cannot be articulated cleanly, the finding is weak — reconsider before emitting. A weak finding is worse than a missed finding; weak findings teach the operator to distrust the audit.
+4. If any of the five cannot be articulated cleanly, the finding is weak — reconsider before emitting. A weak finding is worse than a missed finding; weak findings teach the operator to distrust the audit.
 
 If a single test exhibits more than one in-scope smell, emit **one finding per smell**, each with its own remediation. Do not collapse — each smell prescribes a different fix, and the operator needs to see both.
 
