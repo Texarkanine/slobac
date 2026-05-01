@@ -4,7 +4,7 @@
 
 ![SLOBAC Logo](./docs/img/slobac.jpg)
 
-An agentic skill toolkit for applying the manifesto to your test suites and generating actionable reports on the smells present.
+An agentic skill toolkit for cleaning up software test suites.
 
 ## Read the Manifesto
 
@@ -40,4 +40,8 @@ uv run properdocs serve
 
 ## License
 
-See [`LICENSE`](LICENSE).
+Various licenses apply to different parts of the project. See [`REUSE.toml`](REUSE.toml) for details.
+
+- Skills: [PPL-S](LICENSES/LicenseRef-PPL-S.txt)
+- Manifesto/docs: [CC-BY-SA-4.0](LICENSES/CC-BY-SA-4.0.txt)
+- Code: [AGPL-3.0-or-later](LICENSES/AGPL-3.0-or-later.txt)

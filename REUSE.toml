@@ -22,7 +22,7 @@ precedence = "override"
 SPDX-FileCopyrightText = "Texarkanine"
 SPDX-License-Identifier = "CC-BY-SA-4.0"
 
-# Cursor-local prompts: rules, skills, slash commands
+# Agent customizations local to this repo: rules, skills, slash commands
 [[annotations]]
 path = [
     ".cursor/rules/**",
@@ -33,7 +33,7 @@ precedence = "override"
 SPDX-FileCopyrightText = "Texarkanine"
 SPDX-License-Identifier = "LicenseRef-PPL-S"
 
-# Paths under **/shared/** are vendored from upstream (.cursor-rules / ai-rizz manifest)
+# Paths under **/shared/** are vendored from upstream
 # with unknown or mixed licensing. No license claims are made for those files here.
 [[annotations]]
 path = [".cursor/**/shared/**"]
