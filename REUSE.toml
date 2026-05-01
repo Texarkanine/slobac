@@ -1,0 +1,35 @@
+version = 1
+SPDX-PackageName = "slobac"
+SPDX-PackageSupplier = "Texarkanine <texarkanine@protonmail.com>"
+
+# Default: application code and docs under AGPL-3.0-or-later
+[[annotations]]
+path = ["**/*"]
+SPDX-FileCopyrightText = "Texarkanine"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
+# Prompt-shaped AgentSkills content (repo skills/, not under .cursor/)
+[[annotations]]
+path = ["skills/**"]
+precedence = "override"
+SPDX-FileCopyrightText = "Texarkanine"
+SPDX-License-Identifier = "LicenseRef-PPL-S"
+
+# Cursor-local prompts: rules, skills, slash commands
+[[annotations]]
+path = [
+    ".cursor/rules/**",
+    ".cursor/skills/**",
+    ".cursor/commands/**",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "Texarkanine"
+SPDX-License-Identifier = "LicenseRef-PPL-S"
+
+# Paths under **/shared/** are vendored from upstream (.cursor-rules / ai-rizz manifest)
+# with unknown or mixed licensing. No license claims are made for those files here.
+[[annotations]]
+path = [".cursor/**/shared/**"]
+precedence = "override"
+SPDX-FileCopyrightText = "NOASSERTION"
+SPDX-License-Identifier = "LicenseRef-NOASSERTION"
