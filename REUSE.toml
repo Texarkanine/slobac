@@ -8,12 +8,19 @@ path = ["**/*"]
 SPDX-FileCopyrightText = "Texarkanine"
 SPDX-License-Identifier = "AGPL-3.0-or-later"
 
-# Prompt-shaped AgentSkills content (repo skills/, not under .cursor/)
+# Prompt-shaped AgentSkills content (repo skills/, the deliverables); SKILL.md etc.
 [[annotations]]
 path = ["skills/**"]
 precedence = "override"
 SPDX-FileCopyrightText = "Texarkanine"
 SPDX-License-Identifier = "LicenseRef-PPL-S"
+
+# Manifesto / docs site source (ProperDocs), not prompt-shaped skill payload
+[[annotations]]
+path = ["skills/slobac-audit/references/docs/**"]
+precedence = "override"
+SPDX-FileCopyrightText = "Texarkanine"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
 
 # Cursor-local prompts: rules, skills, slash commands
 [[annotations]]
