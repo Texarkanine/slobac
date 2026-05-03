@@ -1,8 +1,8 @@
 # Shared State / Order Dependence
 
-| Slug | Severity | Protects |
-|---|---|---|
-| `shared-state` | Medium | [Atomic](../principles.md#atomic), [Repeatable](../principles.md#repeatable) |
+| Slug | Severity | Detection Scope | Protects |
+|---|---|---|---|
+| `shared-state` | Medium | per-file | [Atomic](../principles.md#atomic), [Repeatable](../principles.md#repeatable) |
 
 ## Summary
 

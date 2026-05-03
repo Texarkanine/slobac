@@ -1,8 +1,8 @@
 # Tautology Theatre
 
-| Slug | Severity | Protects |
-|---|---|---|
-| `tautology-theatre` | Critical | [Necessary](../principles.md#necessary), [Independent of implementation](../principles.md#independent-of-implementation) |
+| Slug | Severity | Detection Scope | Protects |
+|---|---|---|---|
+| `tautology-theatre` | Critical | per-test | [Necessary](../principles.md#necessary), [Independent of implementation](../principles.md#independent-of-implementation) |
 
 ## Summary
 

@@ -1,8 +1,8 @@
 # Monolithic Test File
 
-| Slug | Severity | Protects |
-|---|---|---|
-| `monolithic-test-file` | Medium | [Understandable](../principles.md#understandable), [Maintainable](../principles.md#maintainable) |
+| Slug | Severity | Detection Scope | Protects |
+|---|---|---|---|
+| `monolithic-test-file` | Medium | per-file | [Understandable](../principles.md#understandable), [Maintainable](../principles.md#maintainable) |
 
 ## Summary
 

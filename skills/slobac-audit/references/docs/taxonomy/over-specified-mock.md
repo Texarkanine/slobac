@@ -1,8 +1,8 @@
 # Over-Specified Mock
 
-| Slug | Severity | Protects |
-|---|---|---|
-| `over-specified-mock` | High | [Maintainable](../principles.md#maintainable), [Independent of implementation](../principles.md#independent-of-implementation) |
+| Slug | Severity | Detection Scope | Protects |
+|---|---|---|---|
+| `over-specified-mock` | High | per-test | [Maintainable](../principles.md#maintainable), [Independent of implementation](../principles.md#independent-of-implementation) |
 
 ## Summary
 

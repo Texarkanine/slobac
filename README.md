@@ -1,20 +1,14 @@
-# SLOBAC
+> ⚠️ Under active development. Documentation may be aspirational, not factual.
 
-**Suite-Life Of Bobs And Code** — a manifesto for what tests should be, what test suites should be, and the named ways they go wrong.
+# SLOBAC - The Suite Life of Bobs and Code
 
-The manifesto ships first. An audit capability (built as Skills / Sub-Agents for mainstream agentic-coding harnesses) comes next. An apply capability follows. Each layer is useful on its own; each layer depends on the previous one for correctness.
+![SLOBAC Logo](./docs/img/slobac.jpg)
 
-## Read the manifesto
+An agentic skill toolkit for cleaning up software test suites.
 
-- 📖 **Published site:** <https://texarkanine.github.io/slobac/> *(after the operator enables GitHub Pages via the Actions source — see [Docs publishing](#docs-publishing) below)*
-- 🗂 **Raw markdown:** the [`skills/slobac-audit/references/docs/`](skills/slobac-audit/references/docs/) tree renders cleanly on GitHub — the manifesto is self-contained and does not require the built site.
+## Read the Manifesto
 
-Entry points:
-
-- [Principles](skills/slobac-audit/references/docs/principles.md) — what a test should be, and the bounds on disciplined suite refactoring.
-- [Workflows](skills/slobac-audit/references/docs/workflows.md) — the RED-GREEN-MUTATE-KILL-REFACTOR cycle taxonomy fixes assume.
-- [Taxonomy](skills/slobac-audit/references/docs/taxonomy/README.md) — 15 named failure modes with signals, prescribed fixes, and examples.
-- [Glossary](skills/slobac-audit/references/docs/glossary.md) — shared terminology and citations.
+[What tests should be, what test suites should be, and the named ways they go wrong.](https://texarkanine.github.io/slobac/)
 
 ## Audit capability (Phase 1)
 
@@ -46,4 +40,8 @@ uv run properdocs serve
 
 ## License
 
-See [`LICENSE`](LICENSE).
+Various licenses apply to different parts of the project. See [`REUSE.toml`](REUSE.toml) for details.
+
+- Skills: [PPL-S](LICENSES/LicenseRef-PPL-S.txt)
+- Manifesto/docs: [CC-BY-SA-4.0](LICENSES/CC-BY-SA-4.0.txt)
+- Code: [AGPL-3.0-or-later](LICENSES/AGPL-3.0-or-later.txt)

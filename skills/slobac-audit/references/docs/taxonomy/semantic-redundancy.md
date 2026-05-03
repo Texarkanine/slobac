@@ -1,8 +1,8 @@
 # Semantic Redundancy
 
-| Slug | Severity | Protects |
-|---|---|---|
-| `semantic-redundancy` | High | [Necessary](../principles.md#necessary), [Maintainable](../principles.md#maintainable), [Fast](../principles.md#fast) |
+| Slug | Severity | Detection Scope | Protects |
+|---|---|---|---|
+| `semantic-redundancy` | High | cross-suite | [Necessary](../principles.md#necessary), [Maintainable](../principles.md#maintainable), [Fast](../principles.md#fast) |
 
 ## Summary
 

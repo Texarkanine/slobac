@@ -1,8 +1,8 @@
 # Vacuous Assertion
 
-| Slug | Severity | Protects |
-|---|---|---|
-| `vacuous-assertion` | High | [Granular](../principles.md#granular), [Necessary](../principles.md#necessary) |
+| Slug | Severity | Detection Scope | Protects |
+|---|---|---|---|
+| `vacuous-assertion` | High | per-test | [Granular](../principles.md#granular), [Necessary](../principles.md#necessary) |
 
 ## Summary
 

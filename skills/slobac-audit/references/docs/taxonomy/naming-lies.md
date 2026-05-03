@@ -1,8 +1,8 @@
 # Naming Lies
 
-| Slug | Severity | Protects |
-|---|---|---|
-| `naming-lies` | Medium | [Understandable](../principles.md#understandable), [Well-named](../principles.md#well-named), [Clear failure message](../principles.md#clear-failure-message) |
+| Slug | Severity | Detection Scope | Protects |
+|---|---|---|---|
+| `naming-lies` | Medium | per-test | [Understandable](../principles.md#understandable), [Well-named](../principles.md#well-named), [Clear failure message](../principles.md#clear-failure-message) |
 
 ## Summary
 

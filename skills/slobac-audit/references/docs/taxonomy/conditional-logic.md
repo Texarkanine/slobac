@@ -1,8 +1,8 @@
 # Conditional Test Logic
 
-| Slug | Severity | Protects |
-|---|---|---|
-| `conditional-logic` | Medium | [Simple](../principles.md#simple), [Granular](../principles.md#granular) |
+| Slug | Severity | Detection Scope | Protects |
+|---|---|---|---|
+| `conditional-logic` | Medium | per-test | [Simple](../principles.md#simple), [Granular](../principles.md#granular) |
 
 ## Summary
 
