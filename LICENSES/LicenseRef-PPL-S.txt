@@ -1,7 +1,7 @@
 Public Prompt License - Service Variant (PPL-S)
 Version 0.2
 
-Copyright (c) [Year] [Copyright Holder]
+Copyright (c) 2026 Texarkanine <texarkanine@protonmail.com>
 
 This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
 
