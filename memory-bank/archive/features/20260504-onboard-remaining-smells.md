@@ -1,5 +1,69 @@
 ---
 task_id: onboard-remaining-smells
+complexity_level: 2
+date: 2026-05-04
+status: completed
+---
+
+# TASK ARCHIVE: Onboard Remaining 9 Per-Test Smells (and Rework)
+
+## SUMMARY
+
+Promoted nine per-test taxonomy slugs to first-class support in `slobac-audit`, achieving 15-smell parity with the manifesto: nine new fixtures under `tests/fixtures/audit/<slug>/`, SKILL/README/techContext updates, and verification-only checks on existing taxonomy `Detection Scope` headers—no orchestrator surgery. A follow-up **rework** (same task id, Level 2) removed drift-prone duplication from `skills/slobac-audit/SKILL.md`: structural enumeration of supported slugs via `references/docs/taxonomy/` entry files, uniform `## Aliases` sections in all 15 taxonomy entries (human-search discoverability only; orchestrator does not consume them), slug-only invocation contract with refusal of fuzzy phrase requests, harness-neutral subagent instructions at three dispatch sites, and softened lead paragraphs in `slobac-audit/README.md` and `memory-bank/techContext.md`. Post-rework doc follow-up: repo-root `CONTRIBUTING.md` as canonical taxonomy entry-shape SoT; taxonomy README trimmed; `memory-bank/systemPatterns.md` updated to point shape authorship at CONTRIBUTING.
+
+## REQUIREMENTS
+
+**Original**
+
+- For each of nine slugs (`vacuous-assertion`, `tautology-theatre`, `pseudo-tested`, `over-specified-mock`, `implementation-coupled`, `presentation-coupled`, `conditional-logic`, `mystery-guest`, `rotten-green`): add to SKILL supported table (per-test row), add natural-phrase mappings, verify taxonomy entry scope, create fixture with positive + negative control + `expected-findings.md`, update fixtures README if needed.
+- `properdocs build --strict` green; no regression for existing six smells; no orchestrator changes for these per-test-only additions.
+
+**Rework (R1 / R2)**
+
+- R1: Drop inline supported-smells table and operator-phrase map from SKILL; enumerate supported set by taxonomy entry file existence; operators invoke by explicit slug; refuse non-slug/fuzzy requests with supported-slug list; whitelist `all` / `everything` / unscoped for bulk-select; migrate phrase content to per-entry `## Aliases` for published-docs discoverability only; update taxonomy README shape SoT; do not reference Aliases in SKILL; mirror lead paragraphs without hardcoded counts; rewrite README scope-and-non-goals bullet for structural enumeration.
+- R2: Replace harness-specific dispatch blocks at Steps 3, 5, 7 with single harness-neutral sentences per site.
+- Preserve fixtures; no taxonomy detection-scope edits; properdocs green.
+
+## IMPLEMENTATION
+
+**Original build (2026-05-03):** 18 steps (one preflight amendment for `slobac-audit/README.md`): Phase A fixture stubs; Phase B taxonomy verification; Phase C SKILL table + phrase bullets + nine fixtures + README updates; Phase D properdocs and grep/consistency checks. One plan deviation: collapsed SKILL/fixtures-README stub steps into Phase C. Straggler: SKILL frontmatter description still said six smells until step 18.
+
+**Rework build (2026-05-04):** Three commits—Phase A taxonomy `## Aliases` on all 15 entries + README shape SoT; Phase B SKILL slug-only contract + delete table/phrase map + neutral dispatch; Phase C README/techContext lead and scope bullet. Preflight amendment: README line 176 scope bullet; mid-flight contract shift from phrase resolution to slug-only (behaviors B2b/B2c/B4 inverted in plan). Post-formal-phase: `CONTRIBUTING.md`, taxonomy README trim, `systemPatterns.md` pointer.
+
+**Key paths touched (non-exhaustive):** `skills/slobac-audit/SKILL.md`, `skills/slobac-audit/references/docs/taxonomy/*.md`, `skills/slobac-audit/README.md`, `tests/fixtures/audit/**`, `memory-bank/techContext.md`, `memory-bank/productContext.md` (rework reflect), `CONTRIBUTING.md`, `memory-bank/systemPatterns.md`.
+
+## TESTING
+
+- **Original:** `properdocs build --strict`; mechanical consistency; QA PASS (rotten-green missing planted TODO fixed).
+- **Rework:** `properdocs build --strict` after Phase A and final; mechanical rg gates (B1–B12 family); fixtures untouched per `git diff`; QA PASS (trivial DRY fix in SKILL Step 2 refusal prose).
+
+## LESSONS LEARNED
+
+- **Technical:** `expected-findings.md` as spec / `test_*.py` as input scales for fixture authoring; mechanical gates do not catch spec–input drift—QA catches it. Post-rework: parallel curated lists of structural data are drift floors; slug-only contract avoids silent miscategorization from fuzzy resolution; uniform taxonomy metadata (e.g. `Detection Scope`, `## Aliases`) keeps rollouts mechanical.
+- **Process:** Preflight amendments for missed touchpoints (README) paid off; for docs/fixture work, stubbing non-code artifacts is often low value vs writing final content; detailed behavior enumeration (B-tokens) made mid-flight contract shifts cheap.
+
+## PROCESS IMPROVEMENTS
+
+- Treat explicit per-behavior checklists as infrastructure for contract shifts, not only TDD.
+- For fixture tasks, add an explicit “diff spec against planted code” step per fixture or end of batch.
+
+## TECHNICAL IMPROVEMENTS
+
+- Optional: stronger automated check that `expected-findings.md` claims match planted signals (beyond QA).
+- Future taxonomy growth: new entry file automatically implies supported slug—no SKILL table edit.
+
+## NEXT STEPS
+
+None for this task. Initialize a new task with `/niko`.
+
+---
+
+## INLINED: Reflection (`reflection-onboard-remaining-smells.md`)
+
+The following is the full reflection document as retained at archive time (original session + rework section).
+
+---
+task_id: onboard-remaining-smells
 date: 2026-05-03
 complexity_level: 2
 ---
