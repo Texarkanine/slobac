@@ -11,3 +11,4 @@ Author the `## False-positive guards` section for 13 taxonomy smell docs that cu
 - Complexity analysis complete — Level 2.
 - Leaving complexity analysis; entering Plan phase.
 - Plan complete. Implementation steps catalog-ordered; TDD adapted to doc-authoring (editorial checklist + `properdocs build --strict`). Leaving Plan; entering Preflight.
+- Preflight PASS with one advisory (cross-smell shared-vocabulary footnoting, not adopted — would breach project brief scope). Runtime-dependency check confirmed `slobac-batch/SKILL.md` already consumes the guard sections by name. Leaving Preflight; entering Build.

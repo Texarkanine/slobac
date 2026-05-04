@@ -6,12 +6,12 @@ Author `## False-positive guards` sections for 13 stub taxonomy docs.
 
 ## Phase
 
-`PLAN - COMPLETE`
+`PREFLIGHT - COMPLETE (PASS with advisory)`
 
 ## What Was Done
 
-Authored the Level 2 plan in `memory-bank/active/tasks.md`. Catalog-ordered 13-file edit pass, gated by `uv run properdocs build --strict`. Plan adapts the TDD workflow to documentation: the "test plan" is an editorial checklist (per-smell scoping, evidence-backed, don't-elide, form-match, link integrity); the mechanical gate is the properdocs strict build. Implementation steps share a single sub-cycle described once in Step 2 and referenced by the rest, to avoid 13 copies of the same procedure. Corpus-read is hoisted into Step 1 so per-smell authoring is corpus-write only.
+Validated the plan against codebase reality. Confirmed: (1) TDD rule literally scopes to "code changes" — this task is documentation authoring with no executable test surface for prose content; the plan's per-unit editorial checklist + `properdocs build --strict` is the closest valid analog and is per-unit-ordered, so no rearchitect is needed. (2) Convention compliance: form is locked to existing exemplars + CONTRIBUTING.md §entry-shape, satisfying the taxonomy-uniformity invariant from `systemPatterns.md`. (3) Runtime dependency surfaced: `skills/slobac-batch/SKILL.md` line 44 already instructs the assessor to "refine signals by the False-positive guards in the same entry" — fulfilling the task gives the runtime audit real content where it currently has placeholders. (4) Cross-references to the section are by **name only** (textual prose), not anchor links, so no link-rename ripple. (5) Completeness: 13 stub files enumerated, all addressed; tasks.md catalog list cross-checked against the live grep for `No audit-specific guards`. (6) One advisory item recorded but not adopted (would inflate scope outside the project brief).
 
 ## Next Step
 
-Preflight. Invoke the `niko-preflight` skill per the Level 2 workflow Phase Mappings.
+Build. Load `.cursor/skills/shared/niko/references/level2/level2-build.md` per the Level 2 workflow Phase Mappings.
