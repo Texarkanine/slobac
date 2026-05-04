@@ -10,3 +10,4 @@ Author the `## False-positive guards` section for 13 taxonomy smell docs that cu
 
 - Complexity analysis complete — Level 2.
 - Leaving complexity analysis; entering Plan phase.
+- Plan complete. Implementation steps catalog-ordered; TDD adapted to doc-authoring (editorial checklist + `properdocs build --strict`). Leaving Plan; entering Preflight.

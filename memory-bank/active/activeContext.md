@@ -6,12 +6,12 @@ Author `## False-positive guards` sections for 13 stub taxonomy docs.
 
 ## Phase
 
-`COMPLEXITY-ANALYSIS - COMPLETE`
+`PLAN - COMPLETE`
 
 ## What Was Done
 
-Classified as **Level 2: Simple Enhancement**. Documentation authoring across 13 sibling files in a single subsystem (`skills/slobac-audit/references/docs/taxonomy/`), following an existing pattern from `naming-lies.md` and `deliverable-fossils.md`, sourced from `planning/research/`. No architectural decisions; pattern is self-contained and repeatable.
+Authored the Level 2 plan in `memory-bank/active/tasks.md`. Catalog-ordered 13-file edit pass, gated by `uv run properdocs build --strict`. Plan adapts the TDD workflow to documentation: the "test plan" is an editorial checklist (per-smell scoping, evidence-backed, don't-elide, form-match, link integrity); the mechanical gate is the properdocs strict build. Implementation steps share a single sub-cycle described once in Step 2 and referenced by the rest, to avoid 13 copies of the same procedure. Corpus-read is hoisted into Step 1 so per-smell authoring is corpus-write only.
 
 ## Next Step
 
-Load `.cursor/skills/shared/niko/references/level2/level2-workflow.md` and execute the next phase per its Phase Mappings.
+Preflight. Invoke the `niko-preflight` skill per the Level 2 workflow Phase Mappings.
