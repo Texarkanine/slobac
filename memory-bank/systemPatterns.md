@@ -52,6 +52,12 @@ This invariant applies to every skill SLOBAC ships, not just `slobac-audit`. Whe
 
 The skill bundle at `skills/slobac-audit/references/docs/` contains the full manifesto. `properdocs.yml` `docs_dir` points directly at this directory; the rendered site is built from it with no indirection. Contributors edit files in `skills/slobac-audit/references/docs/` — that is both the skill's runtime content and the site source. The properdocs "Edit this page" link points at the actual file (not a wrapper), landing the contributor directly at the canonical content.
 
+## Per-skill REUSE bundles: duplicate-for-distribution pattern
+
+Each skill under `skills/*/` ships `LICENSES/LicenseRef-PPL-S.txt` so a marketplace or tarball install carries the license text without the monorepo root. The `license:` field in each `SKILL.md` front matter points humans at it directly.
+
+`slobac-audit` is the only multi-license skill (PPL-S for skill payload + CC-BY-SA-4.0 for `references/docs/**`), so it alone carries a `REUSE.toml` and a `LICENSES/CC-BY-SA-4.0.txt`. Validate its standalone compliance with **`reuse --root . lint`** from `skills/slobac-audit/`. The `--root .` flag is mandatory — omitting it causes `reuse` to ascend to the `.git` boundary and lint the entire monorepo instead.
+
 ## Vocabulary discipline: "describe-before-edit"
 
 The manifesto's [behavior-articulation principle](../skills/slobac-audit/references/docs/principles.md#behavior-articulation-before-change) applies to SLOBAC's own authorship: before proposing any change to a taxonomy entry or principle, state in one sentence what the entry is supposed to claim about testing. Drift in this document tends to happen when contributors preserve shape without restating intent.

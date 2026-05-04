@@ -1,0 +1,16 @@
+version = 1
+SPDX-PackageName = "slobac-audit"
+SPDX-PackageSupplier = "Texarkanine <texarkanine@protonmail.com>"
+
+# Prompt-shaped Agent Skills payload (default)
+[[annotations]]
+path = ["**/*"]
+SPDX-FileCopyrightText = "Texarkanine"
+SPDX-License-Identifier = "LicenseRef-PPL-S"
+
+# Manifesto / docs site source (ProperDocs), not prompt-shaped skill payload
+[[annotations]]
+path = ["references/docs/**"]
+precedence = "override"
+SPDX-FileCopyrightText = "Texarkanine"
+SPDX-License-Identifier = "CC-BY-SA-4.0"

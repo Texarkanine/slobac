@@ -4,6 +4,10 @@ An [AgentSkills.io](https://agentskills.io/)-shaped skill that audits a test sui
 
 This file is **contributor documentation** — architecture, layout, and smoke-test verification.
 
+## Licensing (standalone bundle)
+
+This skill ships `LICENSES/` and `REUSE.toml` so a marketplace or tarball install is REUSE-valid without the monorepo root. From this directory, run `reuse --root . lint` to verify (nested Git checkouts otherwise lint from the repository root unless `--root` is set).
+
 ## Architecture
 
 The audit orchestrates three sibling skills as subagents:

@@ -49,7 +49,9 @@ The cross-link integrity gate is `properdocs build --strict` combined with `vali
 
 ## Testing Process
 
-None yet. There is no code to test. When implementation begins, the test target will be the audit/apply capabilities' own behavior against fixture test suites — not the tests of third-party repos.
+None yet for functional behavior. When implementation begins, the test target will be the audit/apply capabilities' own behavior against fixture test suites — not the tests of third-party repos.
+
+**REUSE compliance validation (slobac-audit only):** `slobac-audit` is the only skill with a `REUSE.toml`; validate its standalone compliance with `reuse --root . lint` from `skills/slobac-audit/`. The `--root .` flag is mandatory — plain `reuse lint` ascends to the `.git` boundary and lints the full monorepo. The REUSE CLI is not in `pyproject.toml`; install via `pipx install reuse` if needed.
 
 ## Authoring Tooling
 

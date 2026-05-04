@@ -1,6 +1,7 @@
 ---
 name: slobac-audit
 description: Audit a test suite for common test smells based on the SLOBAC manifesto.
+license: "Multiple — see LICENSES/ and REUSE.toml"
 ---
 
 # Test Suite Audit Workflow
