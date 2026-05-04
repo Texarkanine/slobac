@@ -1,3 +1,70 @@
+---
+task_id: audit-orchestration
+complexity_level: 3
+date: 2026-05-03
+status: completed
+---
+
+# TASK ARCHIVE: Audit Orchestration at Scale
+
+## SUMMARY
+
+Delivered the Hybrid Scout + Batch + Cross-Suite audit architecture for SLOBAC: three new AgentSkills.io sibling skills (`slobac-scout`, `slobac-batch`, `slobac-cross-suite`), evolution of `slobac-audit` into a nine-step orchestrator, uniform `Detection Scope` metadata on all fifteen taxonomy entries, new shared reference specs (suite manifest and behavior summaries), and four new audit fixtures proving six smells across three detection scopes (expanded from two smells). Preflight and QA both passed; implementation matched the fourteen-step plan without deviation.
+
+## REQUIREMENTS
+
+- Three sibling skills: scout (enumerate/measure → Suite Manifest), batch (per-test + per-file smells → findings + behavior summaries), cross-suite (cluster summaries → targeted reads → cross-suite findings).
+- Orchestrator pipeline replacing single-agent linear audit; harness-neutral subagent dispatch; batch assessor as universal engine for per-test/per-file (single-batch degenerate case for small suites—preflight amendment eliminating dual code paths).
+- Add detection-scope metadata (`per-test`, `per-file`, `cross-suite`) to every taxonomy entry header and catalog documentation.
+- Prove minimum smell set of six: per-test `deliverable-fossils`, `naming-lies`; per-file `shared-state`, `monolithic-test-file`; cross-suite `semantic-redundancy`, `wrong-level`.
+- Shared references under `skills/slobac-audit/references/`: `behavior-summary-format.md`, `suite-manifest-format.md`; cross-skill reads only into `slobac-audit/references/`.
+- Partitioning heuristic (greedy bin-packing by character count, directory cohesion), auto-tuned summary richness, context-window handshake documented in skills.
+- Report shape unchanged for operators; `properdocs build --strict` remains green.
+
+## IMPLEMENTATION
+
+**Phase A — Foundation:** Added `Detection Scope` column to all fifteen `taxonomy/<slug>.md` files and taxonomy README; introduced `behavior-summary-format.md` and `suite-manifest-format.md`.
+
+**Phase B — Fixtures (TDD-oriented expected findings):** New scenarios under `tests/fixtures/audit/`: `shared-state/`, `monolithic-test-file/`, `semantic-redundancy/`, `wrong-level/` with `expected-findings.md` and planted Python tests (multi-file / subdirectory layout where needed); updated fixtures README.
+
+**Phase C — Sub-skills:** Created `skills/slobac-scout/` (SKILL, README, `references/exploration-commands.md`), `skills/slobac-batch/`, `skills/slobac-cross-suite/` with workflows referencing taxonomy and format specs via `../slobac-audit/references/`.
+
+**Phase D — Orchestrator:** Rewrote `skills/slobac-audit/SKILL.md` as scout → scope parse → batch launch(es) → merge → optional cross-suite → report; updated `references/report-template.md` out-of-scope wording and `skills/slobac-audit/README.md` for orchestration and smoke-test guidance.
+
+**Phase E — Verification:** `properdocs build --strict`; manual consistency checks per plan.
+
+**Persistent memory bank updates (post-reflect):** `memory-bank/systemPatterns.md` and `memory-bank/techContext.md` reconciled for sibling skills and expanded smell support (not duplicated here).
+
+## TESTING
+
+- **Preflight (2026-04-30):** PASS; plan amended to universal batch assessor (no dual single-agent vs batch path); advisory recorded on absence of multi-scope fixture for new smells (non-blocking).
+- **Build verification:** `properdocs build --strict` passed after taxonomy edits; fixture `expected-findings.md` files aligned with report template conventions.
+- **QA (2026-04-30):** PASS; zero semantic findings.
+- **Manual:** Skill README smoke-test guidance; orchestration steps reviewed for internal consistency.
+
+## LESSONS LEARNED
+
+- **Technical:** One-file-per-smell taxonomy plus bundling the full manifesto keeps metadata changes mechanical (uniform `Detection Scope` rollout). The behavior-summary IR—aligned with describe-before-edit—makes cross-suite assessment feasible without passing full sources. The cross-skill reference convention (`../slobac-audit/references/`) is simple and load-bearing for a single shared content home.
+- **Process:** L3 workflow phases (plan → creative → preflight → build → QA → reflect) were proportionate; creative implementation notes mapped directly into SKILL bodies; no surprises between design and build.
+
+## PROCESS IMPROVEMENTS
+
+None surfaced; reflection noted no phase felt like overhead.
+
+## TECHNICAL IMPROVEMENTS
+
+Future creative follow-ups from the original design doc (pre-build resolutions noted in tasks: LLM clustering, retry/garbage handling, no incremental audit in scope for this task): optional embedding-based clustering for `semantic-redundancy`, stronger failure semantics for batch timeouts, incremental/diff-based audits, optional on-disk taxonomy partitioning by scope. Preflight advisory: optional multi-scope fixture combining new smells.
+
+## NEXT STEPS
+
+None required for this task. Subsequent work picks up from clean memory bank and new `/niko` initialization.
+
+---
+
+## INLINED: Creative phase (`creative-audit-orchestration.md`)
+
+The following is the full creative phase document as retained at archive time.
+
 # Architecture Decision: Audit Orchestration at Scale
 
 ## Requirements & Constraints
@@ -372,3 +439,92 @@ For suites small enough to fit in one agent's context budget (the scout determin
 - **RepoReviewer** (2026): Context synthesis → file-level analysis → prioritization → summary. Validates the staged decomposition.
 - **Zylos "Long Context Windows" (2026)**: Anti-pattern: "Multi-agent chains passing full context." Fix: "pass only the compressed output — a structured summary, a tool result, a diff."
 - **"Coding Agents in the Monorepo" (2026)**: Layered context (architectural steering → domain docs → on-demand file retrieval). Validates scout-as-navigation-layer.
+
+
+---
+
+## INLINED: Reflection (`reflection-audit-orchestration.md`)
+
+The following is the full reflection document as retained at archive time.
+
+---
+task_id: audit-orchestration
+date: 2026-04-30
+complexity_level: 3
+---
+
+# Reflection: Audit Orchestration at Scale
+
+## Summary
+
+Built the Hybrid Scout + Batch + Cross-Suite audit orchestration architecture: 3 new sibling skills, evolved `slobac-audit` into a multi-agent orchestrator, added `detection_scope` metadata to all 15 taxonomy entries, created 4 new fixture scenarios, and expanded supported smell set from 2 to 6. Build and QA both passed clean with no deviations from plan.
+
+## Requirements vs Outcome
+
+Every requirement from the project brief was implemented:
+- Three new sibling skills created with full SKILL.md + README.md (+ exploration-commands reference for scout)
+- `slobac-audit` rewritten as 9-step orchestrator pipeline
+- `detection_scope` metadata added to all 15 taxonomy entries uniformly
+- 6 smells proven across 3 detection scopes (2 per-test, 2 per-file, 2 cross-suite)
+- Shared references created (behavior-summary-format.md, suite-manifest-format.md)
+- Cross-skill reference convention enforced (unidirectional into `slobac-audit/references/`)
+
+No requirements were dropped, descoped, or reinterpreted. No requirements were added beyond what the plan specified.
+
+## Plan Accuracy
+
+The 14-step implementation plan across 5 phases (A–E) was accurate. Steps executed in order without reordering, splitting, or adding. The phased approach (foundation → fixtures → sub-skills → orchestrator → verification) was the right sequence — each phase built on the prior one's artifacts.
+
+The identified challenges materialized as expected:
+- Monolithic fixture size: managed with stub bodies (`pass` / `assert True`) — structural signals are what matter
+- Cross-suite multi-file fixtures: the `expected-findings.md` + fixture-files convention extended cleanly to multi-file scenarios with subdirectories
+- Subagent dispatch portability: harness-neutral language in SKILL.md with Cursor/Claude Code examples worked
+
+No surprises emerged.
+
+## Creative Phase Review
+
+**Option D (Hybrid Scout + Batch + Cross-Suite)** held up completely during implementation. The architecture translated cleanly to four SKILL.md files with clear responsibilities. The behavior summary intermediate representation — derived from the manifesto's own describe-before-edit principle — was the key design insight that made the cross-suite assessor viable without re-reading full source.
+
+The preflight innovation (eliminating dual code paths by making batch assessor the universal audit engine, with 1-batch as the small-suite degenerate case) was validated — Step 5 of the orchestrator handles both cases uniformly.
+
+No friction points between design and implementation.
+
+## Build & QA Observations
+
+**What went smoothly:**
+- Taxonomy metadata changes were mechanical and parallelizable (15 uniform edits)
+- Fixture creation was straightforward once the conventions were understood
+- Sub-skill SKILL.md authoring benefited from having the existing `slobac-audit/SKILL.md` as a template
+- properdocs --strict served as an effective mechanical gate throughout
+
+**What was uneventful (good):**
+- Cross-skill reference paths all resolved on first try
+- Detection scope consistency aligned across all artifacts without corrections needed
+- QA found 0 issues — the plan-to-implementation path was clean
+
+## Cross-Phase Analysis
+
+- **Creative → Build**: The creative doc's detailed implementation notes (auto-tuned summary richness tiers, partitioning heuristic, context-window handshake) translated directly to SKILL.md sections. The creative phase did its job of resolving design decisions before build started.
+- **Preflight → Build**: The preflight's single amendment (eliminate dual code paths) was incorporated cleanly. The advisory (no multi-scope fixture for new smells) was acknowledged but not blocking — it's a future enhancement.
+- **Plan → Build**: The plan's 14-step sequence was executable without deviation. The component analysis correctly identified all affected files. The cross-module dependency mapping was accurate.
+- **Build → QA**: QA found nothing to fix, suggesting the plan and creative phases caught issues early enough that build had no gap.
+
+## Insights
+
+### Technical
+
+- The "full manifesto in bundle" architecture continues to pay dividends. Adding `Detection Scope` to all 15 taxonomy entries was a uniform metadata change — no wrappers, no generators, no drift-check. The structural simplicity of one-file-per-smell made the change mechanical.
+- The cross-skill reference convention (`../slobac-audit/references/...`) is simple but load-bearing. It's the architectural enforcement that shared content has one home. Future skills that need shared content should follow the same pattern.
+
+### Process
+
+- Nothing notable. The L3 workflow phases (plan → creative → preflight → build → QA → reflect) were proportionate to this task's complexity. No phase felt like overhead.
+
+
+---
+
+## INLINED: Task plan summary (`tasks.md`)
+
+Fourteen-step plan across five phases (A–E): taxonomy + shared refs → fixtures (`shared-state`, `monolithic-test-file`, `semantic-redundancy`, `wrong-level`) → three sub-skills → orchestrator + report/README updates → verification (`properdocs --strict`, manual review). Component analysis covered `slobac-audit` SKILL and references, new skill directories, taxonomy README, report template, and `tests/fixtures/audit/README.md`. Test plan enumerated fourteen behaviors (per-test, per-file, cross-suite, orchestration, integrity). Open questions were pre-resolved (clustering, failure handling, incremental audit scope, taxonomy as header metadata only).
+
