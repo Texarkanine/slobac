@@ -1,6 +1,6 @@
 # SLOBAC audit skill
 
-An [AgentSkills.io](https://agentskills.io/)-shaped skill that audits a test suite against the [SLOBAC manifesto](https://github.com/Texarkanine/slobac) and emits a portable markdown report. Supports all 15 manifesto smells across 3 detection scopes, with multi-agent orchestration for suites of any size.
+An [AgentSkills.io](https://agentskills.io/)-shaped skill that audits a test suite against the [SLOBAC manifesto](https://github.com/Texarkanine/slobac) and emits a portable markdown report. Supports every smell defined in the manifesto, across three detection scopes (per-test, per-file, cross-suite), with multi-agent orchestration for suites of any size.
 
 This is the **canonical source** for the skill. The layout is harness-agnostic; the install step per harness is described below.
 
@@ -173,7 +173,7 @@ Phrasing of the emitted report need not be byte-identical to `expected-findings.
 
 ## Scope and non-goals
 
-- **All 15 manifesto smells supported.** This is full taxonomy parity. If a future taxonomy entry is added without being onboarded into the supported-slug table, requests for it are refused with a clear message — the audit never silently skips a requested smell.
+- **Full taxonomy parity by structural enumeration.** The supported-slug set is the set of taxonomy entry filenames under `references/docs/taxonomy/` (excluding `README.md`); a future taxonomy entry is automatically supported the moment its file lands. If the operator names a slug whose entry does not exist, or invokes with free-text / fuzzy phrasing instead of explicit slugs, the audit refuses with the supported-slug list and prompts the operator to re-invoke with explicit slugs — the audit never silently skips, and never silently resolves a phrase to a slug.
 - **The audit is read-only.** It does not modify test code. Applying a recommendation from the report is a separate step (today manual; automated apply is a future capability).
 - **Python is the only validated ecosystem.** The detection prose is language-neutral; the manifesto's Polyglot notes describe per-ecosystem detection surface. Validation on JS/TS, Ruby, JVM, etc. is future work.
 
