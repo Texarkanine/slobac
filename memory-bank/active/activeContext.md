@@ -2,7 +2,7 @@
 
 **Current Task:** Onboard remaining 9 smells into slobac-audit
 
-**Phase:** QA - COMPLETE
+**Phase:** REFLECT COMPLETE
 
 **What Was Done:**
 - 18-step plan executed end-to-end. 9 new fixtures created (`tautology-theatre`, `pseudo-tested`, `vacuous-assertion`, `over-specified-mock`, `implementation-coupled`, `presentation-coupled`, `conditional-logic`, `mystery-guest`, `rotten-green`) — each with positive cases exercising the canonical signals from its taxonomy entry, a negative control, and an `expected-findings.md` mirroring the report-template shape used by existing fixtures.
@@ -24,7 +24,11 @@
 - **Step 18 caught a straggler:** the SKILL.md frontmatter `description:` still said "Supports 6 smells" after step 13's table edit. Fixed inline; no rework loop needed.
 - **No taxonomy edits.** All 9 taxonomy entries already carried `Detection Scope: per-test` headers from the prior task's uniform metadata rollout — verification only.
 
-**Next Step:** Reflect phase — load `level2-reflect.md` and produce the reflection document.
+**Next Step:** Operator decision — invoke `/niko-archive` to archive this task and finalize.
 
 **QA findings (resolved):**
 - 1 substantive deficiency caught and fixed inline: `rotten-green/test_metric_collector.py` positive 1 was missing the planted `# TODO: test this` comment claimed by its `expected-findings.md`. Restored via StrReplace.
+
+**Reflection document:** `memory-bank/active/reflection/reflection-onboard-remaining-smells.md`
+
+**Persistent file reconciliation:** `techContext.md` already updated during build step 16 (smell count 6 → 15 with extended per-test list). `systemPatterns.md` and `productContext.md` not invalidated by this task — no edits.
