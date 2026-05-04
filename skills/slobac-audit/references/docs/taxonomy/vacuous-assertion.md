@@ -45,7 +45,10 @@ Fix bias: **strengthen, don't multiply.** One strong check beats three weak ones
 
 ## False-positive guards
 
-No audit-specific guards yet; Phase-2 per-smell work will author these.
+Two over-triggers must be suppressed:
+
+- **Side-effect absence is the documented contract.** When the SUT's contract is "this function swallows errors by design," "this listener performs no I/O on the no-op input," or "this idempotent retry has no effect on the second call," `expect { ... }.not_to raise_error` (or `assert no_calls_to(boundary)`, etc.) is the *correct* assertion of that absence — there is no positive return or state to compare against. The smell fires only when the docstring or test name claims a *positive* behavior (a return value, a state mutation, an emitted event) that the assertion does not verify. Pair the negative-existence check with a positive assertion only when the contract has both halves; do not flag a test whose contract is the negative half alone.
+- **Two-stage assertions where the first stage is required language narrowing.** `expect(x).toBeDefined()` followed by `x!.foo === 'bar'` is collapsible into `toMatchObject({ foo: 'bar' })` per the fix recipe. But `assert response is not None` followed by a deep destructure of `response.json()` is sometimes the only shape the *language* allows — TypeScript non-null narrowing, Python `Optional` checks, mypy's `--strict` mode, Kotlin platform-types — where the first-stage check exists to satisfy the type checker and the second-stage destructure is the real oracle. The first-stage check is dead weight; the test as a whole is not vacuous. Flag only when the second-stage assertion is itself weak.
 
 ## Prescribed Fix
 

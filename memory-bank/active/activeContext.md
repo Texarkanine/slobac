@@ -6,12 +6,39 @@ Author `## False-positive guards` sections for 13 stub taxonomy docs.
 
 ## Phase
 
-`PREFLIGHT - COMPLETE (PASS with advisory)`
+`BUILD - COMPLETE`
 
 ## What Was Done
 
-Validated the plan against codebase reality. Confirmed: (1) TDD rule literally scopes to "code changes" — this task is documentation authoring with no executable test surface for prose content; the plan's per-unit editorial checklist + `properdocs build --strict` is the closest valid analog and is per-unit-ordered, so no rearchitect is needed. (2) Convention compliance: form is locked to existing exemplars + CONTRIBUTING.md §entry-shape, satisfying the taxonomy-uniformity invariant from `systemPatterns.md`. (3) Runtime dependency surfaced: `skills/slobac-batch/SKILL.md` line 44 already instructs the assessor to "refine signals by the False-positive guards in the same entry" — fulfilling the task gives the runtime audit real content where it currently has placeholders. (4) Cross-references to the section are by **name only** (textual prose), not anchor links, so no link-rename ripple. (5) Completeness: 13 stub files enumerated, all addressed; tasks.md catalog list cross-checked against the live grep for `No audit-specific guards`. (6) One advisory item recorded but not adopted (would inflate scope outside the project brief).
+Authored 2–3 false-positive guards for each of the 13 stub-bearing taxonomy files, drawing on the per-smell evidence index built from `planning/research/` (synthesis report + 5 model-specific FINDINGS files). Each guard is a `- **Name.** Decision rule.` bullet, per-smell scoped, evidenced from the corpus, and matches the form of `naming-lies.md` / `deliverable-fossils.md`. `uv run --group docs properdocs build --strict` passed cleanly with zero warnings, confirming no link or anchor breakage. Editorial cross-pass confirmed uniformity of form, no generic LLM disclaimers, and no elided guard the corpus clearly supported.
+
+### Files modified
+
+- `/home/mobaxterm/git/slobac/skills/slobac-audit/references/docs/taxonomy/semantic-redundancy.md`
+- `/home/mobaxterm/git/slobac/skills/slobac-audit/references/docs/taxonomy/wrong-level.md`
+- `/home/mobaxterm/git/slobac/skills/slobac-audit/references/docs/taxonomy/vacuous-assertion.md`
+- `/home/mobaxterm/git/slobac/skills/slobac-audit/references/docs/taxonomy/pseudo-tested.md`
+- `/home/mobaxterm/git/slobac/skills/slobac-audit/references/docs/taxonomy/tautology-theatre.md`
+- `/home/mobaxterm/git/slobac/skills/slobac-audit/references/docs/taxonomy/over-specified-mock.md`
+- `/home/mobaxterm/git/slobac/skills/slobac-audit/references/docs/taxonomy/implementation-coupled.md`
+- `/home/mobaxterm/git/slobac/skills/slobac-audit/references/docs/taxonomy/presentation-coupled.md`
+- `/home/mobaxterm/git/slobac/skills/slobac-audit/references/docs/taxonomy/conditional-logic.md`
+- `/home/mobaxterm/git/slobac/skills/slobac-audit/references/docs/taxonomy/shared-state.md`
+- `/home/mobaxterm/git/slobac/skills/slobac-audit/references/docs/taxonomy/mystery-guest.md`
+- `/home/mobaxterm/git/slobac/skills/slobac-audit/references/docs/taxonomy/rotten-green.md`
+- `/home/mobaxterm/git/slobac/skills/slobac-audit/references/docs/taxonomy/monolithic-test-file.md`
+
+### Key implementation decisions
+
+- **Two-or-three guards per smell** rather than a fixed count. Some smells (`wrong-level`, `vacuous-assertion`, `pseudo-tested`, `presentation-coupled`, `rotten-green`, `monolithic-test-file`) have a smaller corpus-supported FP surface; padding to three would have violated the "evidenced, don't invent" constraint. Per-plan: ship the strongest set the corpus supports.
+- **Citation discipline**: each guard's claim was traceable to a passage in `report.md` or one of the FINDINGS files. The audit rule "no fabricated guards" was honored even when it meant a smell shipped with two guards instead of three.
+- **Cross-smell rerouting** (`shared-state` → `rotten-green` for orphan setup) was authored explicitly because the corpus surfaces it as an over-trigger of the shared-state signals.
+- **No anchor invention**: the only new internal links cited anchors that already exist (verified by the strict build).
+
+### Deviations from plan
+
+None. Built exactly to plan; the catalog-ordered sub-cycle ran without surprises.
 
 ## Next Step
 
-Build. Load `.cursor/skills/shared/niko/references/level2/level2-build.md` per the Level 2 workflow Phase Mappings.
+QA. Invoke the `niko-qa` skill per the Level 2 workflow Phase Mappings.

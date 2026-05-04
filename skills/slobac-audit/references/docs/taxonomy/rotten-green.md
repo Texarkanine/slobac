@@ -36,7 +36,10 @@ Covered in spirit by [`vacuous-assertion`](./vacuous-assertion.md), [`pseudo-tes
 
 ## False-positive guards
 
-No audit-specific guards yet; Phase-2 per-smell work will author these.
+Two over-triggers must be suppressed:
+
+- **Linter-covered cases are out of scope.** `eslint-plugin-jest`'s `expect-expect`, ruff's `PT*` rules, `xunit.analyzers`, `rubocop-rspec`'s `Rspec/NoExpectationExample`, and similar deterministic linters already catch a substantial fraction of empty-body / no-assertion tests. SLOBAC's value here is the *cases the linter cannot see* — assertion-shaped statements that exercise no SUT, fixtures declared but unread elsewhere, debug-`print`/`console.log` in the body where an assertion was intended. Don't double-report what the repo's lint already gates; the audit's contribution is the semantic-judgment subset, not the syntactic subset.
+- **Explicit pending markers are the fix, not the smell.** `it.todo(...)`, `xit`, `test.skip(...)`, `@pytest.mark.skip(reason=...)`, `t.Skip(...)`, RSpec `pending(:reason)` — these surface as known gaps in CI reports and explicitly opt out of the "passing" verdict the smell warns about. They are the *prescribed transform* for "stub that was meant to test something." Don't flag tests already using a pending marker with a reason; flag silent-green stubs that report passing while verifying nothing.
 
 ## Prescribed Fix
 

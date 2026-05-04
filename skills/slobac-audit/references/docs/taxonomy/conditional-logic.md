@@ -35,7 +35,11 @@ Platform-skip branches (`if process.platform === 'win32'`) are a distinct subcas
 
 ## False-positive guards
 
-No audit-specific guards yet; Phase-2 per-smell work will author these.
+Branch-in-test-body signals over-trigger in three shapes the audit must not flag:
+
+- **Runner-native skips are the fix, not the smell.** `pytest.mark.skipif(...)`, `it.skipIf(...)`, `describe.skip`, `t.Skip(...)`, `//go:build !windows`, RSpec `skip(:reason)` — all express conditional execution at the runner layer, surface as "skipped" in CI reports, and carry an explicit reason. The smell is `if (process.platform === 'win32') return;` *inside* the body silently passing as if it ran. Don't flag tests that already use a runner-native skip mechanism with a reason string.
+- **`try { sut(); assert.fail(...) } catch { ... }` with the explicit `fail` after the SUT call.** This shape correctly asserts both halves of the throw contract: "an exception was raised" *and* "the exception had property X." It is the prescribed fix pattern in languages whose throw matcher is awkward or absent. The smell is `try { sut() } catch { expect(...) }` *without* `assert.fail`, because the catch block only runs if a throw happened. Don't flag the cured form.
+- **Parameterized-table tests with symmetric per-row branches.** A parameterized test that branches on a row's expected outcome (`if row.expected_exception: assert raises; else: assert eq(row.expected_value)`) is structurally branching but verifies a deliberate matrix of cases; both arms assert. Flag the asymmetric form (one arm asserts, the other returns silently); do not flag the symmetric form, which is a parameterization technique with full assertion coverage on every row.
 
 ## Prescribed Fix
 

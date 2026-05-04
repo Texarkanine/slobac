@@ -43,7 +43,11 @@ This is distinct from [`tautology-theatre`](./tautology-theatre.md): there the S
 
 ## False-positive guards
 
-No audit-specific guards yet; Phase-2 per-smell work will author these.
+Strict-interaction signals over-trigger when the interaction *is* the contract:
+
+- **Call count is the contract.** When the SUT's contract specifies an exact call count — "retries idempotently exactly twice on 503", "transactional commit exactly once per save", "rate-limited dispatch every N seconds" — `toHaveBeenCalledTimes(N)` is verifying the contract, not over-specifying it. Cue: the count appears in the SUT's documentation, ADR, or a referenced standard, not just in the test body. Relax the assertion only when the count is incidental to the observable outcome.
+- **Order is the contract.** Some collaborations require ordering for correctness — handshake protocols, two-phase commit, transactional sequences (`begin → write → commit`), event sourcing where order encodes causality. Assertions on call order against a sequenced fake are correct verification of the protocol. Flag ordered `mockResolvedValueOnce` cascades only when reordering would not change observable behavior.
+- **Argument-shape assertions on documented public arguments.** `toHaveBeenCalledWith(expect.objectContaining({ event: 'click' }))` matching an externally-documented event payload, webhook schema, or vendor-API contract is contract verification. The smell fires when the matched literal is an *internal* constant that the test should not know — production paths, hard-coded timeouts, feature-flag values baked into the test. Distinguish by asking whether the argument's shape has a published owner; if yes, the assertion is an interface check and stays.
 
 ## Prescribed Fix
 

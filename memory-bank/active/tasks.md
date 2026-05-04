@@ -96,6 +96,16 @@ No new technology — validation not required. `uv` and `properdocs` are already
 - [x] Test planning complete (TDD, doc-adapted)
 - [x] Implementation plan complete
 - [x] Technology validation complete
-- [ ] Preflight
-- [ ] Build
+- [x] Preflight
+- [x] Build
 - [ ] QA
+
+## Build notes
+
+- Step 1 (corpus index) executed in-conversation; per-smell evidence inventory drove every authored guard.
+- Steps 2–14: each of the 13 stub sections replaced with 2–3 evidenced, per-smell, concise guards matching the form of `naming-lies.md` and `deliverable-fossils.md`.
+- Step 15: `uv run --group docs properdocs build --strict` → exit 0, no warnings.
+- Step 16: editorial cross-pass — all 13 sections satisfy form-match, per-smell scoping, evidence-traceability, and don't-elide. No revisions required.
+- Step 17: docs-update step intentionally empty (CONTRIBUTING.md and `taxonomy/README.md` already document the section shape and the catalog).
+- Deviations from plan: none.
+- Distribution: 11 of 13 smells received the planned 2–3 guards; `wrong-level`, `vacuous-assertion`, `pseudo-tested`, `presentation-coupled`, `rotten-green`, and `monolithic-test-file` each ship with 2 (the strongest pair the corpus supports), per the plan's "ship a smaller flagged set rather than pad" rule. No smell shipped with zero — every smell had at least 2 corpus-supported guards once the index was built.

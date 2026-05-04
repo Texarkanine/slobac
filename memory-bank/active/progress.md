@@ -12,3 +12,4 @@ Author the `## False-positive guards` section for 13 taxonomy smell docs that cu
 - Leaving complexity analysis; entering Plan phase.
 - Plan complete. Implementation steps catalog-ordered; TDD adapted to doc-authoring (editorial checklist + `properdocs build --strict`). Leaving Plan; entering Preflight.
 - Preflight PASS with one advisory (cross-smell shared-vocabulary footnoting, not adopted — would breach project brief scope). Runtime-dependency check confirmed `slobac-batch/SKILL.md` already consumes the guard sections by name. Leaving Preflight; entering Build.
+- Build complete. 13 taxonomy files updated with 2–3 evidenced false-positive guards each, drawn from `planning/research/` (5 FINDINGS files + synthesis report). `properdocs build --strict` exit 0, zero warnings. Editorial cross-pass confirmed form-match, per-smell scoping, and don't-elide. No deviations from plan. Leaving Build; entering QA.
