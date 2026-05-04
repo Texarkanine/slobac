@@ -1,0 +1,21 @@
+phase: preflight
+status: PASS (with amendment)
+date: 2026-05-04
+task-id: onboard-remaining-smells (REWORK)
+
+Validation summary:
+- Prerequisites: PASS — projectbrief.md (with appended Rework section), activeContext.md, tasks.md, progress.md all present and coherent. No creative phase required for L2.
+- TDD plan encoding: PASS — 16 behaviors enumerated (B1–B15 plus amended B11b) with mechanical-gate assertions and one mental walkthrough. Step 9 grep audit verifies all behaviors at end of build.
+- Convention compliance: PASS — per-entry uniform rollout matches the systemPatterns.md "taxonomy entry uniformity" invariant; mirrors the prior task's `Detection Scope` rollout shape.
+- Dependency / impact analysis: PASS with amendment.
+    - Confirmed: sibling skills (`slobac-scout`, `slobac-batch`, `slobac-cross-suite`) carry no operator-vocabulary mirrors, no dispatch-primitive references, no count assertions. Only `slobac-audit` itself owns the duplication.
+    - Amendment: `slobac-audit/README.md:176` carries a substantive semantic claim ("manually-curated supported-slug table backs refusal") that R1 invalidates. Plan step 6 expanded to rewrite this bullet alongside the lead-paragraph soften. New behavior B11b added.
+- Conflict detection: PASS — no orchestrator surgery, no fixture changes, no taxonomy-scope edits; rework is fully additive at taxonomy entries and substitutive at SKILL.md / README.md / techContext.md mirror surfaces.
+- Completeness: PASS — every requirement in the projectbrief Rework section is now mapped to a plan step.
+- Radical innovation: NONE — operator explicitly scoped the rework to R1 + R2 and explicitly preserved the README contributor-facing table; no expansion warranted.
+
+Amendments applied:
+- tasks.md Behaviors-to-Verify: added B11b (Scope and non-goals semantic shift).
+- tasks.md Phase C step 6: expanded to two sub-changes (lead paragraph + Scope-and-non-goals bullet rewrite).
+
+Ready for: build phase (`niko-build` skill).

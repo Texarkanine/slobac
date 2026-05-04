@@ -31,6 +31,7 @@ The "tests" for a docs-and-instructions refactor are mechanical-gate assertions 
 **Mirror cleanup:**
 
 - **B11 — `slobac-audit/README.md` lead paragraph drops hardcoded count:** the L3 paragraph no longer says "Supports all 15 manifesto smells" or any count-pinned variant. Phrasing equivalent to "supports every smell defined in the manifesto." The human-facing supported-smells table beneath is **preserved** — that's contributor documentation, legitimate as a mirror.
+- **B11b — `slobac-audit/README.md` "Scope and non-goals" reflects structural enumeration:** the bullet at README line 176 currently asserts a manually-curated supported-slug table backs slug refusal. After the rework it asserts: full taxonomy parity is achieved by enumerating taxonomy entry filenames (no manual curation), and a slug whose entry does not exist is refused. The substance — "audit never silently skips a requested smell" — is preserved.
 - **B12 — `memory-bank/techContext.md` lead summary drops hardcoded count:** the lead paragraph references the three detection scopes by name without pinning a smell count or enumerating slugs.
 
 **Regression gates:**
@@ -81,9 +82,11 @@ The plan is **taxonomy-first, SKILL-second, mirror-third, verify-fourth**. Step 
 
 ### Phase C — Mirror cleanup (drop hardcoded counts in lead paragraphs)
 
-6. **Soften `slobac-audit/README.md` lead paragraph.**
+6. **Soften `slobac-audit/README.md` lead paragraph and rewrite "Scope and non-goals" parity assertion.**
     - Files: `skills/slobac-audit/README.md`.
-    - Changes: Replace "Supports all 15 manifesto smells across 3 detection scopes" → "Supports every smell defined in the manifesto, across three detection scopes (per-test, per-file, cross-suite)." Preserve the supported-smells table at lines 9-26 (contributor documentation; human-readable mirror is acceptable here even though it carries the same drift risk; if a future reader wants to remove it, that is a separate decision).
+    - Changes:
+      - **Lead paragraph** (line 3): "Supports all 15 manifesto smells across 3 detection scopes" → "Supports every smell defined in the manifesto, across three detection scopes (per-test, per-file, cross-suite)." Preserve the supported-smells table at lines 9-26 (contributor documentation; human-readable mirror is acceptable here even though it carries the same drift risk; if a future reader wants to remove it, that is a separate decision).
+      - **Scope and non-goals** (line 176): the current bullet attributes refusal to a manually-curated supported-slug table. After the rework, refusal is structural — enumeration is by taxonomy-entry-file existence. Rewrite the bullet to reflect this: full taxonomy parity is achieved by structural enumeration, a future taxonomy entry is automatically supported once its file exists, and a request for any slug whose taxonomy entry does not exist is refused with a clear message. Preserve the closing assertion "the audit never silently skips a requested smell."
 
 7. **Soften `memory-bank/techContext.md` lead summary.**
     - Files: `memory-bank/techContext.md`.

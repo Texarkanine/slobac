@@ -2,7 +2,7 @@
 
 **Current Task:** Onboard remaining 9 smells (REWORK) — delegate manifesto duplication out of `slobac-audit/SKILL.md`
 
-**Phase:** PLAN - COMPLETE (rework)
+**Phase:** PREFLIGHT - PASS (with amendment) (rework)
 
 **What Was Done:**
 - Operator directed rework via `/niko-plan` after the original implementation reached 15-smell parity.
@@ -11,4 +11,4 @@
 - Preserved: `projectbrief.md` (with appended Rework section), `progress.md` (with appended rework history), `reflection/` (original reflection retained for archive inlining).
 - Complexity for the rework retained as **Level 2** — same shape as the original task: per-entry uniform rollout + a small number of SKILL.md surgeries; no design decisions; bounded scope.
 
-**Next Step:** Run Preflight via `niko-preflight` skill to validate the rework plan before Build.
+**Next Step:** Build phase — execute the 4-phase rework plan in tasks.md.
