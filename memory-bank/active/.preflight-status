@@ -1,0 +1,16 @@
+# Preflight validation — Per-skill LICENSES + REUSE.toml
+
+**Date:** 2026-05-04  
+**Result:** FAIL  
+**Blocks:** `/niko-build`
+
+## Blocking codes
+
+| Code | Meaning |
+|------|---------|
+| `planning_incomplete` | `memory-bank/active/tasks.md` not expanded to Level 2 plan format; `activeContext.md` still PLAN IN-PROGRESS |
+| `tdd_plan_encoding` | No Test Plan (TDD) section; no per-unit ordered steps that place verification/tests before adding/committing license artifacts |
+
+## Resolution
+
+Run `/niko-plan` (Level 2) to write the full `tasks.md` plan per `.cursor/skills/shared/niko/references/level2/level2-plan.md`, then re-run `/niko-preflight`.
