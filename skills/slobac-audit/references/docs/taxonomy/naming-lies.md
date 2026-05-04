@@ -8,6 +8,18 @@
 
 The test title or docstring claims behavior X; the body verifies behavior Y (usually a weaker Y). The reader trusts the name, and the name is wrong.
 
+## Aliases
+
+- "naming-lies"
+- "naming lies"
+- "lying names"
+- "lying titles"
+- "titles that lie"
+- "docstrings that lie"
+- "names that don't match the body"
+- "title/body mismatch"
+- "tests whose names overpromise"
+
 ## Description
 
 Unlike [`deliverable-fossils`](./deliverable-fossils.md) — which is about suite-wide naming shaped by history — this is the per-test variant: a single test whose title promises more than the assertions deliver. LLMs parse natural language; static tools cannot tell that `it('should use cyan/blue styling for descriptions')` doesn't check any ANSI escape code.

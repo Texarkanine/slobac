@@ -1,19 +1,8 @@
 # SLOBAC audit skill
 
-An [AgentSkills.io](https://agentskills.io/)-shaped skill that audits a test suite against the [SLOBAC manifesto](https://github.com/Texarkanine/slobac) and emits a portable markdown report. Supports 6 smells across 3 detection scopes, with multi-agent orchestration for suites of any size.
+An [AgentSkills.io](https://agentskills.io/)-shaped skill that audits a test suite against the [SLOBAC manifesto](https://texarkanine.github.io/slobac/) and emits a portable markdown report. For install instructions, invocation examples, and troubleshooting, see **[Using the SLOBAC audit](https://texarkanine.github.io/slobac/using-slobac/)** on the published site.
 
-This is the **canonical source** for the skill. The layout is harness-agnostic; the install step per harness is described below.
-
-## Supported Smells
-
-| Slug | Detection Scope | Description |
-|------|----------------|-------------|
-| `deliverable-fossils` | per-test, cross-suite | Tests named after sprint artifacts, not product behavior |
-| `naming-lies` | per-test | Test title claims X; body verifies Y |
-| `shared-state` | per-file | Module-level mutables leaked across test boundaries |
-| `monolithic-test-file` | per-file | Single file mixing 5+ behavior domains |
-| `semantic-redundancy` | cross-suite | Same behavior tested N times across files |
-| `wrong-level` | cross-suite | Test at wrong pyramid tier vs. directory convention |
+This file is **contributor documentation** — architecture, layout, and smoke-test verification.
 
 ## Architecture
 
@@ -42,12 +31,13 @@ skills/slobac-audit/
     ├── report-template.md                # audit report shape
     ├── behavior-summary-format.md        # IR spec for cross-suite assessor
     ├── suite-manifest-format.md          # scout output spec
-    └── docs/                             # the full SLOBAC manifesto
+    └── docs/                             # the full SLOBAC manifesto + published site
         ├── .pages                        # properdocs nav ordering
         ├── index.md                      # site landing page
         ├── principles.md                 # test principles + governor rules
         ├── glossary.md                   # shared terminology + citations
         ├── workflows.md                  # RED-GREEN-MUTATE-KILL-REFACTOR cycle
+        ├── using-slobac.md               # install, invoke, troubleshooting (end-user)
         └── taxonomy/
             ├── README.md                 # taxonomy shape SoT + entry catalog
             ├── deliverable-fossils.md    # canonical smell definition
@@ -73,95 +63,34 @@ skills/slobac-cross-suite/                # sibling: cross-suite assessment
 
 All shared references (taxonomy entries, format specs, manifesto docs) live in `slobac-audit/references/`. Sibling skills reach in via `../slobac-audit/references/...`. No sibling skill reaches into another sibling — the reference flow is unidirectional into `slobac-audit`.
 
-## Install
-
-The skill is discoverable by any harness that understands an AgentSkills.io-shaped `SKILL.md`. Install the orchestrator (`slobac-audit`) and all three sibling skills so the orchestrator can dispatch them.
-
-### Cursor
-
-Cursor discovers skills under `.cursor/skills/` (repo-level) or `~/.cursor/skills/` (user-level). To make the audit available in the current checkout:
-
-```bash
-for skill in slobac-audit slobac-scout slobac-batch slobac-cross-suite; do
-  ln -s "$PWD/skills/$skill" ".cursor/skills/$skill"
-done
-```
-
-To make it available across all projects:
-
-```bash
-for skill in slobac-audit slobac-scout slobac-batch slobac-cross-suite; do
-  ln -s "$PWD/skills/$skill" "$HOME/.cursor/skills/$skill"
-done
-```
-
-### Claude Code
-
-Claude Code discovers skills under `.claude/skills/` (repo-level) or `~/.claude/skills/` (user-level). The install pattern mirrors Cursor:
-
-```bash
-for skill in slobac-audit slobac-scout slobac-batch slobac-cross-suite; do
-  ln -s "$PWD/skills/$skill" ".claude/skills/$skill"
-done
-```
-
-### Other harnesses
-
-If your harness supports the AgentSkills.io shape, point its skill loader at all four skill directories. The `SKILL.md` frontmatter (`name`, `description`) and the `references/` subtree follow the standard convention; no harness-specific glue is required.
-
-## Invoke
-
-Natural language. Examples:
-
-- "Audit the tests under `src/tests/` for SLOBAC smells."
-- "Check `tests/unit/` for naming-lies."
-- "Run the SLOBAC audit over this suite for fossils."
-- "Which tests have titles that don't match their bodies?"
-- "Check `tests/` for shared state and redundant tests."
-- "Audit `tests/` for all smells — 1M context window."
-
-The skill scopes the audit from the phrasing, orchestrates subagents as needed, and writes `slobac-audit.md` in the current working directory. Pass a different path explicitly if wanted:
-
-- "Audit `src/tests/` and write the report to `reports/audit-2026-04.md`."
-
-### Context window guidance
-
-**For best results, run SLOBAC with your largest available model and context window.** In Cursor, enable MAX mode. In Claude Code, use Opus or Sonnet with the 1M context window. Larger context means fewer batches, richer cross-suite analysis, and better recall on redundancy detection. SLOBAC will work at 200K context, but will shard more aggressively — trading recall on cross-suite smells for safety.
-
-You can tell the orchestrator your context window size in the invocation: "Audit tests/ — 1M context window." This avoids the one-time question the orchestrator asks when it encounters a large suite without a stated budget.
-
 ## Smoke test
 
-The repo ships fixture suites under [`tests/fixtures/audit/`](https://github.com/Texarkanine/slobac/tree/main/tests/fixtures/audit) with documented expected findings. Use them to verify the install:
-
-### Per-test smells (batch assessor)
-
-1. **"Audit `tests/fixtures/audit/deliverable-fossils/` for fossils."** — Compare against `expected-findings.md`. 4 findings, 1 negative example.
-2. **"Audit `tests/fixtures/audit/naming-lies/` for naming-lies."** — Compare against `expected-findings.md`.
-3. **"Audit `tests/fixtures/audit/both-smells/` for all smells."** — Exercises scope honoring with mixed smells.
-4. **"Audit `tests/fixtures/audit/clean/`."** — Expect no findings.
-
-### Per-file smells (batch assessor)
-
-5. **"Audit `tests/fixtures/audit/shared-state/` for shared-state."** — 2 findings (module-level mutables), 2 negative examples.
-6. **"Audit `tests/fixtures/audit/monolithic-test-file/` for monolithic files."** — 1 finding (`test_everything.py`), 1 negative (`test_parser_thorough.py`).
-
-### Cross-suite smells (cross-suite assessor)
-
-7. **"Audit `tests/fixtures/audit/semantic-redundancy/` for redundant tests."** — 1 cross-file redundancy finding, 1 negative (`test_contract_keys.py`).
-8. **"Audit `tests/fixtures/audit/wrong-level/` for wrong-level."** — 2 findings (unit with integration behavior, integration with unit behavior), 1 negative (`test_calculator.py`).
+The repo ships fixture suites under [`tests/fixtures/audit/`](https://github.com/Texarkanine/slobac/tree/main/tests/fixtures/audit) with documented expected findings. Use them to verify the install.
 
 Phrasing of the emitted report need not be byte-identical to `expected-findings.md` — the shape contract is that every expected finding is emitted with its correct smell slug, remediation arm, and a rationale that cites the canonical docs entry. Divergence beyond that is a bug in the skill, not the fixture.
 
-## Scope and non-goals
+### Per-test smells (batch assessor)
 
-- **6 smells supported.** Any request for other smells (`tautology-theatre`, `vacuous-assertion`, etc.) is refused with a clear message — the audit never silently skips a requested smell.
-- **The audit is read-only.** It does not modify test code. Applying a recommendation from the report is a separate step (today manual; automated apply is a future capability).
-- **Python is the only validated ecosystem.** The detection prose is language-neutral; the manifesto's Polyglot notes describe per-ecosystem detection surface. Validation on JS/TS, Ruby, JVM, etc. is future work.
+1. **"Audit `tests/fixtures/audit/deliverable-fossils/` for deliverable-fossils."** — 4 findings, 1 negative.
+2. **"Audit `tests/fixtures/audit/naming-lies/` for naming-lies."** — Compare against `expected-findings.md`.
+3. **"Audit `tests/fixtures/audit/both-smells/` for all smells."** — Exercises scope honoring with mixed smells.
+4. **"Audit `tests/fixtures/audit/clean/`."** — Expect no findings.
+5. **"Audit `tests/fixtures/audit/tautology-theatre/` for tautology-theatre."** — 2 findings (mock-tautology, mock-of-SUT), 1 negative; remediation **delete**.
+6. **"Audit `tests/fixtures/audit/pseudo-tested/` for pseudo-tested."** — 2 findings (no-op SUT replacement survives), 1 negative.
+7. **"Audit `tests/fixtures/audit/vacuous-assertion/` for vacuous-assertion."** — 2 findings (`is not None`, truthy field), 1 negative.
+8. **"Audit `tests/fixtures/audit/over-specified-mock/` for over-specified-mock."** — 2 findings (over-specified interactions, internal-detail testing), 1 negative.
+9. **"Audit `tests/fixtures/audit/implementation-coupled/` for implementation-coupled."** — 2 findings (private dict access, private helper call), 1 negative.
+10. **"Audit `tests/fixtures/audit/presentation-coupled/` for presentation-coupled."** — 2 findings (full-string HTML, long `in`-chain), 1 negative.
+11. **"Audit `tests/fixtures/audit/conditional-logic/` for conditional-logic."** — 2 findings (`if cond: assert(...)`, `try/except` without trailing `pytest.fail`), 1 negative.
+12. **"Audit `tests/fixtures/audit/mystery-guest/` for mystery-guest."** — 2 findings (magic count from external CSV, fixture-coupled magic number), 1 negative.
+13. **"Audit `tests/fixtures/audit/rotten-green/` for rotten-green."** — 2 findings (empty body with TODO, `print` instead of assertion), 1 negative.
 
-## Troubleshooting
+### Per-file smells (batch assessor)
 
-- **The skill emits a finding but the rationale is vague.** The canonical entry's False-positive guards section exists specifically to prevent this. If the skill cannot cite a specific signal from the Signals section, the finding should not emit — reconsider.
-- **The skill misses a finding.** Re-read the canonical entry (`references/docs/taxonomy/<slug>.md`). If the missed case is not covered by any signal, that is a manifesto gap, not a skill bug — raise it as a PR to the canonical entry.
-- **Cross-suite findings seem wrong.** The cross-suite assessor must perform targeted source reads before confirming. If it's emitting findings based only on behavior summary clustering, that's a bug — summaries are an index for candidate detection, not evidence.
-- **The audit launches too many batches.** Provide your context window size in the invocation to avoid conservative sharding at the 200K floor.
+14. **"Audit `tests/fixtures/audit/shared-state/` for shared-state."** — 2 findings (module-level mutables), 2 negative examples.
+15. **"Audit `tests/fixtures/audit/monolithic-test-file/` for monolithic-test-file."** — 1 finding (`test_everything.py`), 1 negative (`test_parser_thorough.py`).
+
+### Cross-suite smells (cross-suite assessor)
+
+16. **"Audit `tests/fixtures/audit/semantic-redundancy/` for semantic-redundancy."** — 1 cross-file redundancy finding, 1 negative (`test_contract_keys.py`).
+17. **"Audit `tests/fixtures/audit/wrong-level/` for wrong-level."** — 2 findings (unit with integration behavior, integration with unit behavior), 1 negative (`test_calculator.py`).

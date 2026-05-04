@@ -8,6 +8,17 @@
 
 `if X: assert(...)` or `try { sut() } catch(e) { assert(...) }` inside a test body. [Cyclomatic complexity](../principles.md#simple) > 1 means there's at least one path through the test that never reaches an assertion — vacuous by omission.
 
+## Aliases
+
+- "conditional logic"
+- "conditional test logic"
+- "if inside test"
+- "branching test body"
+- "try-catch without fail"
+- "platform skip in body"
+- "loop without exit assertion"
+- "vacuous by omission"
+
 ## Description
 
 Tests with branches have at least one execution path that silently passes without asserting anything. The semantic judgment: decide, per branch, whether the `if` encodes **genuine optionality** (→ split into two tests with explicit preconditions) or is **compensating for an upstream oracle weakness** (→ remove the `if`, pin the precondition in the fixture, assert unconditionally).

@@ -8,6 +8,14 @@
 
 Two or more tests exercise the same observable behavior with different names, fixtures, or mock styles. One is the [canonical location](../glossary.md#canonical-location); the others should fold into it or be deleted with a named absorber.
 
+## Aliases
+
+- "redundant tests"
+- "duplicate tests"
+- "same behavior tested twice"
+- "redundancy"
+- "overlapping tests"
+
 ## Description
 
 *"You test the same thing (correctly though!) five times, and it belongs in this one specific place of those five."* Tokens differ; the claim is the same. The semantic judgment decomposes into three questions.

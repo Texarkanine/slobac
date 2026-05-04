@@ -8,6 +8,18 @@
 
 The test *does* assert, and the assertion runs against real SUT output — but the assertion is so weak that many interesting wrong implementations would still pass.
 
+## Aliases
+
+- "vacuous assertion"
+- "weak oracle"
+- "weak assertion"
+- "assertion too weak"
+- "many wrong answers pass"
+- "is-not-none assertions"
+- "truthiness check"
+- "structural-only check"
+- "not-empty as the only check"
+
 ## Description
 
 This is one of three members of the [Tautology Theatre](../glossary.md#tautology-theatre) umbrella, distinguished by *where* the weakness lives:

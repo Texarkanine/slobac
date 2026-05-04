@@ -8,6 +8,16 @@
 
 A test's meaning depends on external data the reader can't see — a fixture file, a long heredoc, a shared factory — without any inline hint of which part of that data matters. The assertion compares against a magic number or string whose origin requires opening three other files.
 
+## Aliases
+
+- "mystery guest"
+- "magic numbers in tests"
+- "external fixture file with no summary"
+- "fixture-coupled magic numbers"
+- "obscure test"
+- "heredoc without naming"
+- "count == n with no comment"
+
 ## Description
 
 A classical xUnit test smell,[^xunit-patterns] still relevant. Covers two variants:

@@ -8,6 +8,14 @@
 
 A single test file mixes multiple behavior domains — parser tests next to integration tests next to regression cases next to contract tests — usually because every new feature accreted into the file of least resistance. Hard to navigate, hard to diff, hard to assign ownership.
 
+## Aliases
+
+- "monolithic"
+- "god test file"
+- "test file too large"
+- "mixed domains in one file"
+- "test file needs splitting"
+
 ## Description
 
 The suite-level analogue of a single test that does too much — a file, not a test, that has outgrown its subject. Often co-occurs with and amplifies [`semantic-redundancy`](./semantic-redundancy.md) (authors don't see what's already there), [`wrong-level`](./wrong-level.md) (levels mix), and [`deliverable-fossils`](./deliverable-fossils.md) (each checklist item got its own `describe` block in the same file).

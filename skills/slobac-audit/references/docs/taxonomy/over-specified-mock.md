@@ -8,6 +8,18 @@
 
 The test pins exact interaction details — call counts, call order, numeric index into `mock.calls`, `verifyNoMoreInteractions`, `ArgumentCaptor` deep inspection — where the product contract doesn't require them. Internal refactors break the test without breaking any user-visible behavior.
 
+## Aliases
+
+- "over-specified mock"
+- "over-specified mocks"
+- "over-spec interactions"
+- "exact call count"
+- "exact call ordering"
+- "verifyNoMoreInteractions"
+- "ArgumentCaptor pinning"
+- "production constants baked into the test"
+- "internal-detail testing"
+
 ## Description
 
 Two distinct shapes fit here:

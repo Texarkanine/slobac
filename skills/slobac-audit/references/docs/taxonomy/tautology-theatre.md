@@ -8,6 +8,18 @@
 
 The test doesn't exercise production code at all. The mock was configured to return X; the assertion checks that the mock returned X. The only thing verified is that the mocking library works.
 
+## Aliases
+
+- "tautology"
+- "tautology theatre"
+- "mock tautology"
+- "tests that don't run production code"
+- "no SUT call"
+- "mock-of-SUT"
+- "would-pass-if-prod-deleted"
+- "framework test"
+- "tests that only verify the mocking library works"
+
 ## Description
 
 This entry belongs to the larger [Tautology Theatre](../glossary.md#tautology-theatre) umbrella. Under the diagnostic question *"would this test still pass if all production code were deleted?"*, this is the strictest case: **yes, trivially, because the production code was never called.**

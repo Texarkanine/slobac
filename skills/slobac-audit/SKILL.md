@@ -1,6 +1,6 @@
 ---
 name: slobac-audit
-description: Audit a test suite for SLOBAC manifesto smells and emit a portable markdown report. Supports 6 smells across 3 detection scopes (per-test, per-file, cross-suite). Orchestrates scout, batch, and cross-suite subagents for suites of any size. Use when a human asks for a smell audit of test code, a review of test names/assertions against the behavior they claim to protect, or a SLOBAC report.
+description: Audit a test suite for common test smells based on the SLOBAC manifesto.
 ---
 
 # Test Suite Audit Workflow
@@ -11,30 +11,11 @@ The operator names a directory (explicitly or implicitly: "these tests", "my sui
 
 ## Step 2 — parse scope
 
-From the operator's request, resolve a list of **in-scope smell slugs** drawn from the supported set:
+From the operator's request, resolve a list of **in-scope smell slugs** drawn from the supported set.
 
-**Supported smells (6):**
+**Slug-only invocation contract.** The supported-slug set is the set of taxonomy entry filenames under `references/docs/taxonomy/` (excluding `README.md`); every `<slug>.md` is a supported slug, and there is no other source of truth. Operators must invoke this skill with **explicit slug names** (e.g. `tautology-theatre`, `vacuous-assertion`). Free-text or fuzzy-phrase requests (e.g. "audit my tests for tautology", "find tests that mock the SUT") are **refused**: respond with the supported-slug list and ask the operator to re-invoke with explicit slugs. Do not silently resolve a phrase to a slug. The same refusal applies if the operator names a slug whose taxonomy entry does not exist.
 
-| Slug | Detection Scope |
-|------|----------------|
-| `deliverable-fossils` | per-test, cross-suite |
-| `naming-lies` | per-test |
-| `shared-state` | per-file |
-| `monolithic-test-file` | per-file |
-| `semantic-redundancy` | cross-suite |
-| `wrong-level` | cross-suite |
-
-Natural phrases map to slugs by meaning, not string match. Map operator intent to slugs:
-
-- `deliverable-fossils` — "fossils", "deliverable fossils", "fossil tests", "stale names", "dead names", "sprint-shaped tests", "checklist tests", "checklist-shaped", "one test per AC", "tests named after tickets", "ticket-id vocabulary", "names that describe who wrote them, not what they prove", "sprint-vocab tests"
-- `naming-lies` — "naming-lies", "naming lies", "lying names", "lying titles", "titles that lie", "docstrings that lie", "names that don't match the body", "title/body mismatch", "tests whose names overpromise"
-- `shared-state` — "shared state", "order dependence", "order-dependent", "leaked state", "module-level mutables", "test isolation", "state leaking between tests"
-- `monolithic-test-file` — "monolithic", "god test file", "test file too large", "mixed domains in one file", "test file needs splitting"
-- `semantic-redundancy` — "redundant tests", "duplicate tests", "same behavior tested twice", "redundancy", "overlapping tests"
-- `wrong-level` — "wrong level", "wrong tier", "wrong pyramid level", "unit test doing integration", "integration test that's really unit"
-- "audit everything", "all smells", unscoped — resolve to the full supported set.
-
-If the operator names a smell not in the supported set (e.g., `tautology-theatre`, `vacuous-assertion`, any other taxonomy slug), **refuse that slug**. Acknowledge it by name, state it is not yet supported, list the supported slugs, and proceed with only the supported slugs from the operator's request. Do not audit the out-of-scope slug anyway; do not silently drop it.
+The single exception is the bulk-select wildcard: if the operator's invocation is `all`, `everything`, or unscoped (no slug names at all), resolve to the full supported-slug set. This is the only non-slug input the orchestrator accepts.
 
 **Classify in-scope slugs by detection scope.** For each in-scope slug, read its `Detection Scope` from `references/docs/taxonomy/<slug>.md` (the header table). Partition into:
 
@@ -51,11 +32,6 @@ Launch a readonly subagent with the `slobac-scout` skill. Provide:
 - Instruct it to read `../slobac-audit/references/suite-manifest-format.md` for the output format.
 
 The scout will enumerate test files, measure their sizes, detect ecosystem and tier conventions, and return a **Suite Manifest**.
-
-**Harness-specific dispatch:**
-- **Cursor:** Use the `Task` tool with `subagent_type: "generalPurpose"`, `readonly: true`. Pass the scout skill's SKILL.md content or instruct the subagent to read it.
-- **Claude Code:** Use `dispatch_agent` with the scout prompt.
-- **Other harnesses:** Use whatever subagent-launch primitive is available. The scout needs only filesystem read access.
 
 ## Step 4 — partition and configure batches
 
@@ -104,10 +80,6 @@ For each batch (1 for small suites, N for large suites), launch a readonly subag
 
 For multiple batches, launch them **in parallel** (each as a separate subagent).
 
-**Harness-specific dispatch:**
-- **Cursor:** Use the `Task` tool with `subagent_type: "generalPurpose"`, `readonly: true`, `run_in_background: true` for parallel batches.
-- **Claude Code:** Use `dispatch_agent` for each batch.
-
 ### Failure handling
 
 - If a batch assessor returns garbage (unparseable, missing required sections): retry once with the same inputs. If it fails again, skip the batch and note in the report which files were not assessed.
@@ -133,10 +105,6 @@ Launch a readonly subagent with the `slobac-cross-suite` skill. Provide:
 - Instruct it to read `../slobac-audit/references/docs/taxonomy/<slug>.md` for each in-scope cross-suite smell.
 
 If the cross-suite smell set is **empty**: skip this step entirely. The batch findings are the complete result.
-
-**Harness-specific dispatch:**
-- **Cursor:** Use the `Task` tool with `subagent_type: "generalPurpose"`, `readonly: true`.
-- **Claude Code:** Use `dispatch_agent`.
 
 ## Step 8 — synthesize report
 
