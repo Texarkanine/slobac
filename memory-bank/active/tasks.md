@@ -98,7 +98,7 @@ No new technology — validation not required. `uv` and `properdocs` are already
 - [x] Technology validation complete
 - [x] Preflight
 - [x] Build
-- [ ] QA
+- [x] QA (PASS with one operator-decision finding — see Build notes)
 
 ## Build notes
 
