@@ -142,6 +142,6 @@ No new technology — validation not required. All edits are markdown.
 - [x] Test planning complete (TDD)
 - [x] Implementation plan complete
 - [x] Technology validation complete
-- [ ] Preflight
-- [ ] Build
+- [x] Preflight (PASS with amendment + pre-build contract shift; B11b added; B2b/B2c/B4 inverted post-amend)
+- [x] Build (Phases A→D shipped across three commits: taxonomy aliases rollout, SKILL.md surgery, mirror cleanup)
 - [ ] QA
