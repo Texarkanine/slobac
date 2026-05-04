@@ -5,6 +5,7 @@
 **Phase:** REFLECT - COMPLETE (rework)
 
 **What Was Done:**
+- Post-rework doc trim (committed `d85da36`): removed "Companion documents" and "How to read an entry" from `skills/slobac-audit/references/docs/taxonomy/README.md`; added repo-root `CONTRIBUTING.md` as the canonical taxonomy entry-shape source of truth; updated `memory-bank/systemPatterns.md` to point shape authorship at CONTRIBUTING instead of taxonomy README. `uv run properdocs build --strict` green.
 - Operator directed rework via `/niko-plan` after the original implementation reached 15-smell parity.
 - Rework brief appended to `projectbrief.md`: R1 (delegate slug enumeration + natural-phrase mappings to per-entry taxonomy content; drop hardcoded counts in lead-paragraph mirrors), R2 (elide harness-specific dispatch examples in SKILL.md).
 - Stale state cleared: `tasks.md`, `activeContext.md` (this file recreated), `.preflight-status`, `.qa-validation-status` deleted.
