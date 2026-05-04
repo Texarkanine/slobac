@@ -21,6 +21,7 @@ Suite-wide behaviors:
 
 - **B5 — Taxonomy unchanged**: All 9 taxonomy entries already carry `Detection Scope: per-test` (verified inline during planning); no edits to `references/docs/taxonomy/<slug>.md` are required. This is a verification step, not an edit step.
 - **B6 — Fixtures README updated**: `tests/fixtures/audit/README.md` enumerates the 9 new scenarios under a new "Scenarios added for taxonomy parity (Phase 3)" subsection.
+- **B6b — Skill README updated** *(added by preflight)*: `skills/slobac-audit/README.md` reflects parity — lead-paragraph smell count, supported-smells table, smoke-test fixtures list, and the constraints disclaimer all consistent with the new 15-smell SKILL.md state.
 - **B7 — Existing 6-smell rows preserved**: The 6 already-supported slugs (`deliverable-fossils`, `naming-lies`, `shared-state`, `monolithic-test-file`, `semantic-redundancy`, `wrong-level`) remain in the table and intent-map without modification → diff inspection.
 - **B8 — properdocs build green**: `uv run properdocs build --strict` succeeds.
 - **B9 — Persistent memory bank updated**: `memory-bank/techContext.md` smell count goes from "6 smells across 3 detection scopes" to "15 smells across 3 detection scopes" with the per-test list extended; `memory-bank/systemPatterns.md` evidence count "all 15 existing entries follow the pattern" remains accurate (no change needed).
@@ -107,19 +108,32 @@ Each step is one TDD cycle: write `expected-findings.md` (the spec / "test"), th
     - Files: `tests/fixtures/audit/README.md`.
     - Changes: Replace the stub bullets from step 3 with a one-line description per fixture in the "Scenarios added for taxonomy parity (Phase 3)" subsection.
 
-15. **Update `memory-bank/techContext.md` smell count.**
+15. **Update `skills/slobac-audit/README.md` to reflect parity.** *(amended in by preflight — was a missed touchpoint.)*
+    - Files: `skills/slobac-audit/README.md`.
+    - Changes:
+        - L3 lead paragraph: promote "Supports 6 smells across 3 detection scopes" → "Supports 15 smells across 3 detection scopes".
+        - Supported-smells table (currently L11–16): add 9 new rows mirroring the same shape used for the existing 6, keeping rows grouped by detection scope (per-test rows together, then per-file, then cross-suite).
+        - Smoke-test fixtures list (currently L139–152): add 9 new smoke-test items (one per new fixture), each citing `tests/fixtures/audit/<slug>/` and a short expected-finding-count summary derived from the new `expected-findings.md`.
+        - Constraints disclaimer (currently L158): rewrite from "6 smells supported. Any request for other smells (`tautology-theatre`, `vacuous-assertion`, etc.) is refused…" to a parity-reached statement noting that all 15 taxonomy entries are now first-class supported, and any future taxonomy additions will be onboarded the same way (refusal behavior preserved, but the example slugs change to a generic placeholder rather than slugs that are about to become supported).
+        - Example tree (currently L53–54): extend the illustrative `taxonomy/` listing if it visibly under-represents the current set; otherwise leave it (the tree is illustrative, not exhaustive).
+
+16. **Update `memory-bank/techContext.md` smell count.**
     - Files: `memory-bank/techContext.md`.
     - Changes: Promote "6 smells across 3 detection scopes" → "15 smells across 3 detection scopes"; expand the per-test list inline to include all 11 per-test slugs (the existing 2 plus the 9 newly onboarded).
 
 ### Phase D — Mechanical verification
 
-16. **`uv run properdocs build --strict`.**
+17. **`uv run properdocs build --strict`.**
     - Files: none modified.
-    - Changes: Verify the docs build remains green with the SKILL.md and README.md edits. (No taxonomy edits, so no new cross-link risk surface — but the SKILL.md table and natural-phrase bullets are linked from the rendered nav and may pick up anchor changes.)
+    - Changes: Verify the docs build remains green. **Note (preflight advisory):** No `references/docs/` files are edited in this plan, so properdocs is a *negative control* gate — it will not exercise the SKILL.md / READMEs / techContext edits directly. Run anyway as a regression safety net.
 
-17. **Manual consistency review.**
+18. **Manual consistency review.**
     - Files: none modified.
-    - Changes: Skim each `expected-findings.md` against its taxonomy entry's "Prescribed fix" section to confirm the prescribed remediation arms match. Skim SKILL.md final state to confirm the 6 already-supported slugs are unchanged.
+    - Changes:
+        - Skim each `expected-findings.md` against its taxonomy entry's "Prescribed fix" section to confirm the prescribed remediation arms match.
+        - Skim `slobac-audit/SKILL.md` final state to confirm the 6 already-supported slugs are unchanged in their existing rows and bullets.
+        - Skim `slobac-audit/README.md` final state to confirm the smoke-test list and supported-smells table count match the SKILL.md state (single source of truth in SKILL.md; README mirrors).
+        - Grep-verify that the count "15" and the count "6" do not coexist in any of the four updated documents — every "6 smells" string must be promoted or removed.
 
 ## Technology Validation
 
@@ -146,6 +160,16 @@ No new technology — validation not required. All edits are markdown and Python
 - [x] Test planning complete (TDD)
 - [x] Implementation plan complete
 - [x] Technology validation complete
-- [ ] Preflight
+- [x] Preflight (PASS with 1 amendment + 2 advisories)
 - [ ] Build
 - [ ] QA
+
+## Preflight Amendments & Advisories
+
+**Amendment (2026-05-03):** Added step 15 — `skills/slobac-audit/README.md` was a missed touchpoint. It mirrors SKILL state (smell count, supported table, smoke-test list, constraints disclaimer) and would have gone stale if not updated. Behavior B6b added to TDD plan. Step renumbering: previous steps 15→16, 16→17, 17→18.
+
+**Advisory 1 — properdocs is a negative-control gate for this task:** Of the four documents this task edits (SKILL.md, two READMEs, techContext.md), zero live under `skills/slobac-audit/references/docs/` (the properdocs `docs_dir`). The strict-build check therefore validates only that nothing else in the manifesto regresses. The actual mechanical gate for *this* task is grep + manual visual review per step 18. Not a blocker — pre-existing to the framework.
+
+**Advisory 2 — multi-scope combined fixture remains deferred:** The prior task's preflight noted absence of a multi-scope combined fixture as a non-blocking advisory. That advisory is unchanged by this task; remains future work and is explicitly out of scope per the project brief.
+
+**Radical-innovation note (advisory only, not adopted):** Once parity is reached, the README.md "constraints disclaimer" L158 example slugs (`tautology-theatre`, `vacuous-assertion`) will be wrong. Step 15 rewrites them to generic placeholders. A more radical move would be to delete the disclaimer entirely on the grounds that "refuse unsupported slugs" is now hypothetical (no slugs are unsupported). Rejected for this task: the refusal behavior is still the contract for *future* taxonomy additions, and removing the disclaimer would make that contract invisible. Re-evaluate if the manifesto stops growing.

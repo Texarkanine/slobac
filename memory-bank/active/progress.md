@@ -11,3 +11,4 @@ Onboard the 9 remaining per-test taxonomy smells (`vacuous-assertion`, `tautolog
 - 2026-05-03 — `/niko` re-entry from clean state. Intent clarified and approved. Complexity classified as Level 2.
 - 2026-05-03 — COMPLEXITY-ANALYSIS phase complete. Transitioning to Plan phase.
 - 2026-05-03 — PLAN phase complete. 17-step plan across 4 phases written to `tasks.md`. Transitioning to Preflight.
+- 2026-05-03 — PREFLIGHT phase complete. PASS with 1 amendment (added `skills/slobac-audit/README.md` step → 18 total steps) and 2 advisories. Transitioning to Build.
