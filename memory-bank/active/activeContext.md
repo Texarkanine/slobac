@@ -2,7 +2,7 @@
 
 **Current Task:** Onboard remaining 9 smells (REWORK) — delegate manifesto duplication out of `slobac-audit/SKILL.md`
 
-**Phase:** PREFLIGHT - PASS (with amendment) (rework)
+**Phase:** PREFLIGHT - PASS (with amendment + pre-build contract shift) (rework)
 
 **What Was Done:**
 - Operator directed rework via `/niko-plan` after the original implementation reached 15-smell parity.

@@ -12,15 +12,17 @@ Reduce the SKILL.md surface that mirrors taxonomy content. The original implemen
 
 The "tests" for a docs-and-instructions refactor are mechanical-gate assertions (`grep`/`rg` on the changed surfaces) and the existing CI gate (`properdocs build --strict`).
 
-**R1 — taxonomy delegation:**
+**R1 — taxonomy delegation + slug-only contract:**
 
 - **B1 — SKILL has no inlined supported-smells table:** `rg "Supported smells \(" skills/slobac-audit/SKILL.md` returns 0 matches.
-- **B2 — SKILL instructs structural enumeration:** SKILL.md Step 2 prose explicitly states the supported set is enumerated by file existence under `references/docs/taxonomy/`, and any slug whose entry does not exist is refused. Verified by reading the section.
-- **B3 — SKILL has no inlined natural-phrase map:** `rg "^- \`[a-z][a-z-]+\` — \"" skills/slobac-audit/SKILL.md` returns 0 matches.
-- **B4 — SKILL delegates phrase resolution to taxonomy entries:** SKILL.md Step 2 prose instructs the agent to resolve operator phrasing by reading each entry's `Summary` + `## Natural phrases` sections.
-- **B5 — Each taxonomy entry carries the new section:** `rg -l "^## Natural phrases$" skills/slobac-audit/references/docs/taxonomy/*.md` returns exactly 15 paths (one per entry; not the README).
-- **B6 — Each migrated phrase set matches its current SKILL.md content:** for each of the 15 slugs, the bullets under `## Natural phrases` in `taxonomy/<slug>.md` are the same bullets currently at SKILL.md lines 38-52 (verbatim, modulo formatting; no editorial expansion).
-- **B7 — Taxonomy README shape SoT documents the new section:** `taxonomy/README.md` lists `## Natural phrases` as a required section in the canonical entry shape.
+- **B2 — SKILL instructs structural enumeration:** SKILL.md Step 2 prose explicitly states the supported set is enumerated by file existence under `references/docs/taxonomy/` (`README.md` excluded). Verified by reading the section.
+- **B2b — SKILL enforces slug-only invocation:** SKILL.md Step 2 prose explicitly states operators invoke by explicit slug; non-slug or fuzzy-phrase requests are **refused** (not silently resolved). The refusal lists the supported slug set and prompts the operator to re-invoke with explicit slugs. Verified by reading the section.
+- **B2c — SKILL preserves bulk-select wildcard:** SKILL.md Step 2 prose recognizes a small whitelist of unambiguous wildcard tokens (`all`, `everything`, unscoped) as a request for the full supported-slug set. This is not phrase-to-slug fuzzy matching — it is an explicit "all" gesture, unambiguous by definition. (If operator subsequently rejects this carve-out, drop it; surface as decision point during build.)
+- **B3 — SKILL has no inlined operator-phrase map:** `rg "^- \`[a-z][a-z-]+\` — \"" skills/slobac-audit/SKILL.md` returns 0 matches.
+- **B4 — SKILL does NOT reference the Aliases section as a runtime input:** `rg "Aliases" skills/slobac-audit/SKILL.md` returns 0 matches. Aliases live in the taxonomy entries strictly for human-search discoverability on the published docs site; the orchestrator never reads them.
+- **B5 — Each taxonomy entry carries an `## Aliases` section:** `rg -l "^## Aliases$" skills/slobac-audit/references/docs/taxonomy/*.md` returns exactly 15 paths (one per entry; the taxonomy `README.md` does not get the section).
+- **B6 — Each migrated alias set matches its current SKILL.md content:** for each of the 15 slugs, the bullets under `## Aliases` in `taxonomy/<slug>.md` are the same bullets currently at SKILL.md lines 38-52 (verbatim, modulo formatting; no editorial expansion). The slug-name prefix is dropped from each bullet (since the section already lives in the slug's file).
+- **B7 — Taxonomy README shape SoT documents the new section as a discoverability aid:** `taxonomy/README.md` lists `## Aliases` as a required section in the canonical entry shape, and the section's purpose-and-audience explanation states it is for human search discoverability on the published docs site (operators landing from a fuzzy query find the right entry, then invoke by slug). The shape SoT explicitly notes the orchestrator does not consume the section at runtime.
 
 **R2 — harness-neutral dispatch:**
 
@@ -37,13 +39,17 @@ The "tests" for a docs-and-instructions refactor are mechanical-gate assertions 
 **Regression gates:**
 
 - **B13 — `properdocs build --strict` passes** after every phase that touches `references/docs/`.
-- **B14 — Operator-invocation flow unchanged:** mental walkthrough — an operator phrase like "audit my tests for tautology" still resolves to `tautology-theatre` because the canonical phrase is now in `taxonomy/tautology-theatre.md` instead of SKILL.md, but the agent still finds it.
+- **B14 — Operator-invocation flow under new slug-only contract is sane:** mental walkthrough — operator invokes `/slobac-audit tautology-theatre vacuous-assertion`, agent resolves both slugs against `taxonomy/<slug>.md` existence, partitions by detection scope, dispatches batch and (where present) cross-suite assessors. Operator invokes `/slobac-audit tests that mock the SUT`, agent refuses with the supported-slug list and asks for explicit slugs. Operator invokes `/slobac-audit all`, agent expands to the full supported-slug set.
 - **B15 — Existing 9 fixtures untouched:** `git diff` against the rework-init commit (HEAD) shows zero changes under `tests/fixtures/audit/`. Their presence and content are preserved.
 
 ### Edge Cases
 
 - **`deliverable-fossils` is the only slug with multi-scope detection** (per-test + cross-suite). Its taxonomy entry's existing structure works as-is — adding `## Natural phrases` is uniform with the other 14. The SKILL.md Step 2 partition logic keeps reading `Detection Scope` per-entry; no special-case logic.
-- **Existing taxonomy entries already have varying section counts** (Signals / False-positive guards / Prescribed Fix / Example / Related modes / Polyglot notes). Adding `## Natural phrases` must place consistently across all 15 — propose **immediately after Summary, before Description** so phrase aliases live near the canonical name. This keeps the section's purpose ("how operators name this smell") tight to the slug's identity.
+- **Existing taxonomy entries already have varying section counts** (Signals / False-positive guards / Prescribed Fix / Example / Related modes / Polyglot notes). Adding `## Aliases` must place consistently across all 15 — propose **immediately after Summary, before Description** so alias terms live near the canonical name. This keeps the section's purpose ("alternate terms a search engine indexes for this slug") tight to the slug's identity.
+
+- **Slug-only contract removes the orchestrator's phrase-resolution responsibility entirely.** Old SKILL.md Step 2 attempted fuzzy phrase-to-slug resolution; new contract refuses. Aliases stay in the taxonomy purely for **human-side discoverability** — published docs site search, manifesto cross-references, drive-by reading. The orchestrator never reads them. This is the operator's explicit decision: minimal ambiguity, slugs only, invocation contract is unforgiving in the right way.
+
+- **The "all" wildcard:** previously SKILL.md treated "audit everything", "all smells", and unscoped as resolving to the full supported set. This is technically a phrase-to-set rule, not a phrase-to-slug rule, and it is unambiguous by definition (no fuzzy match). Plan preserves it as an explicit wildcard whitelist (`all`, `everything`, unscoped) — surface as a build-time decision point in case operator wants to drop it for strict slug-only.
 - **The SKILL.md frontmatter `description:` field was already softened by the operator pre-plan** (`commit 2d5c4d4`: changed from "Supports all 15 manifesto smells across 3 detection scopes (per-test, per-file, cross-suite)." to "Audit a test suite for common test smells based on the SLOBAC manifesto."). This is R1-aligned; the field needs no further edits in this plan.
 
 ### Test Infrastructure
@@ -60,11 +66,11 @@ The plan is **taxonomy-first, SKILL-second, mirror-third, verify-fourth**. Step 
 
 1. **Update `taxonomy/README.md` shape SoT.**
     - Files: `skills/slobac-audit/references/docs/taxonomy/README.md`.
-    - Changes: Add `## Natural phrases` to the documented canonical entry shape, positioned immediately after `## Summary` and before `## Description`. State the section's purpose ("operator-vocabulary aliases for the slug; consumed by the audit orchestrator at runtime") and required form (bullet list of double-quoted phrase aliases).
+    - Changes: Add `## Aliases` to the documented canonical entry shape, positioned immediately after `## Summary` and before `## Description`. State the section's **purpose and audience** clearly: alternate terms by which the smell may be named or searched, intended for **human-side discoverability** when readers land on the docs site from a fuzzy query (e.g. via search engine or manifesto cross-link). Explicitly note that the orchestrator does **not** consume this section at runtime — the audit orchestrator requires explicit slug invocation, not phrase resolution. Required form: bullet list of double-quoted alias phrases.
 
-2. **Migrate 15 natural-phrase mappings into per-entry `## Natural phrases` sections.**
+2. **Migrate 15 operator-phrase lists into per-entry `## Aliases` sections.**
     - Files: each of `skills/slobac-audit/references/docs/taxonomy/<slug>.md` for `<slug>` ∈ {`deliverable-fossils`, `naming-lies`, `vacuous-assertion`, `tautology-theatre`, `pseudo-tested`, `over-specified-mock`, `implementation-coupled`, `presentation-coupled`, `conditional-logic`, `mystery-guest`, `rotten-green`, `shared-state`, `monolithic-test-file`, `semantic-redundancy`, `wrong-level`}.
-    - Changes: insert a `## Natural phrases` section between Summary and Description in each entry. The bullet content is the existing curated phrase list from `slobac-audit/SKILL.md` lines 38-52, copied verbatim per slug — no editorial expansion in this rework. One bullet per quoted phrase, exactly as currently rendered. Source for each entry is the corresponding SKILL.md bullet line.
+    - Changes: insert a `## Aliases` section between Summary and Description in each entry. The bullet content is the existing curated phrase list from `slobac-audit/SKILL.md` lines 38-52, copied verbatim per slug — no editorial expansion in this rework. One bullet per quoted phrase, exactly as currently rendered. The slug-name prefix is dropped from each bullet (since the section already lives in the slug's file). Source for each entry is the corresponding SKILL.md bullet line.
 
 3. **Run `properdocs build --strict`.**
     - Files: none modified.
@@ -72,9 +78,15 @@ The plan is **taxonomy-first, SKILL-second, mirror-third, verify-fourth**. Step 
 
 ### Phase B — SKILL.md surgery (R1 SKILL side + R2)
 
-4. **Replace SKILL.md Step 2 supported-smells table and natural-phrase map with structural-enumeration prose.**
+4. **Replace SKILL.md Step 2 supported-smells table and operator-phrase map with slug-only structural-enumeration prose.**
     - Files: `skills/slobac-audit/SKILL.md`.
-    - Changes: Delete the `**Supported smells (15):**` heading + the table (lines 16-34). Delete the natural-phrase bullet list (lines 36-52) and the trailing "audit everything, all smells, unscoped" line (line 53). Delete the refusal paragraph that names example slugs (line 55). Replace with a single paragraph telling the agent: (a) the supported-slug set is the set of entry filenames under `references/docs/taxonomy/` excluding `README.md`; (b) refuse any operator-named slug whose entry does not exist, listing the supported slugs from the directory; (c) resolve operator phrasing by reading each entry's `Summary` and `## Natural phrases` sections. Preserve the existing detection-scope partition instruction (current line 39, "read its `Detection Scope` from `references/docs/taxonomy/<slug>.md`") — that part already works structurally.
+    - Changes:
+      - Delete the `**Supported smells (15):**` heading + the table (lines 16-34).
+      - Delete the operator-phrase bullet list (lines 36-52).
+      - Convert the trailing "audit everything, all smells, unscoped" line (line 53) into a structured wildcard rule: explicitly whitelist `all`, `everything`, and an unscoped invocation as the bulk-select gesture for the full supported-slug set. This is the only non-slug input the orchestrator accepts.
+      - Delete the refusal paragraph that names example slugs (line 55) and replace with a slug-only contract paragraph: (a) supported-slug set is the set of entry filenames under `references/docs/taxonomy/` excluding `README.md`; (b) operators invoke by **explicit slug**; (c) free-text or fuzzy-phrase requests are **refused** with the supported-slug list, prompting the operator to re-invoke with explicit slugs (the orchestrator never silently resolves a phrase to a slug); (d) operator-named slugs whose taxonomy entry does not exist are also refused with the supported-slug list.
+      - Preserve the existing detection-scope partition instruction (current line 39, "read its `Detection Scope` from `references/docs/taxonomy/<slug>.md`") — that part already works structurally.
+      - **Do not** reference the `## Aliases` section anywhere in SKILL.md. It is not a runtime input.
 
 5. **Replace harness-specific dispatch blocks at SKILL.md Steps 3, 5, 7.**
     - Files: `skills/slobac-audit/SKILL.md`.
