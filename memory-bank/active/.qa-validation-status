@@ -1,0 +1,19 @@
+phase: qa
+status: PASS
+date: 2026-05-04
+task-id: onboard-remaining-smells (REWORK)
+
+Constraint review summary:
+
+- KISS: PASS. SKILL.md Step 2 reduced from a 15-row table + 15-bullet phrase map + multi-paragraph refusal section to two paragraphs of structural-enumeration prose plus a small wildcard exception. The harness-specific dispatch blocks at Steps 3, 5, 7 reduced from 3-bullet harness lists to zero (lead sentence already carries the instruction).
+- DRY: PASS with one trivial fix. Identified and corrected: SKILL.md Step 2 line 16 had a parenthetical "(filenames under references/docs/taxonomy/ excluding README.md)" describing the refusal payload, which restated the supported-set definition given earlier in the same paragraph. Tightened to "respond with the supported-slug list" — the antecedent is unambiguous from the same paragraph's lead. Properdocs rebuilt green.
+- YAGNI: PASS. The `(e.g. tautology-theatre, vacuous-assertion)` slug examples and `(no slug names at all)` clarification on "unscoped" are anchoring concrete details, not speculation. The "and there is no other source of truth" clause is anti-regression scaffolding (prevents a future maintainer from re-introducing a parallel curated list); kept.
+- Completeness: PASS. All 16 enumerated behaviors (B1, B2, B2b, B2c, B3, B4, B5, B6, B7, B8, B9, B10, B11, B11b, B12, B13, B14, B15) verified by direct inspection or grep gate. Project brief Rework requirements R1 and R2 fully satisfied. The R1 contract-shift (slug-only invocation, no fuzzy resolution) is explicitly enforced by SKILL.md Step 2 prose.
+- Regression: PASS. `## Aliases` placement uniform across 15 entries (between Summary and Description). Header table preserved unchanged in every taxonomy entry. Step numbering 1–9 in SKILL.md preserved. Sibling skills (slobac-scout, slobac-batch, slobac-cross-suite) untouched. tests/fixtures/audit/ untouched (`git diff --stat 258444e -- tests/fixtures/audit/` empty). The systemPatterns.md "taxonomy entry uniformity" invariant is preserved — the new section was added uniformly to all 15 entries, not selectively.
+- Integrity: PASS. No magic numbers, no debug artifacts, no commented-out code, no TODO/FIXME/XXX/placeholder/TBD markers in SKILL.md or any taxonomy entry. The SKILL.md frontmatter description (operator-edited pre-rework) is concise and count-free.
+- Documentation: PASS. taxonomy/README.md shape SoT updated to require ## Aliases and to state purpose-and-audience explicitly. slobac-audit/README.md lead paragraph and "Scope and non-goals" bullet rewritten. memory-bank/techContext.md lead summary rewritten. Persistent files (systemPatterns, productContext) not invalidated by the rework. The slobac-audit/README.md contributor-facing supported-smells table is preserved as a deliberate decision per the project brief's R1 scope boundary.
+
+Findings:
+1. **DRY duplication in SKILL.md Step 2 refusal-payload prose** — fixed inline (parenthetical removed). Properdocs rebuilt green.
+
+Ready for: reflect phase (`niko-reflect` skill).
