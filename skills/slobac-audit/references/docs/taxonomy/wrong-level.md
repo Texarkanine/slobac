@@ -8,6 +8,14 @@
 
 The test is well-written but lives at the wrong [pyramid tier](../glossary.md#test-tier--pyramid-level): a "unit" test running a subprocess, an "integration" test that mocks every dependency, a build smoke colocated with millisecond-scoped assertions.
 
+## Aliases
+
+- "wrong level"
+- "wrong tier"
+- "wrong pyramid level"
+- "unit test doing integration"
+- "integration test that's really unit"
+
 ## Description
 
 Runner conventions tie test location to test tier (`*.unit.test.ts` vs `*.integration.test.ts`, `tests/` vs `tests/integration/`, `@slow` tags, `-tags=integration` build constraints). When a test drifts, it incurs the worst cost of both tiers: slow enough to hurt dev-loop latency, yet not trustworthy enough to count as real integration coverage. The semantic judgment is classifying each test as **unit / component / integration** and comparing the answer to where it currently lives.

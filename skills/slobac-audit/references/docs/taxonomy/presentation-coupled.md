@@ -8,6 +8,16 @@
 
 The test asserts on the exact rendered presentation of an output — a terminal string, HTML fragment, markdown, JSON with ordered keys, log message — when the real contract is about *semantics*. Any cosmetic formatting change breaks the test.
 
+## Aliases
+
+- "presentation coupled"
+- "rendered-string equality"
+- "golden-string snapshot"
+- "long toContain chains"
+- "raw HTML assertions"
+- "asserts on formatting not semantics"
+- "string match on structured output"
+
 ## Description
 
 The converse of [`vacuous-assertion`](./vacuous-assertion.md): the oracle is too *strong* in the wrong dimension. Long `toContain` chains over rendered output, full-string equality on prose, HTML with a specific class name — any of these couple the test to rendering accidents rather than the behavior they were trying to describe.

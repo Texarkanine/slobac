@@ -8,6 +8,16 @@
 
 Tests leak state across one another via module-level mutables, fixture side effects retained between tests, `before(:suite)` blocks that install globals without restoration, or lazy-initialized module variables populated by the first test to run. Results depend on execution order.
 
+## Aliases
+
+- "shared state"
+- "order dependence"
+- "order-dependent"
+- "leaked state"
+- "module-level mutables"
+- "test isolation"
+- "state leaking between tests"
+
 ## Description
 
 The semantic judgment is reachability analysis over the file's mutable bindings: trace writes and reads of each shared container across test bodies and setup hooks. A reader with the imports plus the hook blocks can build this graph quickly; a linter has to do scope-aware data flow.

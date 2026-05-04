@@ -8,6 +8,16 @@
 
 Replace the SUT body with `return;` / `return null` / `return input` — every test still passes. The SUT *runs*, the test *asserts*, but the assertion could not tell a working implementation from a no-op one.
 
+## Aliases
+
+- "pseudo-tested"
+- "extreme mutation survives"
+- "no-op mutant survives"
+- "structural-shape oracle"
+- "non-empty as the only check"
+- "would pass if SUT body were deleted"
+- "Niedermayr-style"
+
 ## Description
 
 This is the [extreme-mutation / pseudo-tested-methods](../glossary.md#extreme-mutation--pseudo-tested-methods) smell: methods whose bodies can be replaced with a no-op without any test noticing. Niedermayr et al.[^niedermayr] measured a median of 10.1% of methods in studied Java suites being pseudo-tested — a cheap, high-signal mutation class (often run via [Descartes](../glossary.md#descartes) on JVM, `mutmut --simple-mutations` on Python, `cargo-mutants` on Rust, or Stryker's block-statement mutator on JS/TS).

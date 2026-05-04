@@ -19,6 +19,7 @@ Every taxonomy file follows the same shape:
 
 - **Header table** — slug, severity, detection scope (`per-test`, `per-file`, or `cross-suite` — which agent type handles detection), and the [principles](../principles.md) the smell violates.
 - **Summary** — one-line TL;DR.
+- **Aliases** — alternate terms by which the smell may be named or searched. Audience is **human readers** landing on the entry from a fuzzy query (search engines, manifesto cross-links, drive-by reading). Format is a bullet list of double-quoted phrases. The audit orchestrator does **not** consume this section at runtime — it requires explicit slug invocation, not phrase resolution. The section exists purely for discoverability.
 - **Description** — what the smell is, why it matters, and what semantic judgment is required (i.e. what a linter cannot do).
 - **Signals** — concrete detection heuristics, static and semantic.
 - **False-positive guards** — common over-triggers and why they aren't the smell. Calibrates both human readers and agent consumers against pattern-matching false positives.

@@ -8,6 +8,17 @@
 
 The test reaches through a public type into a private method, internal field, or undocumented implementation shape. Renaming or refactoring an internal detail breaks the test even when observable behavior is unchanged.
 
+## Aliases
+
+- "implementation coupled"
+- "private method tests"
+- "private field access"
+- "underscore-prefixed access"
+- "reaches into internals"
+- "tests private API"
+- "VisibleForTesting"
+- "internal accessors"
+
 ## Description
 
 Distinct from [`over-specified-mock`](./over-specified-mock.md) — that's about over-asserting *interactions*; this is about reaching into *state* or *visibility*.

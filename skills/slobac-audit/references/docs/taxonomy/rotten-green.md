@@ -10,6 +10,17 @@ The test reports green but never actually exercises or asserts anything. Empty b
 
 Also known as "dead scaffolding".
 
+## Aliases
+
+- "rotten green"
+- "dead scaffolding"
+- "empty test body"
+- "TODO that passes"
+- "print where assertion was intended"
+- "console.log instead of assertion"
+- "dead fixture never read"
+- "test that reports green but verifies nothing"
+
 ## Description
 
 Covered in spirit by [`vacuous-assertion`](./vacuous-assertion.md), [`pseudo-tested`](./pseudo-tested.md), and [`shared-state`](./shared-state.md), but worth a separate entry because the signal is **syntactic and extremely cheap** — no semantic reasoning required for detection, only for the fix-vs-delete decision.

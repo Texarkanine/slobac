@@ -8,6 +8,22 @@
 
 Tests whose names, docstrings, or file organization reflect a long-gone development artifact — a sprint checklist, an acceptance-criteria list, a ticket title, or a refactor work-item — rather than the product's behavior. The suite reads like an archaeology of who-did-what-when, not a spec for what the code is supposed to do.
 
+## Aliases
+
+- "fossils"
+- "deliverable fossils"
+- "fossil tests"
+- "stale names"
+- "dead names"
+- "sprint-shaped tests"
+- "checklist tests"
+- "checklist-shaped"
+- "one test per AC"
+- "tests named after tickets"
+- "ticket-id vocabulary"
+- "names that describe who wrote them, not what they prove"
+- "sprint-vocab tests"
+
 ## Description
 
 When a team ships from a design document with a checklist, tests tend to get authored one per checkbox: one `it` block per AC line, file layout shaped like the feature breakdown, names mentioning the refactor/story/ticket that motivated them. This is perfectly fine during the sprint. But six months later the design doc is gone and the tests are still carrying the scaffolding. New readers meet a suite organized by *who did what, when* instead of *what the product guarantees*.
