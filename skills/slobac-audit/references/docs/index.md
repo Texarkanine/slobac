@@ -2,7 +2,9 @@
 
 Welcome. This is the manifesto for **SLOBAC** — *Suite-Life Of Bobs And Code* — a point of view about what tests should be, what test suites should be, and the named ways both go wrong.
 
-The manifesto ships as a **self-contained read**. No software is required to use it. A reader who finishes these pages should be able to audit their own test suite by hand and classify real tests against the named failure modes. Whether SLOBAC later ships an audit capability on top of this manifesto is a separate question — the manifesto stands on its own.
+The manifesto ships as a **self-contained read**. No software is required to use it. A reader who finishes these pages should be able to audit their own test suite by hand and classify real tests against the named failure modes.
+
+An agentic audit capability ships alongside the manifesto. Once you have read enough to know the taxonomy, see **[Using the SLOBAC audit](using-slobac.md)** to install and invoke it.
 
 ## How to read the manifesto
 
