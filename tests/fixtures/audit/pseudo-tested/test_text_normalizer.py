@@ -45,4 +45,4 @@ def test_normalize_preserves_some_letters():
 #     no-op mutation. Mutation kill-set delta is strictly positive.        -
 
 def test_normalize_lowercases_and_strips_trailing_punctuation():
-    assert normalize("  Hello, World!  ") == "hello world"
+    assert normalize("  Hello, World!  ") == "hello, world"

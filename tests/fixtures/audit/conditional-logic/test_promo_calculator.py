@@ -23,8 +23,8 @@ def apply_promo(price: float, code: str | None) -> float:
 
 
 # --- positive 1: `if cond: assert(...)` shape.                              -
-#     The `if code is not None` path has an assertion; the `else` path    -
-#     (when `code is None`) is silently passing — vacuous by omission. -
+#     The `if code` (truthy) path has an assertion; the falsy path       -
+#     (empty string or None) is silently passing — vacuous by omission.  -
 
 def test_apply_promo_with_save10_reduces_price():
     code = "SAVE10"
