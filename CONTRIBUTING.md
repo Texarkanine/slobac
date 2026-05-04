@@ -6,7 +6,7 @@ Taxonomy entries live at `skills/slobac-audit/references/docs/taxonomy/<slug>.md
 
 ### Entry shape
 
-```markdown
+~~~markdown
 | Slug | Severity | Detection Scope | Protects |
 |---|---|---|---|
 | `<slug>` | Critical / High / Medium / Low | per-test / per-file / cross-suite | [Principle](../principles.md#anchor) |
@@ -47,15 +47,15 @@ Gate: [preservation of regression-detection power](../principles.md#preservation
 
 ### Before
 
-\`\`\`<language>
+```<language>
 // planted smell
-\`\`\`
+```
 
 ### After
 
-\`\`\`<language>
+```<language>
 // fixed version
-\`\`\`
+```
 
 ## Related modes
 
@@ -64,7 +64,7 @@ Gate: [preservation of regression-detection power](../principles.md#preservation
 ## Polyglot notes
 
 What changes across ecosystems for detection and the prescribed transform.
-```
+~~~
 
 ### Required fields
 

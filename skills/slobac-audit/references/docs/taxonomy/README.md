@@ -32,7 +32,7 @@ Ordered roughly by how much semantic reasoning the required judgment demands. Hi
 
 These are covered by existing tooling. Where a linter, mutation tool, or codemod runner already does the work *deterministically*, this taxonomy defers.
 
-- Syntactic smell counts (TsDetect-style scoreboards). The EMSE 2023 follow-up study[^testsmells20] found classical smell counts uncorrelated with maintenance pain, and that machine-generated tests actually score *better* on smell detectors while being semantically worse. Optimizing for smell counts is an explicit anti-goal.
+- Syntactic smell counts ([TsDetect](https://github.com/TestSmells/TSDetect)-style scoreboards). The EMSE 2023 follow-up study[^testsmells20] found classical smell counts uncorrelated with maintenance pain, and that machine-generated tests actually score *better* on smell detectors while being semantically worse. Optimizing for smell counts is an explicit anti-goal.
 - Net-new test generation (handled by tools like CoverUp[^coverup]).
 - Framework migrations (handled by jest-codemods, OpenRewrite, unittest2pytest, and similar).
 - Flaky *detection* (handled by DeFlaker, `pytest-rerunfailures`, test-retry plugins). This catalog names flakiness root causes when they surface as [`shared-state`](./shared-state.md) or [`conditional-logic`](./conditional-logic.md); detection itself is out of scope.
