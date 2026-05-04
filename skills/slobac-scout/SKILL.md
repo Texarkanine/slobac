@@ -1,6 +1,9 @@
 ---
 name: slobac-scout
 description: Enumerate and measure a test suite's files, emit a Suite Manifest for the audit orchestrator. Use when slobac-audit dispatches a scout to map the suite before partitioning.
+license: >-
+  LicenseRef-PPL-S (Public Prompt License — Service Variant). Bundled texts: LICENSES/LicenseRef-PPL-S.txt,
+  LICENSES/AGPL-3.0-or-later.txt; SPDX annotations in REUSE.toml (standalone marketplace/tarball install).
 ---
 
 # Test Suite Scout Workflow

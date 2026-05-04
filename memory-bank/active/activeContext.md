@@ -1,16 +1,17 @@
 # Active Context
 
 ## Current Task: Per-skill LICENSES + REUSE.toml instrumentation
-**Phase:** PREFLIGHT — COMPLETE
+**Phase:** BUILD — COMPLETE
 
 ## What Was Done
 
-- Classified task as **Level 2** (scoped enhancement across four skill folders: add bundled licenses + per-unit REUSE config + SKILL front matter; no new runtime architecture).
-- Reviewed planning export `planning/Claude-Licensing skills with PPL-S on agentskills.io.md` and current repo `REUSE.toml`, canonical `/LICENSES/`, and `skills/*/SKILL.md` layout (none of the skills currently ship local `LICENSES/` or `license:` front matter).
-- **Decision:** static committed `LICENSES/` + `REUSE.toml` per skill; **no** Makefile/pyproject reuse helper unless we discover a need. Verification = `cd skills/<name> && reuse lint` per skill.
-- **Plan phase (2026-05-04):** Wrote full Level 2 plan to `memory-bank/active/tasks.md` per `level2-plan.md`: Test Plan (`reuse lint` as harness), ordered implementation steps (batch → scout → cross-suite → audit), Technology Validation, Challenges, Status checkboxes.
-- **Preflight (2026-05-04):** PASS — plan matches conventions and dependency touchpoints; advisory only (reorder bullets in steps 3–4 for parity with step 2; optional all-skills `reuse lint` sweep).
+- **Build (2026-05-04):** Added per-skill `LICENSES/` (copies from repo root), `REUSE.toml` (`SPDX-PackageName` per skill; PPL-S default; `slobac-audit` overrides `references/docs/**` → CC-BY-SA-4.0), `BUNDLED-AGPL.md` + REUSE override so **bundled `AGPL-3.0-or-later.txt` is a “used” license** under standalone `reuse --root . lint` (REUSE otherwise reports unused AGPL when only PPL-S tags apply to sources).
+- **`SKILL.md`:** Added YAML `license:` to `skills/slobac-batch/`, `skills/slobac-scout/`, `skills/slobac-cross-suite/`, `skills/slobac-audit/` (headline LicenseRef-PPL-S + pointers; audit notes CC-BY-SA for manifesto docs).
+- **Docs:** Short **Licensing (standalone bundle)** section in `skills/slobac-audit/README.md`.
+- **Harness correction:** `tasks.md` Test Plan / infrastructure updated — nested Git checkouts require **`reuse --root . lint`** at the skill root; plain `reuse lint` ascends to monorepo root.
+- **Tooling:** Installed REUSE CLI via `pipx` (`~/.local/bin/reuse`).
+- **Verification:** `reuse --root . lint` for all four skill roots (exit 0); `reuse lint` at repo root (exit 0); `uv run properdocs build --strict` (exit 0).
 
 ## Next Step
 
-- Run `/niko-build` following `tasks.md` implementation plan and `level2-build.md`.
+- Run `/niko-qa` following `level2-workflow.md`.

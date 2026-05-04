@@ -41,3 +41,18 @@ Implement REUSE-compliant, self-contained license bundles for each Agent Skill u
   - Unblock `/niko-build`; advisory: reorder scout/cross-suite bullets for clarity; optional all-skills `reuse lint` loop post-merge.
 * Insights
   - Preflight PASS hinges on the Implementation Plan header (“verify RED → add artifacts → verify GREEN”) plus explicit RED on batch/audit—not only on scout/cross-suite bullet order.
+
+## 2026-05-04 — Build — COMPLETE
+
+* Work completed
+  - Installed REUSE CLI (`pipx`, `reuse` 6.2.0 on PATH).
+  - For each of `skills/slobac-batch/`, `skills/slobac-scout/`, `skills/slobac-cross-suite/`, `skills/slobac-audit/`: created `LICENSES/` with byte copies from repo root (`LicenseRef-PPL-S`, `AGPL-3.0-or-later`; audit also `CC-BY-SA-4.0`); added skill-scoped `REUSE.toml` mirroring root policy (audit: `references/docs/**` → CC-BY-SA-4.0).
+  - Added `BUNDLED-AGPL.md` and a `REUSE.toml` override (`AGPL-3.0-or-later`) so standalone `reuse --root . lint` does not fail on unused bundled AGPL text; documents PPL-S ↔ AGPL relationship.
+  - Added `license:` front matter to each `SKILL.md`; added standalone licensing paragraph to `skills/slobac-audit/README.md`.
+  - Updated `memory-bank/active/tasks.md` (Build checked; Test Plan documents `reuse --root . lint`).
+  - Verified: `reuse --root . lint` per skill root; `reuse lint` at repo root; `uv run properdocs build --strict`.
+* Decisions made
+  - Standalone verification command is **`reuse --root . lint`** at skill root (nested repo otherwise uses root `REUSE.toml`).
+  - Satisfy REUSE “used license” for bundled AGPL via dedicated `BUNDLED-AGPL.md` + SPDX override, not by tagging all skill sources as AGPL.
+* Insights
+  - Plain `cd skills/<name> && reuse lint` without `--root` still linted the full monorepo (159 files); `--root .` is required for a true per-skill REUSE project boundary inside a Git tree.

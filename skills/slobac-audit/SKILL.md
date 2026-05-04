@@ -1,6 +1,10 @@
 ---
 name: slobac-audit
 description: Audit a test suite for common test smells based on the SLOBAC manifesto.
+license: >-
+  LicenseRef-PPL-S (Public Prompt License — Service Variant) for skill payload; references/docs/ manifesto
+  markdown is CC-BY-SA-4.0. Bundled texts under LICENSES/ (PPL-S, AGPL-3.0-or-later, CC-BY-SA-4.0); SPDX in REUSE.toml
+  (standalone marketplace/tarball install).
 ---
 
 # Test Suite Audit Workflow

@@ -13,7 +13,7 @@ Verification is **not** pytest (see `memory-bank/techContext.md` — no test run
 
 ### Behaviors to Verify
 
-- **[Batch root is a REUSE project]** `cd skills/slobac-batch && reuse lint` → process exits 0; no missing-license / missing-copyright findings for files under that tree.
+- **[Batch root is a REUSE project]** `cd skills/slobac-batch && reuse --root . lint` → process exits 0; no missing-license / missing-copyright findings for files under that skill tree only.
 - **[Scout root is a REUSE project]** Same for `skills/slobac-scout/`.
 - **[Cross-suite root is a REUSE project]** Same for `skills/slobac-cross-suite/`.
 - **[Audit root is a REUSE project]** Same for `skills/slobac-audit/`, with **`references/docs/**`** files annotated as **CC-BY-SA-4.0** and non-docs skill payload as **LicenseRef-PPL-S** (mirrors root `REUSE.toml` policy).
@@ -30,7 +30,7 @@ Verification is **not** pytest (see `memory-bank/techContext.md` — no test run
 
 - **Framework:** [REUSE](https://reuse.software/) CLI (`reuse lint`).
 - **Test location:** N/A (validator is CLI + cwd).
-- **Conventions:** Run with **current working directory** = skill root (`skills/<name>/`).
+- **Conventions:** Run with **current working directory** = skill root (`skills/<name>/`). Because each skill lives inside the Git working tree, use **`reuse --root . lint`** so the nearest `REUSE.toml` defines the project root; plain `reuse lint` would otherwise ascend to the repo root and lint the whole monorepo.
 - **New test files:** None (no pytest). Optional future CI job is advisory only per project brief.
 
 ## Implementation Plan
@@ -99,5 +99,5 @@ Each numbered step is one vertical slice: **verify RED → add artifacts → ver
 - [x] Implementation plan complete
 - [x] Technology validation complete
 - [x] Preflight
-- [ ] Build
+- [x] Build
 - [ ] QA
