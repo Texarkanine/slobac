@@ -162,7 +162,7 @@ No new technology — validation not required. All edits are markdown and Python
 - [x] Technology validation complete
 - [x] Preflight (PASS with 1 amendment + 2 advisories)
 - [x] Build (PASS — 18 steps complete; 1 documented deviation; 1 straggler caught and fixed during step 18)
-- [ ] QA
+- [x] QA (PASS — 1 substantive deficiency caught and fixed inline: rotten-green fixture's planted `# TODO` comment was missing)
 
 ## Preflight Amendments & Advisories
 
