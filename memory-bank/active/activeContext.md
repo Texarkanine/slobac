@@ -6,7 +6,7 @@ Author `## False-positive guards` sections for 13 stub taxonomy docs.
 
 ## Phase
 
-`BUILD - COMPLETE`
+`REFLECT COMPLETE`
 
 ## What Was Done
 
@@ -41,4 +41,4 @@ None. Built exactly to plan; the catalog-ordered sub-cycle ran without surprises
 
 ## Next Step
 
-QA. Invoke the `niko-qa` skill per the Level 2 workflow Phase Mappings.
+Operator-initiated `/niko-archive` to finalize the task. Reconcile-persistent skipped (no persistent file invalidated by this task).
