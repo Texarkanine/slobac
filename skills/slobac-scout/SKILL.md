@@ -1,7 +1,6 @@
 ---
 name: slobac-scout
 description: Enumerate and measure a test suite's files, emit a Suite Manifest for the audit orchestrator. Use when slobac-audit dispatches a scout to map the suite before partitioning.
-license: Public Prompt License - Service Variant (PPL-S)
 ---
 
 # Test Suite Scout Workflow

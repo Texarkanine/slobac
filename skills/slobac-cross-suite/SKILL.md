@@ -1,7 +1,6 @@
 ---
 name: slobac-cross-suite
-description: Detect cross-suite SLOBAC smells by clustering behavior summaries and performing targeted source reads. Used when slobac-audit dispatches a cross-suite assessor during orchestrated audit.
-license: Public Prompt License - Service Variant (PPL-S)
+description: Detect cross-suite SLOBAC smells by clustering behavior summaries and performing targeted source reads. Use when slobac-audit dispatches a cross-suite assessor during orchestrated audit.
 ---
 
 # Cross-Suite Assessor Workflow

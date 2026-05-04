@@ -1,7 +1,6 @@
 ---
 name: slobac-batch
-description: Assess a batch of test files for per-test and per-file SLOBAC smells, emit findings and behavior summaries. Used when slobac-audit dispatches a batch assessor during orchestrated audit.
-license: Public Prompt License - Service Variant (PPL-S)
+description: Assess a batch of test files for per-test and per-file SLOBAC smells, emit findings and behavior summaries. Use when slobac-audit dispatches a batch assessor during orchestrated audit.
 ---
 
 # Batch Assessor Workflow

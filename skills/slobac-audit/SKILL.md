@@ -1,7 +1,6 @@
 ---
 name: slobac-audit
 description: Audit a test suite for common test smells based on the SLOBAC manifesto.
-license: ./PPL-S.txt
 ---
 
 # Test Suite Audit Workflow
