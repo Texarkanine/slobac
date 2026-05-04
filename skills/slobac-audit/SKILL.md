@@ -1,6 +1,6 @@
 ---
 name: slobac-audit
-description: Audit a test suite for SLOBAC manifesto smells and emit a portable markdown report. Supports all 15 manifesto smells across 3 detection scopes (per-test, per-file, cross-suite). Orchestrates scout, batch, and cross-suite subagents for suites of any size. Use when a human asks for a smell audit of test code, a review of test names/assertions against the behavior they claim to protect, or a SLOBAC report.
+description: Audit a test suite for common test smells based on the SLOBAC manifesto.
 ---
 
 # Test Suite Audit Workflow
