@@ -44,7 +44,10 @@ Semantic signals:
 
 ## False-positive guards
 
-No audit-specific guards yet; Phase-2 per-smell work will author these.
+The "reaches into internals" signals are language-conditional and over-trigger when transplanted between ecosystems:
+
+- **"Private" is a per-language convention.** The signals (`_prefix`, `send(:method)`, `(x as any)`, lowercase-Go) only mean "private" in the conventions where they do. Python's `_helper` is a *naming convention* — same-module test access is conventional and explicitly permitted in many codebases. Rust's `#[cfg(test)] mod tests` is built to read private fields on purpose. Apply each language's convention before flagging; the per-ecosystem pointers in the [Polyglot notes](#polyglot-notes) below are the source of truth, not a transplant from TS's strict `private`.
+- **Sanctioned visibility relaxation for testing.** Some languages provide a *deliberate* escape hatch for test-time access: Java/Guava `@VisibleForTesting`, .NET's `[InternalsVisibleTo]`, Kotlin `internal`, Go's same-package `_test.go` files, Ruby `send` accompanied by an annotated allow comment. When a test uses the sanctioned mechanism, the access was an intentional contract decision by the SUT's author, not a coupling violation. Flag access that *bypasses* the sanctioned mechanism (forced reflection in Java where `@VisibleForTesting` would have sufficed; `(x as any)` cast in TS where the property could have been declared `protected` for the test subclass); do not flag the use of the sanctioned mechanism itself.
 
 ## Prescribed Fix
 

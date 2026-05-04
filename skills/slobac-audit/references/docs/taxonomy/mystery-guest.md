@@ -39,7 +39,11 @@ This is the lowest-risk, highest-readability entry in the catalog; the transform
 
 ## False-positive guards
 
-No audit-specific guards yet; Phase-2 per-smell work will author these.
+External-data signals over-trigger in three shapes the audit must not flag:
+
+- **Inlined derivation cures the magic number.** `assert count == EXPECTED_USER_MSGS + EXPECTED_ASSISTANT_MSGS` (or any expression that *names* the arithmetic) is not mystery-guest — a reader can see why the answer is what it is without leaving the test. Flag only unnamed magic literals (`assert count == 6` with no derivation in scope, no comment, no symbolic constant).
+- **Real-world fixtures *are* the input domain.** Parser, codec, schema-validation, and migration tests legitimately read large fixture files because the file *is* the SUT's input contract. The fixture is not a hidden coupling; it is the test subject. Flag only when the *assertion* depends on an unstated property of the file (a magic count, a magic offset); do not flag tests that read a fixture and assert on a specifically-described, comment-summarized property of it.
+- **Named factories with descriptive identifiers.** A `let user_with_two_orders = ...` or `make_session(messages=3)` factory call carries the relevant fixture shape in its *name*. The shape is not hidden; the identifier states it. Flag unnamed heredocs, unnamed `let` bindings, and bare `File.read(path)` patterns whose product is never named — not the named-factory pattern, even when the underlying fixture data is large.
 
 ## Prescribed Fix
 

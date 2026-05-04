@@ -36,7 +36,11 @@ Includes unused shared setup (dead `@temp_dir`, unused `let(:doc)`) — syntacti
 
 ## False-positive guards
 
-No audit-specific guards yet; Phase-2 per-smell work will author these.
+Module-level binding signals over-trigger in three classes the audit must not flag:
+
+- **Read-only shared bindings.** Module-level constants (`const FIXTURES_DIR = ...`, `const FROZEN = Object.freeze({...})`, `FIXTURE_PATH = pathlib.Path(...)`) and `let`s bound to immutable values are not shared *state* — they're shared *data*. There is no order-coupling risk because no test can mutate them. The smell fires on mutable bindings only; immutable shared bindings are a normal optimization.
+- **`beforeAll` / `before(:suite)` for genuinely expensive immutable setup.** A parsed grammar, a compiled regex, an HTTP-client connection pool, a once-loaded ML model — created once and never mutated by tests — is legitimate cross-test sharing. Per-test recreation would burn CI time with zero isolation gain. The smell fires when (a) tests mutate the suite-level resource, or (b) the setup installs *globals* (monkey-patches, env-var changes, DOM patches) without a paired restore in `afterAll` / `after(:suite)`.
+- **Genuinely-unused shared setup is [`rotten-green`](./rotten-green.md), not shared-state.** A `before(:suite)` block whose product is read by no test (a `@temp_dir` created and never referenced, a `let(:doc)` bound and never used) is dead scaffolding, not state leakage. Distinguish: shared-state requires both write and read across tests with order coupling; orphan setup with zero reads belongs to a different smell entirely. Routing such cases to rotten-green is the correct disposition.
 
 ## Prescribed Fix
 

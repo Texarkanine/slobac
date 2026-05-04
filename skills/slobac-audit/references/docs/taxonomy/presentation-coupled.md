@@ -37,7 +37,10 @@ Distinct from [`over-specified-mock`](./over-specified-mock.md): presentation co
 
 ## False-positive guards
 
-No audit-specific guards yet; Phase-2 per-smell work will author these.
+String-equality signals over-trigger when rendering itself is the deliverable:
+
+- **The presentation IS the contract.** Tests for code formatters, syntax highlighters, ANSI styling libraries, JSON pretty-printers, markdown renderers, terminal UIs, or any SUT whose deliverable *is* the rendered string MUST assert on the rendered output character-by-character — that's the public contract, and a parsed-AST assertion would lose the formatting fidelity the SUT exists to produce. Flag presentation coupling only when the SUT's contract is *semantic* (a calculator that incidentally returns formatted text, an API that emits JSON which happens to be human-readable) and the test pins formatting accidents that aren't part of the contract.
+- **Snapshot tests for visual regression with a semantic sibling.** A snapshot or golden-file assertion paired with a sibling test that asserts the parsed structure is a deliberate two-axis guard: structure for behavior, snapshot for reviewer visual diff. The pair is not over-coupled — each axis catches what the other can't. Flag snapshot-only tests that stand alone with no semantic sibling, where any whitespace edit silently demands a snapshot update with no behavior question asked.
 
 ## Prescribed Fix
 

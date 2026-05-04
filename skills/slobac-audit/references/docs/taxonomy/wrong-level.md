@@ -31,7 +31,10 @@ Do *not* try to enforce a global layer policy across repos — read the repo's e
 
 ## False-positive guards
 
-No audit-specific guards yet; Phase-2 per-smell work will author these.
+Tier signals are repo-conditional and over-trigger when applied as if they were universal:
+
+- **The repo's existing layer convention is authoritative.** Before flagging a test for living at the wrong tier, read the repo's tier conventions: directory layout (`tests/integration/`), filename suffixes (`*.unit.test.ts`, `*_integration_test.go`), runner markers (`pytest.mark.integration`, `@Tag("slow")`), and build constraints (`//go:build integration`). If the test sits in a tier the repo treats as appropriate for the test's content, do not flag — even if a different repo would file it differently. The signal is mismatch between a test's content and its repo's stated tier, not mismatch with an idealized pyramid.
+- **Co-location-by-convention single-file ecosystems.** Some ecosystems place all tier coverage for a unit in one file by design — Go's `package_test.go` adjacent to `package.go`, Rust's `#[cfg(test)] mod tests` — and the build system shards via tags or build constraints. Flag only when the colocation incurs the cost the smell warns about (slow tests blocking the dev-loop tier), not when the colocation is the ecosystem's idiomatic shape and the cost is already mitigated by the runner.
 
 ## Prescribed Fix
 

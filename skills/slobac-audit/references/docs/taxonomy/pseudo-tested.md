@@ -36,7 +36,10 @@ A reader can *conjecture* without running a mutator: "if `short_digest` returned
 
 ## False-positive guards
 
-No audit-specific guards yet; Phase-2 per-smell work will author these.
+The no-op-survival signal over-triggers in two cases:
+
+- **Side-effect contracts observed via a non-return channel.** A SUT whose entire contract is to perform a side effect — write a file, emit a log line, publish an event, mutate a database row — has no return path for the obvious return-value mutator to expose. A test that calls the SUT and then asserts on the side effect via the appropriate channel (file content, captured log, event store, database query) is *not* pseudo-tested even though `return null` substituted in the SUT body would survive a return-value mutator. Before flagging on null-op survival, ask whether the SUT's contract is its return value or its side effect, and confirm the test asserts on whichever is the contract. The relevant mutant for a side-effect SUT is on the side-effect call, not the return path.
+- **Conjecture vs verified mutation.** Reader-side conjecture ("if `short_digest` returned `''`, would any test fail?") is cheap and useful, but it is not a verdict. A real mutation tool runs many no-op shapes (`return null`, `return input`, `return zero`, `return ""`); an assertion that catches *some* shapes but not the simplest constant-replacement still constitutes meaningful coverage. Before flagging on conjecture alone, consider multiple plausible no-op replacements; if at least one would plausibly fail an existing assertion, downgrade to INVESTIGATE rather than flag, and recommend a real mutation run as the verifier. The verified pseudo-tested verdict requires a tool run; the conjectural verdict is a hypothesis.
 
 ## Prescribed Fix
 

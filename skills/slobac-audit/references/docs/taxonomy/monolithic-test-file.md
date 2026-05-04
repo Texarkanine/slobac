@@ -33,7 +33,10 @@ The semantic judgment: cluster the file's tests by behavior domain ([describe-be
 
 ## False-positive guards
 
-No audit-specific guards yet; Phase-2 per-smell work will author these.
+File-shape signals over-trigger when applied as if size alone were the violation:
+
+- **Line/test-count thresholds are signals, not verdicts.** A 1500-line file of small parameterized cases all targeting one parser is not monolithic — it has a single behavior domain. The smell fires on *mixed* domains, not size. Apply the size signals (>1000 lines, >50 `it` blocks) as a triage filter for human review, not as a pass/fail verdict; the semantic judgment is "are these tests about the same product capability?", not "is this file too big?".
+- **Co-location-by-convention ecosystems.** Go's `package_test.go` adjacent to `package.go` and Rust's `#[cfg(test)] mod tests` place all coverage for a unit in one file by deliberate convention; splitting fights the build system's discovery and the ecosystem's idioms. Flag only when in-file content mixes behaviors the ecosystem would not idiomatically colocate (e.g. a Go file mixing pure-function units with subprocess-driving integration tests deserves an `_integration_test.go` split — see [`wrong-level`](./wrong-level.md) — but a file of focused unit tests for one package's exported functions is not a violation regardless of size).
 
 ## Prescribed Fix
 

@@ -36,7 +36,11 @@ This entry respects the [knowledge-DRY governor rule](../principles.md#knowledge
 
 ## False-positive guards
 
-No audit-specific guards yet; Phase-2 per-smell work will author these.
+Embedding-cluster signals over-trigger in three classes the audit must suppress:
+
+- **Mirrored components are intentional duplication.** When the redundancy spans two files testing two implementations of the same contract (`plugin-cursor.test.ts` vs `plugin-claude.test.ts`), the duplication is the *deliverable shape*: both products are independent, and a regression in either must be caught by its own suite. Flag only when a parameterized or shared-example refactor would not change *which* products' contracts are verified. If parameterization would collapse two product surfaces into one, the duplication is intentional and the right move is documenting the divergence, not merging.
+- **Same surface, different business concept.** Two tests whose bodies match the embedding threshold can encode different domain rules (validation-by-presence vs validation-by-format; the user-facing rejection path vs the internal-audit logging path). Token similarity is not concept similarity. Run [describe-before-edit](../principles.md#behavior-articulation-before-change) on both candidates; if the one-sentence behavior summaries disagree, keep both. This is the [knowledge-DRY governor rule](../principles.md#knowledge-dry-not-syntactic-dry) applied to the cluster.
+- **Contract-duplication of production constants.** A test that re-states a production constant — `STORAGE_KEYS`, schema versions, magic IDs, error codes — on purpose, as a regression guard against silent drift between test and production, must not be merged with a test that *uses* the constant. The cue is a deliberate inline literal whose production home is what the test guards. An explicit metacomment (`# test-design: contract-duplication`) or an allowlist is the operator-side complement to this guard.
 
 ## Prescribed Fix
 
