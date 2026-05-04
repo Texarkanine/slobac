@@ -42,6 +42,33 @@ Implement REUSE-compliant, self-contained license bundles for each Agent Skill u
 * Insights
   - Preflight PASS hinges on the Implementation Plan header (“verify RED → add artifacts → verify GREEN”) plus explicit RED on batch/audit—not only on scout/cross-suite bullet order.
 
+## 2026-05-04 — Reflect — COMPLETE
+
+* Work completed
+    - Wrote `memory-bank/active/reflection/reflection-per-skill-reuse-bundles.md`.
+    - Updated `memory-bank/systemPatterns.md` — added per-skill REUSE bundle pattern (BUNDLED-AGPL.md witness, `--root .` flag requirement).
+    - Updated `memory-bank/techContext.md` — added REUSE compliance validation note under Testing Process.
+    - Updated `memory-bank/active/activeContext.md` (Reflect — COMPLETE).
+* Decisions made
+    - Two insights promoted to persistent files: `--root .` requirement for nested REUSE projects; BUNDLED-AGPL.md pattern for compliance-only bundled license texts.
+    - Million-dollar question: architecture is already optimal; no redesign warranted.
+* Insights
+    - Preflight's enforcement of explicit RED/GREEN encoding per slice paid off during Build — plan-shape gaps caught before any files were touched.
+
+## 2026-05-04 — QA — PASS
+
+* Work completed
+    - Ran `/niko-qa`: semantic review of all four per-skill bundles against project brief acceptance criteria and KISS/DRY/YAGNI/Completeness/Regression/Integrity/Documentation constraints.
+    - Confirmed all four `reuse --root . lint` exit 0 (batch: 3/3 files; scout: 4/4; cross-suite: 3/3; audit: 28/28).
+    - Confirmed repo-root `reuse lint` still exit 0 (163/163 files).
+    - Confirmed `properdocs build --strict` exit 0.
+    - Verified sibling READMEs have no distribution content requiring a licensing paragraph (skip condition in plan step 6 applies).
+    - Wrote `memory-bank/active/.qa-validation-status` (PASS); updated `tasks.md` (QA checked).
+* Decisions made
+    - No defects found; no fixes required.
+* Insights
+    - BUNDLED-AGPL.md pattern (override annotation to satisfy REUSE "used license" for the bundled AGPL text) is clean and carries its own explanation — no debug artifacts survive.
+
 ## 2026-05-04 — Build — COMPLETE
 
 * Work completed

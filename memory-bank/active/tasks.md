@@ -100,4 +100,4 @@ Each numbered step is one vertical slice: **verify RED → add artifacts → ver
 - [x] Technology validation complete
 - [x] Preflight
 - [x] Build
-- [ ] QA
+- [x] QA

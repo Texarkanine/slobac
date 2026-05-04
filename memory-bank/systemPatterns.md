@@ -52,6 +52,15 @@ This invariant applies to every skill SLOBAC ships, not just `slobac-audit`. Whe
 
 The skill bundle at `skills/slobac-audit/references/docs/` contains the full manifesto. `properdocs.yml` `docs_dir` points directly at this directory; the rendered site is built from it with no indirection. Contributors edit files in `skills/slobac-audit/references/docs/` — that is both the skill's runtime content and the site source. The properdocs "Edit this page" link points at the actual file (not a wrapper), landing the contributor directly at the canonical content.
 
+## Per-skill REUSE bundles: duplicate-for-distribution pattern
+
+Each skill under `skills/*/` carries its own `LICENSES/` directory and `REUSE.toml` so that a marketplace-only install is a valid REUSE project without the repo root. This is intentional redundancy: the repo-root `REUSE.toml` remains the authoritative full-tree linter; the per-skill copies exist purely for standalone distribution. When adding a new skill, mirror the pattern from any existing sibling:
+
+- `LICENSES/LicenseRef-PPL-S.txt` and `LICENSES/AGPL-3.0-or-later.txt` — byte copies from repo root.
+- `REUSE.toml` with `SPDX-PackageName` = skill name; `**/*` → `LicenseRef-PPL-S` (plus `references/docs/**` → `CC-BY-SA-4.0` for `slobac-audit`).
+- `BUNDLED-AGPL.md` with `SPDX-License-Identifier: AGPL-3.0-or-later` annotation — satisfies REUSE's "no unused licenses" rule for the bundled AGPL text, which exists for downstream legal compliance rather than annotating source files.
+- Validate with **`reuse --root . lint`** from the skill root. The `--root .` flag is mandatory; plain `reuse lint` ascends to the `.git` boundary and lints the full monorepo instead.
+
 ## Vocabulary discipline: "describe-before-edit"
 
 The manifesto's [behavior-articulation principle](../skills/slobac-audit/references/docs/principles.md#behavior-articulation-before-change) applies to SLOBAC's own authorship: before proposing any change to a taxonomy entry or principle, state in one sentence what the entry is supposed to claim about testing. Drift in this document tends to happen when contributors preserve shape without restating intent.
