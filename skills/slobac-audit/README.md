@@ -6,7 +6,7 @@ This file is **contributor documentation** — architecture, layout, and smoke-t
 
 ## Licensing (standalone bundle)
 
-This skill directory ships committed `LICENSES/`, `REUSE.toml`, and `BUNDLED-AGPL.md` alongside `SKILL.md` so a marketplace or tarball install stays REUSE-valid without the monorepo root. From this directory, run `reuse --root . lint` to verify (nested Git checkouts otherwise lint from the repository root unless `--root` is set).
+This skill ships `LICENSES/` and `REUSE.toml` so a marketplace or tarball install is REUSE-valid without the monorepo root. From this directory, run `reuse --root . lint` to verify (nested Git checkouts otherwise lint from the repository root unless `--root` is set).
 
 ## Architecture
 

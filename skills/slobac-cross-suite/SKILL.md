@@ -1,9 +1,7 @@
 ---
 name: slobac-cross-suite
 description: Detect cross-suite SLOBAC smells by clustering behavior summaries and performing targeted source reads. Use when slobac-audit dispatches a cross-suite assessor during orchestrated audit.
-license: >-
-  LicenseRef-PPL-S (Public Prompt License — Service Variant). Bundled texts: LICENSES/LicenseRef-PPL-S.txt,
-  LICENSES/AGPL-3.0-or-later.txt; SPDX annotations in REUSE.toml (standalone marketplace/tarball install).
+license: "LicenseRef-PPL-S — see LICENSES/LicenseRef-PPL-S.txt"
 ---
 
 # Cross-Suite Assessor Workflow

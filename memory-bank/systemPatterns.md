@@ -54,14 +54,9 @@ The skill bundle at `skills/slobac-audit/references/docs/` contains the full man
 
 ## Per-skill REUSE bundles: duplicate-for-distribution pattern
 
-Each skill under `skills/*/` carries its own `LICENSES/` directory and `REUSE.toml` so that a marketplace-only install is a valid REUSE project without the repo root. This is intentional redundancy: the repo-root `REUSE.toml` remains the authoritative full-tree linter; the per-skill copies exist purely for standalone distribution. When adding a new skill, mirror the pattern from any existing sibling:
+Each skill under `skills/*/` ships `LICENSES/LicenseRef-PPL-S.txt` so a marketplace or tarball install carries the license text without the monorepo root. The `license:` field in each `SKILL.md` front matter points humans at it directly.
 
-- `LICENSES/LicenseRef-PPL-S.txt` and `LICENSES/AGPL-3.0-or-later.txt` — byte copies from repo root.
-- `REUSE.toml` with `SPDX-PackageName` = skill name; `**/*` → `LicenseRef-PPL-S` (plus `references/docs/**` → `CC-BY-SA-4.0` for `slobac-audit`).
-<!-- REUSE-IgnoreStart -->
-- `BUNDLED-AGPL.md` with `SPDX-License-Identifier: AGPL-3.0-or-later` annotation — satisfies REUSE's "no unused licenses" rule for the bundled AGPL text, which exists for downstream legal compliance rather than annotating source files.
-<!-- REUSE-IgnoreEnd -->
-- Validate with **`reuse --root . lint`** from the skill root. The `--root .` flag is mandatory; plain `reuse lint` ascends to the `.git` boundary and lints the full monorepo instead.
+`slobac-audit` is the only multi-license skill (PPL-S for skill payload + CC-BY-SA-4.0 for `references/docs/**`), so it alone carries a `REUSE.toml` and a `LICENSES/CC-BY-SA-4.0.txt`. Validate its standalone compliance with **`reuse --root . lint`** from `skills/slobac-audit/`. The `--root .` flag is mandatory — omitting it causes `reuse` to ascend to the `.git` boundary and lint the entire monorepo instead.
 
 ## Vocabulary discipline: "describe-before-edit"
 

@@ -1,9 +1,7 @@
 ---
 name: slobac-batch
 description: Assess a batch of test files for per-test and per-file SLOBAC smells, emit findings and behavior summaries. Use when slobac-audit dispatches a batch assessor during orchestrated audit.
-license: >-
-  LicenseRef-PPL-S (Public Prompt License — Service Variant). Bundled texts: LICENSES/LicenseRef-PPL-S.txt,
-  LICENSES/AGPL-3.0-or-later.txt; SPDX annotations in REUSE.toml (standalone marketplace/tarball install).
+license: "LicenseRef-PPL-S — see LICENSES/LicenseRef-PPL-S.txt"
 ---
 
 # Batch Assessor Workflow
