@@ -2,7 +2,7 @@
 
 **Current Task:** Onboard remaining 9 smells (REWORK) — delegate manifesto duplication out of `slobac-audit/SKILL.md`
 
-**Phase:** QA - PASS (rework)
+**Phase:** REFLECT - COMPLETE (rework)
 
 **What Was Done:**
 - Operator directed rework via `/niko-plan` after the original implementation reached 15-smell parity.
@@ -11,4 +11,4 @@
 - Preserved: `projectbrief.md` (with appended Rework section), `progress.md` (with appended rework history), `reflection/` (original reflection retained for archive inlining).
 - Complexity for the rework retained as **Level 2** — same shape as the original task: per-entry uniform rollout + a small number of SKILL.md surgeries; no design decisions; bounded scope.
 
-**Next Step:** Reflect phase via `niko-reflect` skill — write reflection-onboard-remaining-smells.md (rework continuation), reconcile persistent files.
+**Next Step:** Run `/niko-archive` to inline both reflection sections (original + rework) into a single archive document and finalize the project. Reflect is a terminal node; this requires operator initiation.

@@ -145,3 +145,4 @@ No new technology — validation not required. All edits are markdown.
 - [x] Preflight (PASS with amendment + pre-build contract shift; B11b added; B2b/B2c/B4 inverted post-amend)
 - [x] Build (Phases A→D shipped across three commits: taxonomy aliases rollout, SKILL.md surgery, mirror cleanup)
 - [x] QA (PASS — one trivial DRY fix applied inline at SKILL.md Step 2 refusal payload prose; properdocs rebuilt green)
+- [x] Reflect (rework section appended to existing reflection-onboard-remaining-smells.md; persistent files reconciled — productContext.md surgical fix to subset-selection UX phrasing; systemPatterns.md not invalidated; techContext.md updated during build)
