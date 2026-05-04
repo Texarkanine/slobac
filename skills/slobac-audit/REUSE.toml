@@ -14,10 +14,3 @@ path = ["references/docs/**"]
 precedence = "override"
 SPDX-FileCopyrightText = "Texarkanine"
 SPDX-License-Identifier = "CC-BY-SA-4.0"
-
-# Uses bundled AGPL text (PPL-S extends AGPL); satisfies REUSE “used license” for LICENSES/AGPL-3.0-or-later.txt
-[[annotations]]
-path = ["BUNDLED-AGPL.md"]
-precedence = "override"
-SPDX-FileCopyrightText = "Texarkanine"
-SPDX-License-Identifier = "AGPL-3.0-or-later"
