@@ -27,7 +27,7 @@ The plan was accurate in sequence and file scope; two REUSE-specific surprises r
 
 **Surprise 1 — `--root .` is mandatory for nested REUSE projects.** The plan's test harness described `cd skills/slobac-batch && reuse lint`, but plain `reuse lint` inside a Git working tree always ascends to the nearest `.git` root and lints the entire monorepo. The correct command is `reuse --root . lint` from the skill directory. The tasks.md Test Plan was corrected in-place during Build.
 
-**Surprise 2 — every `LICENSES/*.txt` must be referenced by at least one annotation.** REUSE treats an unreferenced license file as an error ("unused license"). The AGPL text is bundled for downstream legal compliance, but no skill source file carries `SPDX-License-Identifier: AGPL-3.0-or-later`. The fix — `BUNDLED-AGPL.md` with an AGPL override annotation — is minimal, self-documenting, and leaves zero debug artifacts.
+**Surprise 2 — every `LICENSES/*.txt` must be referenced by at least one annotation.** REUSE treats an unreferenced license file as an error ("unused license"). The AGPL text is bundled for downstream legal compliance, but no skill source file carries an AGPL identifier. The fix — `BUNDLED-AGPL.md` with an AGPL override annotation — is minimal, self-documenting, and leaves zero debug artifacts.
 
 The identified challenge ("REUSE.toml precedence / glob mistakes") did not materialize; the CC-BY-SA override for `references/docs/**` worked on the first attempt.
 

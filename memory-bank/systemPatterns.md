@@ -58,7 +58,9 @@ Each skill under `skills/*/` carries its own `LICENSES/` directory and `REUSE.to
 
 - `LICENSES/LicenseRef-PPL-S.txt` and `LICENSES/AGPL-3.0-or-later.txt` — byte copies from repo root.
 - `REUSE.toml` with `SPDX-PackageName` = skill name; `**/*` → `LicenseRef-PPL-S` (plus `references/docs/**` → `CC-BY-SA-4.0` for `slobac-audit`).
+<!-- REUSE-IgnoreStart -->
 - `BUNDLED-AGPL.md` with `SPDX-License-Identifier: AGPL-3.0-or-later` annotation — satisfies REUSE's "no unused licenses" rule for the bundled AGPL text, which exists for downstream legal compliance rather than annotating source files.
+<!-- REUSE-IgnoreEnd -->
 - Validate with **`reuse --root . lint`** from the skill root. The `--root .` flag is mandatory; plain `reuse lint` ascends to the `.git` boundary and lints the full monorepo instead.
 
 ## Vocabulary discipline: "describe-before-edit"
