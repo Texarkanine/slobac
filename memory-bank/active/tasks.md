@@ -161,7 +161,7 @@ No new technology — validation not required. All edits are markdown and Python
 - [x] Implementation plan complete
 - [x] Technology validation complete
 - [x] Preflight (PASS with 1 amendment + 2 advisories)
-- [ ] Build
+- [x] Build (PASS — 18 steps complete; 1 documented deviation; 1 straggler caught and fixed during step 18)
 - [ ] QA
 
 ## Preflight Amendments & Advisories

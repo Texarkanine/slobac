@@ -23,6 +23,18 @@ Scenarios added for orchestration (Phase 2):
 - `semantic-redundancy/` — multi-file scenario exercising cross-suite detection scope. Two files (`test_auth_tokens.py`, `test_session_auth.py`) test the same expired-token rejection behavior at different indirection levels. A third file (`test_contract_keys.py`) contains structurally similar key-checking assertions that guard different contracts (negative example — intentional duplication).
 - `wrong-level/` — multi-file, multi-directory scenario exercising cross-suite detection scope. Directory structure encodes tier conventions (`unit/`, `integration/`). Contains both directions of wrong-level: `unit/test_api_client.py` spawns subprocesses and makes real HTTP requests (too low — should be integration), `integration/test_pure_helpers.py` tests pure functions with no external deps (too high — should be unit). `unit/test_calculator.py` is a negative example — correctly placed despite heavy-sounding imports.
 
+Scenarios added for taxonomy parity (Phase 3):
+
+- `tautology-theatre/` — `test_payment_processor.py`. Two positives (mock-tautology, mock-of-SUT) and one negative control (real SUT, mock as collaborator). Severity Critical; remediation **delete**.
+- `pseudo-tested/` — `test_text_normalizer.py`. Two positives where a no-op SUT replacement still passes (structural-shape and `in`-existence oracles); one negative control with full output equality.
+- `vacuous-assertion/` — `test_invoice_parser.py`. Two positives (`is not None`, truthy field) where many interesting wrong answers still pass; one negative control with structural equality on all parsed fields.
+- `over-specified-mock/` — `test_email_dispatcher.py`. Two positives (over-specified interactions with pinned timeout constant; field-by-field log-call inspection); one negative control using `ANY`-matchers for incidental args.
+- `implementation-coupled/` — `test_user_repository.py`. Two positives (asserts on `repo._users` private dict; calls `repo._normalize_email` private helper); one negative control driving only the public `save`/`get` API.
+- `presentation-coupled/` — `test_report_renderer.py`. Two positives (full-string HTML equality; long `in`-chain over rendered HTML); one negative control parsing JSON output to its semantic layer.
+- `conditional-logic/` — `test_promo_calculator.py`. Two positives (`if cond: assert(...)` shape; `try/except` without trailing `pytest.fail`); one negative control using `pytest.parametrize` with unconditional assertions.
+- `mystery-guest/` — `test_csv_importer.py` plus the external fixture data file `orders.csv`. Two positives (magic count `len == 6`; magic count `count_paid == 4` tied to the CSV row distribution); one negative control with inline fixture data and a derived expectation.
+- `rotten-green/` — `test_metric_collector.py`. Two positives (empty body with `# TODO` and `pass`; SUT call followed by `print(...)` instead of an assertion); one negative control with a real assertion on real SUT output.
+
 ## Validation mode
 
 Phase 1 validation is **manual**. The operator invokes the audit skill against a fixture path in Cursor or Claude Code, reads the emitted `slobac-audit.md`, and compares it to `expected-findings.md` for that scenario. A scripted eval harness (golden-file or structured-pattern matching) is deliberately deferred to Phase 2 — Phase 1 is proving the shape works, not proving the detection is byte-stable.

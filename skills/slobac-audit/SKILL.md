@@ -1,6 +1,6 @@
 ---
 name: slobac-audit
-description: Audit a test suite for SLOBAC manifesto smells and emit a portable markdown report. Supports 6 smells across 3 detection scopes (per-test, per-file, cross-suite). Orchestrates scout, batch, and cross-suite subagents for suites of any size. Use when a human asks for a smell audit of test code, a review of test names/assertions against the behavior they claim to protect, or a SLOBAC report.
+description: Audit a test suite for SLOBAC manifesto smells and emit a portable markdown report. Supports all 15 manifesto smells across 3 detection scopes (per-test, per-file, cross-suite). Orchestrates scout, batch, and cross-suite subagents for suites of any size. Use when a human asks for a smell audit of test code, a review of test names/assertions against the behavior they claim to protect, or a SLOBAC report.
 ---
 
 # Test Suite Audit Workflow
@@ -13,12 +13,21 @@ The operator names a directory (explicitly or implicitly: "these tests", "my sui
 
 From the operator's request, resolve a list of **in-scope smell slugs** drawn from the supported set:
 
-**Supported smells (6):**
+**Supported smells (15):**
 
 | Slug | Detection Scope |
 |------|----------------|
 | `deliverable-fossils` | per-test, cross-suite |
 | `naming-lies` | per-test |
+| `vacuous-assertion` | per-test |
+| `tautology-theatre` | per-test |
+| `pseudo-tested` | per-test |
+| `over-specified-mock` | per-test |
+| `implementation-coupled` | per-test |
+| `presentation-coupled` | per-test |
+| `conditional-logic` | per-test |
+| `mystery-guest` | per-test |
+| `rotten-green` | per-test |
 | `shared-state` | per-file |
 | `monolithic-test-file` | per-file |
 | `semantic-redundancy` | cross-suite |
@@ -28,13 +37,22 @@ Natural phrases map to slugs by meaning, not string match. Map operator intent t
 
 - `deliverable-fossils` — "fossils", "deliverable fossils", "fossil tests", "stale names", "dead names", "sprint-shaped tests", "checklist tests", "checklist-shaped", "one test per AC", "tests named after tickets", "ticket-id vocabulary", "names that describe who wrote them, not what they prove", "sprint-vocab tests"
 - `naming-lies` — "naming-lies", "naming lies", "lying names", "lying titles", "titles that lie", "docstrings that lie", "names that don't match the body", "title/body mismatch", "tests whose names overpromise"
+- `vacuous-assertion` — "vacuous assertion", "weak oracle", "weak assertion", "assertion too weak", "many wrong answers pass", "is-not-none assertions", "truthiness check", "structural-only check", "not-empty as the only check"
+- `tautology-theatre` — "tautology", "tautology theatre", "mock tautology", "tests that don't run production code", "no SUT call", "mock-of-SUT", "would-pass-if-prod-deleted", "framework test", "tests that only verify the mocking library works"
+- `pseudo-tested` — "pseudo-tested", "extreme mutation survives", "no-op mutant survives", "structural-shape oracle", "non-empty as the only check", "would pass if SUT body were deleted", "Niedermayr-style"
+- `over-specified-mock` — "over-specified mock", "over-specified mocks", "over-spec interactions", "exact call count", "exact call ordering", "verifyNoMoreInteractions", "ArgumentCaptor pinning", "production constants baked into the test", "internal-detail testing"
+- `implementation-coupled` — "implementation coupled", "private method tests", "private field access", "underscore-prefixed access", "reaches into internals", "tests private API", "VisibleForTesting", "internal accessors"
+- `presentation-coupled` — "presentation coupled", "rendered-string equality", "golden-string snapshot", "long toContain chains", "raw HTML assertions", "asserts on formatting not semantics", "string match on structured output"
+- `conditional-logic` — "conditional logic", "conditional test logic", "if inside test", "branching test body", "try-catch without fail", "platform skip in body", "loop without exit assertion", "vacuous by omission"
+- `mystery-guest` — "mystery guest", "magic numbers in tests", "external fixture file with no summary", "fixture-coupled magic numbers", "obscure test", "heredoc without naming", "count == n with no comment"
+- `rotten-green` — "rotten green", "dead scaffolding", "empty test body", "TODO that passes", "print where assertion was intended", "console.log instead of assertion", "dead fixture never read", "test that reports green but verifies nothing"
 - `shared-state` — "shared state", "order dependence", "order-dependent", "leaked state", "module-level mutables", "test isolation", "state leaking between tests"
 - `monolithic-test-file` — "monolithic", "god test file", "test file too large", "mixed domains in one file", "test file needs splitting"
 - `semantic-redundancy` — "redundant tests", "duplicate tests", "same behavior tested twice", "redundancy", "overlapping tests"
 - `wrong-level` — "wrong level", "wrong tier", "wrong pyramid level", "unit test doing integration", "integration test that's really unit"
 - "audit everything", "all smells", unscoped — resolve to the full supported set.
 
-If the operator names a smell not in the supported set (e.g., `tautology-theatre`, `vacuous-assertion`, any other taxonomy slug), **refuse that slug**. Acknowledge it by name, state it is not yet supported, list the supported slugs, and proceed with only the supported slugs from the operator's request. Do not audit the out-of-scope slug anyway; do not silently drop it.
+If the operator names a smell not in the supported set (i.e., not present in the table above — for example, a hypothetical future taxonomy slug that has not been onboarded), **refuse that slug**. Acknowledge it by name, state it is not yet supported, list the supported slugs, and proceed with only the supported slugs from the operator's request. Do not audit the out-of-scope slug anyway; do not silently drop it.
 
 **Classify in-scope slugs by detection scope.** For each in-scope slug, read its `Detection Scope` from `references/docs/taxonomy/<slug>.md` (the header table). Partition into:
 

@@ -1,6 +1,6 @@
 # SLOBAC audit skill
 
-An [AgentSkills.io](https://agentskills.io/)-shaped skill that audits a test suite against the [SLOBAC manifesto](https://github.com/Texarkanine/slobac) and emits a portable markdown report. Supports 6 smells across 3 detection scopes, with multi-agent orchestration for suites of any size.
+An [AgentSkills.io](https://agentskills.io/)-shaped skill that audits a test suite against the [SLOBAC manifesto](https://github.com/Texarkanine/slobac) and emits a portable markdown report. Supports all 15 manifesto smells across 3 detection scopes, with multi-agent orchestration for suites of any size.
 
 This is the **canonical source** for the skill. The layout is harness-agnostic; the install step per harness is described below.
 
@@ -10,6 +10,15 @@ This is the **canonical source** for the skill. The layout is harness-agnostic; 
 |------|----------------|-------------|
 | `deliverable-fossils` | per-test, cross-suite | Tests named after sprint artifacts, not product behavior |
 | `naming-lies` | per-test | Test title claims X; body verifies Y |
+| `vacuous-assertion` | per-test | Oracle so weak that many wrong answers pass |
+| `tautology-theatre` | per-test | Test never exercises production code; only the mock is verified |
+| `pseudo-tested` | per-test | SUT runs, but a no-op replacement of its body would still pass |
+| `over-specified-mock` | per-test | Mock interactions / internal-detail assertions break on benign refactors |
+| `implementation-coupled` | per-test | Reaches into private fields or methods rather than the public surface |
+| `presentation-coupled` | per-test | Asserts on rendered formatting where the contract is semantic |
+| `conditional-logic` | per-test | `if` or `try/except` inside the test body silently skips assertions |
+| `mystery-guest` | per-test | Magic numbers / external fixtures with no inline summary |
+| `rotten-green` | per-test | Reports green but never asserts (empty bodies, dead fixtures, stray prints) |
 | `shared-state` | per-file | Module-level mutables leaked across test boundaries |
 | `monolithic-test-file` | per-file | Single file mixing 5+ behavior domains |
 | `semantic-redundancy` | cross-suite | Same behavior tested N times across files |
@@ -140,22 +149,31 @@ The repo ships fixture suites under [`tests/fixtures/audit/`](https://github.com
 2. **"Audit `tests/fixtures/audit/naming-lies/` for naming-lies."** — Compare against `expected-findings.md`.
 3. **"Audit `tests/fixtures/audit/both-smells/` for all smells."** — Exercises scope honoring with mixed smells.
 4. **"Audit `tests/fixtures/audit/clean/`."** — Expect no findings.
+5. **"Audit `tests/fixtures/audit/tautology-theatre/` for tautology theatre."** — 2 findings (mock-tautology, mock-of-SUT), 1 negative; remediation **delete**.
+6. **"Audit `tests/fixtures/audit/pseudo-tested/` for pseudo-tested."** — 2 findings where a no-op SUT replacement still passes, 1 negative.
+7. **"Audit `tests/fixtures/audit/vacuous-assertion/` for vacuous assertions."** — 2 findings (`is not None`, truthy field), 1 negative.
+8. **"Audit `tests/fixtures/audit/over-specified-mock/` for over-specified mocks."** — 2 findings (over-specified interactions, internal-detail testing), 1 negative.
+9. **"Audit `tests/fixtures/audit/implementation-coupled/` for implementation coupling."** — 2 findings (private dict access, private helper call), 1 negative.
+10. **"Audit `tests/fixtures/audit/presentation-coupled/` for presentation coupling."** — 2 findings (full-string HTML, long `in`-chain), 1 negative.
+11. **"Audit `tests/fixtures/audit/conditional-logic/` for conditional logic."** — 2 findings (`if cond: assert(...)`, `try/except` without trailing `pytest.fail`), 1 negative.
+12. **"Audit `tests/fixtures/audit/mystery-guest/` for mystery guests."** — 2 findings (magic count from external CSV, fixture-coupled magic number), 1 negative.
+13. **"Audit `tests/fixtures/audit/rotten-green/` for rotten green tests."** — 2 findings (empty body with TODO, `print` instead of assertion), 1 negative.
 
 ### Per-file smells (batch assessor)
 
-5. **"Audit `tests/fixtures/audit/shared-state/` for shared-state."** — 2 findings (module-level mutables), 2 negative examples.
-6. **"Audit `tests/fixtures/audit/monolithic-test-file/` for monolithic files."** — 1 finding (`test_everything.py`), 1 negative (`test_parser_thorough.py`).
+14. **"Audit `tests/fixtures/audit/shared-state/` for shared-state."** — 2 findings (module-level mutables), 2 negative examples.
+15. **"Audit `tests/fixtures/audit/monolithic-test-file/` for monolithic files."** — 1 finding (`test_everything.py`), 1 negative (`test_parser_thorough.py`).
 
 ### Cross-suite smells (cross-suite assessor)
 
-7. **"Audit `tests/fixtures/audit/semantic-redundancy/` for redundant tests."** — 1 cross-file redundancy finding, 1 negative (`test_contract_keys.py`).
-8. **"Audit `tests/fixtures/audit/wrong-level/` for wrong-level."** — 2 findings (unit with integration behavior, integration with unit behavior), 1 negative (`test_calculator.py`).
+16. **"Audit `tests/fixtures/audit/semantic-redundancy/` for redundant tests."** — 1 cross-file redundancy finding, 1 negative (`test_contract_keys.py`).
+17. **"Audit `tests/fixtures/audit/wrong-level/` for wrong-level."** — 2 findings (unit with integration behavior, integration with unit behavior), 1 negative (`test_calculator.py`).
 
 Phrasing of the emitted report need not be byte-identical to `expected-findings.md` — the shape contract is that every expected finding is emitted with its correct smell slug, remediation arm, and a rationale that cites the canonical docs entry. Divergence beyond that is a bug in the skill, not the fixture.
 
 ## Scope and non-goals
 
-- **6 smells supported.** Any request for other smells (`tautology-theatre`, `vacuous-assertion`, etc.) is refused with a clear message — the audit never silently skips a requested smell.
+- **All 15 manifesto smells supported.** This is full taxonomy parity. If a future taxonomy entry is added without being onboarded into the supported-slug table, requests for it are refused with a clear message — the audit never silently skips a requested smell.
 - **The audit is read-only.** It does not modify test code. Applying a recommendation from the report is a separate step (today manual; automated apply is a future capability).
 - **Python is the only validated ecosystem.** The detection prose is language-neutral; the manifesto's Polyglot notes describe per-ecosystem detection surface. Validation on JS/TS, Ruby, JVM, etc. is future work.
 
