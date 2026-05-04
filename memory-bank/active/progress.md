@@ -29,3 +29,15 @@ Implement REUSE-compliant, self-contained license bundles for each Agent Skill u
   - TDD cycle encoded as RED `reuse lint` → add `LICENSES/` + `REUSE.toml` → GREEN → edit `SKILL.md` → lint again.
 * Insights
   - Preflight failure mode was **plan shape**, not architecture; ready for preflight re-run.
+
+## 2026-05-04 — Preflight — PASS
+
+* Work completed
+  - Ran `/niko-preflight`: re-read `tasks.md`, `projectbrief.md`, `systemPatterns.md`, `techContext.md`; confirmed no `memory-bank/active/creative/**/*.md` (none required for this L2 task).
+  - Verified TDD encoding: `reuse lint` RED/GREEN per slice; root plan sentence binds RED → artifacts → GREEN; steps 3–4 bullet order is advisory-only ambiguity vs step 2.
+  - Cross-checked root `REUSE.toml` (PPL-S for `skills/**`, CC-BY-SA for audit docs) against planned per-skill mirrors; confirmed no existing `skills/**/REUSE.toml` or `skills/**/LICENSES/` (no duplication conflict).
+  - Wrote `memory-bank/active/.preflight-status` (PASS); appended Preflight notes to `tasks.md`; updated `activeContext.md`.
+* Decisions made
+  - Unblock `/niko-build`; advisory: reorder scout/cross-suite bullets for clarity; optional all-skills `reuse lint` loop post-merge.
+* Insights
+  - Preflight PASS hinges on the Implementation Plan header (“verify RED → add artifacts → verify GREEN”) plus explicit RED on batch/audit—not only on scout/cross-suite bullet order.

@@ -1,7 +1,7 @@
 # Active Context
 
 ## Current Task: Per-skill LICENSES + REUSE.toml instrumentation
-**Phase:** PLAN — COMPLETE
+**Phase:** PREFLIGHT — COMPLETE
 
 ## What Was Done
 
@@ -9,7 +9,8 @@
 - Reviewed planning export `planning/Claude-Licensing skills with PPL-S on agentskills.io.md` and current repo `REUSE.toml`, canonical `/LICENSES/`, and `skills/*/SKILL.md` layout (none of the skills currently ship local `LICENSES/` or `license:` front matter).
 - **Decision:** static committed `LICENSES/` + `REUSE.toml` per skill; **no** Makefile/pyproject reuse helper unless we discover a need. Verification = `cd skills/<name> && reuse lint` per skill.
 - **Plan phase (2026-05-04):** Wrote full Level 2 plan to `memory-bank/active/tasks.md` per `level2-plan.md`: Test Plan (`reuse lint` as harness), ordered implementation steps (batch → scout → cross-suite → audit), Technology Validation, Challenges, Status checkboxes.
+- **Preflight (2026-05-04):** PASS — plan matches conventions and dependency touchpoints; advisory only (reorder bullets in steps 3–4 for parity with step 2; optional all-skills `reuse lint` sweep).
 
 ## Next Step
 
-- Run `/niko-preflight`; on PASS, `/niko-build` following `tasks.md` implementation plan.
+- Run `/niko-build` following `tasks.md` implementation plan and `level2-build.md`.

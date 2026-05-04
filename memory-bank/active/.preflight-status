@@ -1,16 +1,24 @@
 # Preflight validation — Per-skill LICENSES + REUSE.toml
 
 **Date:** 2026-05-04  
-**Result:** FAIL  
-**Blocks:** `/niko-build`
+**Result:** PASS  
+**Blocks:** (none)
 
-## Blocking codes
+## Summary
 
-| Code | Meaning |
-|------|---------|
-| `planning_incomplete` | `memory-bank/active/tasks.md` not expanded to Level 2 plan format; `activeContext.md` still PLAN IN-PROGRESS |
-| `tdd_plan_encoding` | No Test Plan (TDD) section; no per-unit ordered steps that place verification/tests before adding/committing license artifacts |
+Level 2 plan in `memory-bank/active/tasks.md` aligns with repo conventions (skill-root self-containment, mirror of root `REUSE.toml` policy). Per-skill `reuse lint` is encoded as the verification harness before and after artifacts. No conflicting prior art under `skills/` (no per-skill `LICENSES/` or `REUSE.toml` yet). Dependency touchpoints are documented; root `REUSE.toml` / `LICENSES/` remain untouched.
+
+## Findings
+
+| Severity | Code | Detail |
+|----------|------|--------|
+| Advisory | `bullet_order` | Steps 3–4 (`slobac-scout`, `slobac-cross-suite`) list **Files** before **Verify**; step 2 lists **Verify (RED)** first. Global Implementation Plan header still mandates RED → artifacts → GREEN per slice—acceptable, but reordering bullets to match step 2 removes ambiguity for implementers. |
+| Advisory | `ci_matrix` | Optional: one shell loop or CI job `for d in skills/*/; do (cd "$d" && reuse lint) || exit 1; done` after all slices—fits brief “optional future CI” without adding `pyproject.toml` helpers. |
+
+## TDD / harness
+
+- **PASS:** Test Plan names behaviors; each slice ties **Verify** to `reuse lint` before declaring GREEN. Step-level ordering is explicit for batch and audit; scout/cross-suite defer to “same pattern as batch” + global RED→GREEN sentence.
 
 ## Resolution
 
-Run `/niko-plan` (Level 2) to write the full `tasks.md` plan per `.cursor/skills/shared/niko/references/level2/level2-plan.md`, then re-run `/niko-preflight`.
+Proceed to `/niko-build` per `level2-workflow.md` Phase Mappings.

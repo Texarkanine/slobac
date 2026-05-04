@@ -87,12 +87,17 @@ Each numbered step is one vertical slice: **verify RED → add artifacts → ver
 - **REUSE.toml precedence / glob mistakes:** Mitigation — after each skill, run `reuse lint` only from that skill root; fix annotations until exit 0.
 - **Drift between root and per-skill license text:** Mitigation — copies are static; if root `LICENSES/` changes later, update each skill’s copies in the same change (document in commit message). No automation in scope.
 
+## Preflight (2026-05-04)
+
+- **Result:** PASS — proceed to Build.
+- **Advisory:** Reorder Implementation Plan bullets for steps 3–4 to put **Verify (RED)** before **Files** (parity with step 2); optional one-shot `reuse lint` over all `skills/*/` for regression after the last slice.
+
 ## Status
 
 - [x] Initialization complete
 - [x] Test planning complete (TDD)
 - [x] Implementation plan complete
 - [x] Technology validation complete
-- [ ] Preflight
+- [x] Preflight
 - [ ] Build
 - [ ] QA
