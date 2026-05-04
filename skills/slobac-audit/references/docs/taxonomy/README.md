@@ -4,30 +4,6 @@ A curated, polyglot catalog of test-suite failure modes that are **seeable, fixa
 
 The taxonomy is foundational. It names smells, describes how to see them, and prescribes how to fix them. It does *not* describe any particular tool.
 
-## Companion documents
-
-Two sibling documents carry the shared context. Every taxonomy entry cross-links to them rather than re-explaining:
-
-- [`../principles.md`](../principles.md) — the test-design principles each smell violates (Farley's 8, Greg Wright's three additions, plus the refactoring principles that constrain how fixes may be applied). Anchored per principle.
-- [`../glossary.md`](../glossary.md) — general-purpose term definitions (mutation testing, mutation kill-set, tautology theatre, canonical location, etc.) with citations. Anchored per term.
-
-See also [`../workflows.md`](../workflows.md) for the RED-GREEN-MUTATE-KILL-REFACTOR cycle that underlies "refactor is only safe with known detection power".
-
-## How to read an entry
-
-Every taxonomy file follows the same shape:
-
-- **Header table** — slug, severity, detection scope (`per-test`, `per-file`, or `cross-suite` — which agent type handles detection), and the [principles](../principles.md) the smell violates.
-- **Summary** — one-line TL;DR.
-- **Aliases** — alternate terms by which the smell may be named or searched. Audience is **human readers** landing on the entry from a fuzzy query (search engines, manifesto cross-links, drive-by reading). Format is a bullet list of double-quoted phrases. The audit orchestrator does **not** consume this section at runtime — it requires explicit slug invocation, not phrase resolution. The section exists purely for discoverability.
-- **Description** — what the smell is, why it matters, and what semantic judgment is required (i.e. what a linter cannot do).
-- **Signals** — concrete detection heuristics, static and semantic.
-- **False-positive guards** — common over-triggers and why they aren't the smell. Calibrates both human readers and agent consumers against pattern-matching false positives.
-- **Prescribed Fix** — the mechanical move and the preservation gate the transform must clear.
-- **Example** — a "before / after" mock in some representative language.
-- **Related** — how this mode differs from adjacent ones.
-- **Polyglot notes** — what changes across ecosystems. Every entry is expected to be polyglot; this section documents the per-language surface the detector and codemod need to handle.
-
 ## The catalog
 
 Ordered roughly by how much semantic reasoning the required judgment demands. Higher-numbered entries lean on mechanical signals; lower-numbered entries need reasoning a linter cannot do.
@@ -52,9 +28,9 @@ Ordered roughly by how much semantic reasoning the required judgment demands. Hi
 
 **Severity** is a relative-harm/safety hint: how bad the smell is for the suite, weighted by how safe the canonical fix is. Critical smells can usually be deleted outright because they were killing no mutants. Lower severities need transforms and correspondingly more reviewer attention. No severity is a mandate to act; it is input to prioritization.
 
-## Non-goals (what the catalog is not for)
+## Non-goals
 
-These are covered by existing tooling. Where a linter, mutation tool, or codemod runner already does the work deterministically, this taxonomy defers.
+These are covered by existing tooling. Where a linter, mutation tool, or codemod runner already does the work *deterministically*, this taxonomy defers.
 
 - Syntactic smell counts (TsDetect-style scoreboards). The EMSE 2023 follow-up study[^testsmells20] found classical smell counts uncorrelated with maintenance pain, and that machine-generated tests actually score *better* on smell detectors while being semantically worse. Optimizing for smell counts is an explicit anti-goal.
 - Net-new test generation (handled by tools like CoverUp[^coverup]).
