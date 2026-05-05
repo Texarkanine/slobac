@@ -1,12 +1,12 @@
 # Tech Context
 
-SLOBAC's runtime artifact is the **audit skill** at [`skills/slobac-audit/`](../skills/slobac-audit/), an AgentSkills.io-shaped `SKILL.md` + `references/` tree that orchestrates three sibling skills ([`slobac-scout`](../skills/slobac-scout/), [`slobac-batch`](../skills/slobac-batch/), [`slobac-cross-suite`](../skills/slobac-cross-suite/)) to audit test suites of any size. Supports every smell defined in the manifesto, across three detection scopes (per-test, per-file, cross-suite), with the supported-slug set enumerated structurally from taxonomy entry filenames. The full manifesto lives **inside the skill bundle** at `skills/slobac-audit/references/docs/` — hand-authored, single source of truth. Target harnesses: Cursor and Claude Code (per `planning/VISION.md` §1.2 and §5 open question #6, resolved via the OQ1 creative phase to ur-Skill + per-smell references).
+SLOBAC's runtime artifact is the **audit skill** at [`skills/audit/`](../skills/audit/), an AgentSkills.io-shaped `SKILL.md` + `references/` tree that orchestrates three sibling skills ([`slobac:scout`](../skills/scout/) · [`slobac:batch`](../skills/batch/) · [`slobac:cross-suite`](../skills/cross-suite/)) to audit test suites of any size. Supports every smell defined in the manifesto, across three detection scopes (per-test, per-file, cross-suite), with the supported-slug set enumerated structurally from taxonomy entry filenames. The full manifesto lives **inside the skill bundle** at `skills/audit/references/docs/` — hand-authored, single source of truth. Target harnesses: Cursor and Claude Code (per `planning/VISION.md` §1.2 and §5 open question #6, resolved via the OQ1 creative phase to ur-Skill + per-smell references).
 
-The project also has a **docs publishing toolchain** (Phase 0 deliverable): the manifesto is published to GitHub Pages by `.github/workflows/docs.yaml` using [ProperDocs](https://properdocs.org/) (the actively-maintained continuation of MkDocs 1.x) with the `mkdocs-material` theme, using `--strict` link validation as a CI gate. ProperDocs builds directly from `skills/slobac-audit/references/docs/` (`docs_dir` in `properdocs.yml` points there).
+The project also has a **docs publishing toolchain** (Phase 0 deliverable): the manifesto is published to GitHub Pages by `.github/workflows/docs.yaml` using [ProperDocs](https://properdocs.org/) (the actively-maintained continuation of MkDocs 1.x) with the `mkdocs-material` theme, using `--strict` link validation as a CI gate. ProperDocs builds directly from `skills/audit/references/docs/` (`docs_dir` in `properdocs.yml` points there).
 
 ## Audit skill layout and discovery
 
-The canonical source is [`skills/slobac-audit/`](../skills/slobac-audit/). Layout:
+The canonical source is [`skills/audit/`](../skills/audit/). Layout:
 
 - `SKILL.md` — orchestrator workflow: scope parsing, scout dispatch, partitioning, batch dispatch, cross-suite dispatch, report synthesis.
 - `references/report-template.md` — report shape.
@@ -14,13 +14,13 @@ The canonical source is [`skills/slobac-audit/`](../skills/slobac-audit/). Layou
 - `references/suite-manifest-format.md` — scout output spec for orchestrator partitioning.
 - `references/docs/` — the **full SLOBAC manifesto**: `index.md`, `principles.md`, `glossary.md`, `workflows.md`, `.pages`, and `taxonomy/` (15 canonical smell definitions + `README.md` shape SoT). Hand-authored; the SKILL.md workflow reads one taxonomy file per in-scope smell at runtime — no second file, no augmentation layer. ProperDocs builds the published site directly from this directory.
 
-Sibling skills (`skills/slobac-scout/`, `skills/slobac-batch/`, `skills/slobac-cross-suite/`) are subagents dispatched by the orchestrator. They reach into `slobac-audit/references/` for shared content via `../slobac-audit/references/...`.
+Sibling skills (`skills/scout/`, `skills/batch/`, `skills/cross-suite/`) are subagents dispatched by the orchestrator. They reach into `audit/references/` for shared content via `../audit/references/...`.
 
-Per-harness discovery paths are operator-install concerns, not architectural ones. The canonical source stays harness-agnostic; install via symlink (`.cursor/skills/slobac-audit`, `.claude/skills/slobac-audit`) per the smoke-test in [`skills/slobac-audit/README.md`](../skills/slobac-audit/README.md).
+Per-harness discovery paths are operator-install concerns, not architectural ones. The canonical source stays harness-agnostic; **install the `slobac` plugin from the [`Texarkanine/txrk9-agent-plugins`](https://github.com/Texarkanine/txrk9-agent-plugins) marketplace catalog** (see [`using-slobac.md`](../skills/audit/references/docs/using-slobac.md)). Legacy symlink installs into `.cursor/skills/` / `.claude/skills/` remain possible for repo contributors; smoke-test instructions live in [`skills/audit/README.md`](../skills/audit/README.md).
 
 ### Full-manifesto-in-bundle pattern
 
-The entire manifesto lives at `skills/slobac-audit/references/docs/`. `properdocs.yml` `docs_dir` points directly at this directory — no snippet indirection, no wrapper files, no `docs/` directory at repo root. At agent-runtime the skill reads only files inside its own root — invariant #11 (skill-root self-containment) is satisfied architecturally. At build-time properdocs renders the site directly from the same files.
+The entire manifesto lives at `skills/audit/references/docs/`. `properdocs.yml` `docs_dir` points directly at this directory — no snippet indirection, no wrapper files, no `docs/` directory at repo root. At agent-runtime the skill reads only files inside its own root — invariant #11 (skill-root self-containment) is satisfied architecturally. At build-time properdocs renders the site directly from the same files.
 
 Relative links in canonical files (e.g. `[Understandable](../principles.md#understandable)` inside a taxonomy entry) resolve at their actual filesystem location because properdocs renders from the directory where the files live. No link-path footgun — links work both for the rendered site and for raw-GitHub rendering.
 
@@ -32,7 +32,7 @@ Planted test suites live at [`tests/fixtures/audit/<scenario>/`](../tests/fixtur
 
 ## Environment Setup
 
-**To read/edit the manifesto:** a Markdown-capable editor is sufficient. The entire manifesto lives at `skills/slobac-audit/references/docs/` — per-smell entries at `taxonomy/<slug>.md`, principles at `principles.md`, glossary at `glossary.md`, workflows at `workflows.md`. There are no wrappers or indirection; this is both the authoring surface and the properdocs build source.
+**To read/edit the manifesto:** a Markdown-capable editor is sufficient. The entire manifesto lives at `skills/audit/references/docs/` — per-smell entries at `taxonomy/<slug>.md`, principles at `principles.md`, glossary at `glossary.md`, workflows at `workflows.md`. There are no wrappers or indirection; this is both the authoring surface and the properdocs build source.
 
 **To preview the built docs site locally:** `uv` (which auto-provisions Python per `pyproject.toml`), then `uv sync --group docs` + `uv run properdocs serve`.
 
@@ -51,7 +51,7 @@ The cross-link integrity gate is `properdocs build --strict` combined with `vali
 
 None yet for functional behavior. When implementation begins, the test target will be the audit/apply capabilities' own behavior against fixture test suites — not the tests of third-party repos.
 
-**REUSE compliance validation (slobac-audit only):** `slobac-audit` is the only skill with a `REUSE.toml`; validate its standalone compliance with `reuse --root . lint` from `skills/slobac-audit/`. The `--root .` flag is mandatory — plain `reuse lint` ascends to the `.git` boundary and lints the full monorepo. The REUSE CLI is not in `pyproject.toml`; install via `pipx install reuse` if needed.
+**REUSE compliance validation (`skills/audit/` only):** the audit skill bundle is the only subtree with a nested `REUSE.toml`; validate its standalone compliance with `reuse --root . lint` from `skills/audit/`. The `--root .` flag is mandatory — plain `reuse lint` ascends to the `.git` boundary and lints the full monorepo. The REUSE CLI is not in `pyproject.toml`; install via `pipx install reuse` if needed.
 
 ## Authoring Tooling
 
@@ -61,7 +61,7 @@ None yet for functional behavior. When implementation begins, the test target wi
 
 ## Anticipated Tooling (Phase 1+)
 
-These are referenced by the manifesto and will be **orchestrated**, never reimplemented. Listed here so a future contributor doesn't waste time rediscovering them. Canonical per-ecosystem pointers live in [`glossary.md`](../skills/slobac-audit/references/docs/glossary.md#mutation-testing) and [`planning/research/report.md`](../planning/research/report.md).
+These are referenced by the manifesto and will be **orchestrated**, never reimplemented. Listed here so a future contributor doesn't waste time rediscovering them. Canonical per-ecosystem pointers live in [`glossary.md`](../skills/audit/references/docs/glossary.md#mutation-testing) and [`planning/research/report.md`](../planning/research/report.md).
 
 - Mutation testing (JVM PIT+Descartes, JS/TS Stryker, Python mutmut/Cosmic Ray, Rust cargo-mutants, Go go-mutesting, .NET Stryker.NET). Required for the preservation-of-regression-detection-power gate.
 - Existing test-smell linters — deferred to per-ecosystem tooling, not reimplemented.

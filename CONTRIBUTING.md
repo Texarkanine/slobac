@@ -2,7 +2,7 @@
 
 ## Adding a taxonomy entry
 
-Taxonomy entries live at `skills/slobac-audit/references/docs/taxonomy/<slug>.md`. Each entry follows a uniform shape — this is the authoritative template.
+Taxonomy entries live at `skills/audit/references/docs/taxonomy/<slug>.md`. Each entry follows a uniform shape — this is the authoritative template.
 
 ### Entry shape
 
@@ -85,13 +85,13 @@ Severity is a prioritization hint, not a mandate.
 
 | Value | Handled by |
 |---|---|
-| `per-test` | `slobac-batch` assessor |
-| `per-file` | `slobac-batch` assessor |
-| `cross-suite` | `slobac-cross-suite` assessor |
+| `per-test` | `batch` assessor (`slobac:batch`) |
+| `per-file` | `batch` assessor (`slobac:batch`) |
+| `cross-suite` | `cross-suite` assessor (`slobac:cross-suite`) |
 
 ### After adding an entry
 
-1. Add the slug row to the catalog table in `skills/slobac-audit/references/docs/taxonomy/README.md`.
+1. Add the slug row to the catalog table in `skills/audit/references/docs/taxonomy/README.md`.
 2. Run `uv run properdocs build --strict` — must stay green.
 3. Verify all cross-links in the new entry resolve (`../principles.md#anchor`, `../glossary.md#term`, sibling entries).
 
@@ -101,4 +101,4 @@ Severity is a prioritization hint, not a mandate.
 uv run properdocs serve
 ```
 
-The site builds from `skills/slobac-audit/references/docs/`. `properdocs build --strict` is the CI gate — warnings are errors.
+The site builds from `skills/audit/references/docs/`. `properdocs build --strict` is the CI gate — warnings are errors.

@@ -1,5 +1,5 @@
 ---
-name: slobac-audit
+name: "slobac:audit"
 description: Audit a test suite for common test smells based on the SLOBAC manifesto.
 license: "Multiple — see LICENSES/ and REUSE.toml"
 ---
@@ -27,10 +27,10 @@ Note: `deliverable-fossils` has both `per-test` and `cross-suite` scopes. Its pe
 
 ## Step 3 — launch scout
 
-Launch a readonly subagent with the `slobac-scout` skill. Provide:
+Launch a readonly subagent with the `slobac:scout` skill. Provide:
 
 - The target directory from Step 1.
-- Instruct it to read `../slobac-audit/references/suite-manifest-format.md` for the output format.
+- Instruct it to read `../audit/references/suite-manifest-format.md` for the output format.
 
 The scout will enumerate test files, measure their sizes, detect ecosystem and tier conventions, and return a **Suite Manifest**.
 
@@ -70,14 +70,14 @@ If no cross-suite smells are in scope, richness level is irrelevant (summaries w
 
 ## Step 5 — launch batch assessors
 
-For each batch (1 for small suites, N for large suites), launch a readonly subagent with the `slobac-batch` skill. Provide:
+For each batch (1 for small suites, N for large suites), launch a readonly subagent with the `slobac:batch` skill. Provide:
 
 - The file list for this batch.
 - The per-test / per-file smell slugs from Step 2.
 - The summary richness level from Step 4c.
 - The tier conventions from the Suite Manifest.
-- Instruct it to read `../slobac-audit/references/behavior-summary-format.md` for the summary output format.
-- Instruct it to read `../slobac-audit/references/docs/taxonomy/<slug>.md` for each in-scope smell.
+- Instruct it to read `../audit/references/behavior-summary-format.md` for the summary output format.
+- Instruct it to read `../audit/references/docs/taxonomy/<slug>.md` for each in-scope smell.
 
 For multiple batches, launch them **in parallel** (each as a separate subagent).
 
@@ -97,13 +97,13 @@ Collect findings and behavior summaries from all batch assessors.
 
 If the cross-suite smell set from Step 2 is **non-empty**:
 
-Launch a readonly subagent with the `slobac-cross-suite` skill. Provide:
+Launch a readonly subagent with the `slobac:cross-suite` skill. Provide:
 
 - The merged behavior summary table from Step 6.
 - The cross-suite smell slugs.
 - The tier conventions from the Suite Manifest.
 - The suite root path.
-- Instruct it to read `../slobac-audit/references/docs/taxonomy/<slug>.md` for each in-scope cross-suite smell.
+- Instruct it to read `../audit/references/docs/taxonomy/<slug>.md` for each in-scope cross-suite smell.
 
 If the cross-suite smell set is **empty**: skip this step entirely. The batch findings are the complete result.
 

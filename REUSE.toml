@@ -17,7 +17,7 @@ SPDX-License-Identifier = "LicenseRef-PPL-S"
 
 # Manifesto / docs site source (ProperDocs), not prompt-shaped skill payload
 [[annotations]]
-path = ["skills/slobac-audit/references/docs/**"]
+path = ["skills/audit/references/docs/**"]
 precedence = "override"
 SPDX-FileCopyrightText = "Texarkanine"
 SPDX-License-Identifier = "CC-BY-SA-4.0"

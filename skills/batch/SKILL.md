@@ -1,12 +1,12 @@
 ---
-name: slobac-batch
-description: Assess a batch of test files for per-test and per-file SLOBAC smells, emit findings and behavior summaries. Use when slobac-audit dispatches a batch assessor during orchestrated audit.
+name: "slobac:batch"
+description: Assess a batch of test files for per-test and per-file SLOBAC smells, emit findings and behavior summaries. Use when slobac:audit dispatches a batch assessor during orchestrated audit.
 license: "Public Prompt License - Service Variant (PPL-S); see LICENSES/LicenseRef-PPL-S.txt"
 ---
 
 # Batch Assessor Workflow
 
-This skill is a subagent of the [`slobac-audit`](../slobac-audit/SKILL.md) orchestrator. It receives a list of test files, a set of in-scope smell slugs (per-test and per-file only), a summary richness level, and tier conventions. It reads each file fully, evaluates smells, and emits findings plus behavior summaries.
+This skill is a subagent of the [`slobac:audit`](../audit/SKILL.md) orchestrator. It receives a list of test files, a set of in-scope smell slugs (per-test and per-file only), a summary richness level, and tier conventions. It reads each file fully, evaluates smells, and emits findings plus behavior summaries.
 
 The batch assessor is the universal audit engine for per-test and per-file smells. For small suites, the orchestrator launches one batch assessor with all files. For large suites, it launches N batch assessors in parallel, each with a partition of files.
 
@@ -18,15 +18,15 @@ The orchestrator provides these in the launch prompt:
 - **In-scope smell slugs** — which per-test and per-file smells to evaluate (drawn from the taxonomy's `per-test` and `per-file` detection scopes).
 - **Summary richness level** — `full`, `standard`, or `compact` (controls how much detail goes into the Behavior field of behavior summaries).
 - **Tier conventions** — the directory-based tier conventions detected by the scout (e.g., "`unit/` directory → unit tier").
-- **Behavior summary format** — the spec to follow (loaded from `../slobac-audit/references/behavior-summary-format.md`).
+- **Behavior summary format** — the spec to follow (loaded from `../audit/references/behavior-summary-format.md`).
 
 ## Step 1 — load canonical smell definitions
 
-For each slug in the in-scope smell list, read **`../slobac-audit/references/docs/taxonomy/<slug>.md`** (relative to this `SKILL.md`). This is the single source of truth for what the smell is, how to detect it, what the common over-triggers are, and how to fix it. Do not paraphrase, do not substitute.
+For each slug in the in-scope smell list, read **`../audit/references/docs/taxonomy/<slug>.md`** (relative to this `SKILL.md`). This is the single source of truth for what the smell is, how to detect it, what the common over-triggers are, and how to fix it. Do not paraphrase, do not substitute.
 
 ## Step 2 — load the behavior summary format spec
 
-Read **`../slobac-audit/references/behavior-summary-format.md`** (relative to this `SKILL.md`). This defines the exact shape of the behavior summary table you must produce alongside your findings.
+Read **`../audit/references/behavior-summary-format.md`** (relative to this `SKILL.md`). This defines the exact shape of the behavior summary table you must produce alongside your findings.
 
 ## Step 3 — assess each file
 
