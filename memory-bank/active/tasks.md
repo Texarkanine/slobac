@@ -278,7 +278,7 @@ No new technology — validation not required. Manifest formats are JSON and wer
 - [x] Technology validation complete
 - [x] Preflight — PASS with ADVISORY (plan amended ×2; see findings; proceed to `/niko-build`)
 - [x] Build — 2026-05-05: directory renames (`skills/{audit,scout,batch,cross-suite}`), `slobac:*` SKILL names + refs, docs/install/marketplace, plugin manifests (`.cursor-plugin/`, `.claude-plugin/`), `txrk9-agent-plugins` marketplace catalogs; gates: `uv run properdocs build --strict`, `reuse lint`, `reuse --root . lint` from `skills/audit/`
-- [ ] QA
+- [x] QA — 2026-05-05: PASS (1 trivial fix applied: `systemPatterns.md` stale paths; gates re-verified; pending operator smoke test)
 
 ## Preflight Findings (Run 1 — 2026-05-05)
 
