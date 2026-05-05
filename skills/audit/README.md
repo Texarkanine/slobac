@@ -10,14 +10,16 @@ This skill ships `LICENSES/` and `REUSE.toml` so a marketplace or tarball instal
 
 ## Architecture
 
-The audit orchestrates three sibling skills as subagents:
+The audit orchestrator dispatches three subagent workflows from `references/subagents/`:
 
 ```
-slobac:audit (orchestrator)
-  ├── slobac:scout → Suite Manifest (file inventory + sizes + tier conventions)
-  ├── slobac:batch (×1 or ×N) → Findings + Behavior Summaries
-  └── slobac:cross-suite → Cross-Suite Findings (if cross-suite smells in scope)
+slobac-audit (orchestrator — SKILL.md)
+  ├── scout subagent → Suite Manifest (file inventory + sizes + tier conventions)
+  ├── batch subagent (×1 or ×N) → Findings + Behavior Summaries
+  └── cross-suite subagent → Cross-Suite Findings (if cross-suite smells in scope)
 ```
+
+Subagent workflows are raw prompt documents (not registered skills). The orchestrator reads `references/subagents/<name>.md` and launches a readonly subagent whose task is that file's content, supplemented with runtime context variables.
 
 **For small suites** (fitting in one context budget): the orchestrator launches 1 scout + 1 batch assessor. Functionally identical to a single-agent audit — the orchestration is invisible.
 
@@ -35,6 +37,12 @@ skills/audit/
     ├── report-template.md                # audit report shape
     ├── behavior-summary-format.md        # IR spec for cross-suite assessor
     ├── suite-manifest-format.md          # scout output spec
+    ├── subagents/                        # raw subagent workflow prompts
+    │   ├── README.md                     # dispatch contract documentation
+    │   ├── scout.md                      # suite enumeration workflow
+    │   ├── batch.md                      # per-test + per-file assessment workflow
+    │   ├── cross-suite.md                # cross-suite assessment workflow
+    │   └── exploration-commands.md       # shell command templates (used by scout)
     └── docs/                             # the full SLOBAC manifesto + published site
         ├── .pages                        # properdocs nav ordering
         ├── index.md                      # site landing page
@@ -47,25 +55,11 @@ skills/audit/
             ├── deliverable-fossils.md    # canonical smell definition
             ├── naming-lies.md            # canonical smell definition
             └── ... (13 more entries)     # canonical smell definitions
-
-skills/scout/                             # sibling: suite enumeration
-├── SKILL.md
-├── README.md
-└── references/
-    └── exploration-commands.md           # shell command templates
-
-skills/batch/                             # sibling: per-test + per-file assessment
-├── SKILL.md
-└── README.md
-
-skills/cross-suite/                       # sibling: cross-suite assessment
-├── SKILL.md
-└── README.md
 ```
 
-### Cross-skill reference convention
+### Reference convention
 
-All shared references (taxonomy entries, format specs, manifesto docs) live in `audit/references/`. Sibling skills reach in via `../audit/references/...`. No sibling skill reaches into another sibling — the reference flow is unidirectional into `audit`.
+All shared references (taxonomy entries, format specs, manifesto docs, subagent workflows) live under `audit/references/`. The orchestrator reads subagent workflows from `references/subagents/` and passes the absolute `references/` path to subagents so they can resolve taxonomy entries and format specs at runtime.
 
 ## Smoke test
 

@@ -1,11 +1,12 @@
 # Active Context
 
 - **Current Task:** Expose SLOBAC as Cursor + Claude Code plugin with marketplace entries
-- **Phase:** PLAN (revision 2: single-skill architecture) — COMPLETE
+- **Phase:** BUILD (revision) — COMPLETE
 - **What Was Done:**
-  - Decided to fold `scout/`, `batch/`, `cross-suite/` into `audit/references/subagents/` (operator-approved)
-  - Rationale: (1) eliminates all Cursor naming collisions, (2) removes picker clutter (only audit is user-facing), (3) subagent dispatch via raw prompts is model-agnostic and harness-native
-  - Name field resolves to `slobac-audit` (Cursor normalizes colons to hyphens; uses name field verbatim)
-  - Claude Code resolves to `slobac:audit` (plugin-name:folder-name; ignores name field)
-  - Subagent workflows become reference files; orchestrator reads them and launches raw subagents with dynamic foreground/background
-- **Next Step:** `/niko-build` — Phase R1-R5 (create subagent refs, rewrite dispatch, delete siblings, update docs, verify)
+  - Phase R1: Created `skills/audit/references/subagents/` with migrated workflow files (scout.md, batch.md, cross-suite.md, exploration-commands.md, README.md)
+  - Phase R2: Rewrote orchestrator dispatch in `skills/audit/SKILL.md` — name field `slobac-audit`, subagent steps read raw workflow files and pass absolute `references/` path
+  - Phase R3: Deleted `skills/scout/`, `skills/batch/`, `skills/cross-suite/` — RED gate confirmed stale refs in Phase R4 targets
+  - Phase R4: Updated `audit/README.md`, `using-slobac.md`, `CONTRIBUTING.md`, `techContext.md`, `systemPatterns.md` — GREEN gate all pass
+  - Phase R5: Final verification — properdocs strict, reuse lint (nested + monorepo), stale-ref grep clean
+- **Deviations from Plan:** None — built to plan
+- **Next Step:** QA review (automatic)

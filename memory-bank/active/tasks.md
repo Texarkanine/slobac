@@ -280,7 +280,8 @@ No new technology — validation not required. Manifest formats are JSON and wer
 - [x] Build — 2026-05-05: directory renames (`skills/{audit,scout,batch,cross-suite}`), `slobac:*` SKILL names + refs, docs/install/marketplace, plugin manifests (`.cursor-plugin/`, `.claude-plugin/`), `txrk9-agent-plugins` marketplace catalogs; gates: `uv run properdocs build --strict`, `reuse lint`, `reuse --root . lint` from `skills/audit/`
 - [x] QA — 2026-05-05: **FAIL** (semantic review PASS w/ 1 trivial fix; operator smoke test FAIL — Cursor naming + subagent skill clutter). Routing to plan revision.
 - [x] Plan (revision) — 2026-05-05: Single-skill architecture. Fold `scout/`, `batch/`, `cross-suite/` into `audit/references/subagents/`. One visible skill per harness. Name field: `slobac-audit` (Cursor) / folder `audit` (Claude Code → `slobac:audit`).
-- [ ] Build (revision)
+- [x] Preflight (revision) — 2026-05-05: PASS with ADVISORY. One FAIL found and fixed: TDD plan encoding — missing baseline + intermediate gates. Plan amended with Phase R0, RED gate after R3, GREEN gate after R4. Proceed to `/niko-build`.
+- [x] Build (revision) — 2026-05-05: Single-skill architecture implemented. Folded scout/batch/cross-suite into `references/subagents/`. Name field `slobac-audit`. Orchestrator dispatches raw subagent prompts. All gates green (properdocs, reuse lint ×2, stale-ref grep clean).
 - [ ] QA (re-run)
 
 ## Plan Revision: Single-Skill Architecture (2026-05-05)
@@ -333,6 +334,13 @@ Slight cosmetic difference (hyphen vs colon) is the best achievable given platfo
 
 ### Implementation Plan (Revision)
 
+**Phase R0: Establish baselines (TDD — green-before-red)**
+
+0. Before any changes, confirm the CI gates currently pass:
+   - Run `uv run properdocs build --strict` from `slobac/` → must pass
+   - Run `reuse --root . lint` from `skills/audit/` → must pass
+   - Run stale-ref grep: `rg -l "slobac:scout|slobac:batch|slobac:cross-suite|skills/scout|skills/batch|skills/cross-suite" --glob '*.md' --glob '*.yml' --glob '*.toml' .` → document current hit list as inventory of files to touch
+
 **Phase R1: Create subagent reference files**
 
 1. Create `skills/audit/references/subagents/` directory
@@ -351,12 +359,15 @@ Slight cosmetic difference (hyphen vs colon) is the best achievable given platfo
    - `name: "slobac:audit"` → `name: slobac-audit`
    - Steps 3, 5, 7: replace "Launch a readonly subagent with the `slobac:scout` skill" → "Read `references/subagents/scout.md`. Launch a readonly subagent whose task is the content of that file, supplemented with [context variables]."
    - Add instruction for the orchestrator to resolve its own `references/` absolute path and pass it to subagents so they can read taxonomy/format files
+   - Path resolution contract: the orchestrator passes the absolute `references/` path as a context variable; subagent workflow files use relative paths (`../docs/taxonomy/<slug>.md`) for human readability but subagents use the orchestrator-supplied absolute path at runtime
 
 **Phase R3: Delete sibling skill directories**
 
 7. `git rm -r skills/scout/`
 8. `git rm -r skills/batch/`
 9. `git rm -r skills/cross-suite/`
+
+   > **TDD gate (expect RED):** Run stale-ref grep — should find references in Phase R4 target files (`CONTRIBUTING.md`, `using-slobac.md`, `audit/README.md`, `techContext.md`, `systemPatterns.md`). Hits in files being deleted (sibling SKILL.md/README.md) are gone; hits in Phase R4 targets prove the grep is meaningful and Phase R4 is necessary.
 
 **Phase R4: Update documentation**
 
@@ -367,6 +378,9 @@ Slight cosmetic difference (hyphen vs colon) is the best achievable given platfo
 11. `skills/audit/references/docs/using-slobac.md` — simplify:
     - Install section: "one skill" (not "four skills")
     - Remove references to subagent skills in user-facing text
+    - Update Cursor/Claude Code install sections for single-skill invocation names
+    - Update Legacy symlink section (one directory, not four)
+    - Update "Other harnesses" section (one skill directory)
 12. `CONTRIBUTING.md` — detection-scope routing table:
     - Remove `slobac:batch` / `slobac:cross-suite` skill name references
     - Replace with internal mechanism description (or just "batch assessor" / "cross-suite assessor")
@@ -377,11 +391,13 @@ Slight cosmetic difference (hyphen vs colon) is the best achievable given platfo
     - Module boundary description (no longer "four skills", now "one skill with subagent workflows")
     - Reference flow (all content under `audit/`, no `../audit/` escapes)
 
-**Phase R5: Verification**
+   > **TDD gate (expect GREEN):** Run `uv run properdocs build --strict`, `reuse --root . lint` from `skills/audit/`, and stale-ref grep — all should pass. Grep should find no hits outside `memory-bank/active/` and `planning/`.
+
+**Phase R5: Final verification sweep**
 
 15. `uv run properdocs build --strict` — must pass
 16. `reuse --root . lint` from `skills/audit/` — must pass
-17. Grep for stale refs: `grep -rl "slobac:scout\|slobac:batch\|slobac:cross-suite\|skills/scout\|skills/batch\|skills/cross-suite" --include="*.md" --include="*.yml" --include="*.toml" .` — expect no hits outside `memory-bank/active/` and `planning/`
+17. Grep for stale refs: `rg -l "slobac:scout|slobac:batch|slobac:cross-suite|skills/scout|skills/batch|skills/cross-suite" --glob '*.md' --glob '*.yml' --glob '*.toml' .` — expect no hits outside `memory-bank/active/` and `planning/`
 18. Operator smoke test: install in Cursor + Claude Code → single entry, audit dispatches subagents correctly
 
 ### Test Plan
@@ -420,3 +436,13 @@ Slight cosmetic difference (hyphen vs colon) is the best achievable given platfo
 **ADVISORY — Project brief stale:** `projectbrief.md` still declares "Out of scope: Modifying any SKILL.md file in slobac" but Phase 2 (Steps 5-8) modifies four SKILL.md files. The scope expansion is correctly documented in `progress.md` from the plan phase, but the project brief was not updated. Recommend updating `projectbrief.md` before build.
 
 **ADVISORY — Steps 20-22 missing per-unit stub gates:** Step 19 applies proper stub→RED→fill TDD to `.cursor-plugin/plugin.json`. Steps 20-22 create the remaining three manifest files without individual RED phases — only the Phase 6 collective gate validates them after the fact. The Phase 6 gate is a reasonable approximation but not per-unit TDD. Consider applying the stub-validate pattern to all four manifest files for consistency.
+
+## Preflight Findings (Run 3 — Revision Plan — 2026-05-05)
+
+**FAIL — TDD plan encoding: missing baselines and intermediate gates (fixed in-place).** The revision plan deferred all verification to Phase R5 (Steps 15-18) — the same anti-pattern that caused the Run 1 FAIL on the original plan. Amended plan adds: Phase R0 (establish baselines before changes), a RED gate after Phase R3 (stale-ref grep expected to find hits in Phase R4 target files, proving the test is meaningful), and a GREEN gate after Phase R4 (all verification commands pass before entering Phase R5 final sweep).
+
+**ADVISORY — Subagent path resolution dual-mechanism.** The plan updates relative paths in migrated workflow files (Steps 2, 4, 5: `../audit/references/` → `../`) AND has the orchestrator pass an absolute `references/` path (Step 6). The intent is coherent — relative paths serve human readers navigating the files; the absolute path is what subagents use at runtime — but the plan should make this distinction explicit to prevent the implementer from being confused about which mechanism the subagent actually uses. Amended Step 6 with a "path resolution contract" clarification.
+
+**ADVISORY — Project brief stale (carried forward from Run 2).** `projectbrief.md` still describes the original multi-skill architecture. The revision substantially changes the plan. Recommend updating before build, but this is an ephemeral file that will be archived with the task — not blocking.
+
+**ADVISORY — Radical innovation: `references/subagents/README.md`.** A small (~15 line) README inside the new `subagents/` directory would document the dispatch contract for contributors: what these files are (raw workflow prompts, not registered skills), how the orchestrator uses them, and what context variables the orchestrator passes. Cost: trivial. Benefit: prevents future confusion about why these files aren't standard SKILL.md skills. Within current complexity level and scope — can be added during Phase R1.

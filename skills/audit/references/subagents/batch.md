@@ -1,12 +1,6 @@
----
-name: "slobac:batch"
-description: Assess a batch of test files for per-test and per-file SLOBAC smells, emit findings and behavior summaries. Use when slobac:audit dispatches a batch assessor during orchestrated audit.
-license: "Public Prompt License - Service Variant (PPL-S); see LICENSES/LicenseRef-PPL-S.txt"
----
-
 # Batch Assessor Workflow
 
-This skill is a subagent of the [`slobac:audit`](../audit/SKILL.md) orchestrator. It receives a list of test files, a set of in-scope smell slugs (per-test and per-file only), a summary richness level, and tier conventions. It reads each file fully, evaluates smells, and emits findings plus behavior summaries.
+This is a subagent of the [audit orchestrator](../../SKILL.md). It receives a list of test files, a set of in-scope smell slugs (per-test and per-file only), a summary richness level, and tier conventions. It reads each file fully, evaluates smells, and emits findings plus behavior summaries.
 
 The batch assessor is the universal audit engine for per-test and per-file smells. For small suites, the orchestrator launches one batch assessor with all files. For large suites, it launches N batch assessors in parallel, each with a partition of files.
 
@@ -18,15 +12,16 @@ The orchestrator provides these in the launch prompt:
 - **In-scope smell slugs** — which per-test and per-file smells to evaluate (drawn from the taxonomy's `per-test` and `per-file` detection scopes).
 - **Summary richness level** — `full`, `standard`, or `compact` (controls how much detail goes into the Behavior field of behavior summaries).
 - **Tier conventions** — the directory-based tier conventions detected by the scout (e.g., "`unit/` directory → unit tier").
-- **Behavior summary format** — the spec to follow (loaded from `../audit/references/behavior-summary-format.md`).
+- **Behavior summary format** — the spec to follow (loaded from `../behavior-summary-format.md`).
+- **References path** — the absolute filesystem path to the `references/` directory, for resolving taxonomy entries and format specs at runtime.
 
 ## Step 1 — load canonical smell definitions
 
-For each slug in the in-scope smell list, read **`../audit/references/docs/taxonomy/<slug>.md`** (relative to this `SKILL.md`). This is the single source of truth for what the smell is, how to detect it, what the common over-triggers are, and how to fix it. Do not paraphrase, do not substitute.
+For each slug in the in-scope smell list, read **`../docs/taxonomy/<slug>.md`** (relative to this file; at runtime, use the orchestrator-supplied absolute references path + `docs/taxonomy/<slug>.md`). This is the single source of truth for what the smell is, how to detect it, what the common over-triggers are, and how to fix it. Do not paraphrase, do not substitute.
 
 ## Step 2 — load the behavior summary format spec
 
-Read **`../audit/references/behavior-summary-format.md`** (relative to this `SKILL.md`). This defines the exact shape of the behavior summary table you must produce alongside your findings.
+Read **`../behavior-summary-format.md`** (relative to this file; at runtime, use the orchestrator-supplied absolute references path + `behavior-summary-format.md`). This defines the exact shape of the behavior summary table you must produce alongside your findings.
 
 ## Step 3 — assess each file
 
@@ -89,7 +84,7 @@ The complete behavior summary table for all tests in the batch, in the format de
 
 ## Constraints
 
-- **Read-only.** This skill does not modify test code.
-- **Per-test and per-file smells only.** Cross-suite smells (`semantic-redundancy`, `wrong-level`, etc.) are handled by the cross-suite assessor, not this skill. If you see cross-suite signals while reading, note them in the Smells Found column of behavior summaries (append `?` for suspected cross-suite smells) but do not emit findings for them.
+- **Read-only.** This workflow does not modify test code.
+- **Per-test and per-file smells only.** Cross-suite smells (`semantic-redundancy`, `wrong-level`, etc.) are handled by the cross-suite assessor, not this workflow. If you see cross-suite signals while reading, note them in the Smells Found column of behavior summaries (append `?` for suspected cross-suite smells) but do not emit findings for them.
 - **Canonical entries are the single source of truth.** Detection logic comes from the canonical taxonomy entries, not from paraphrased or memorized definitions.
 - **Finding quality over quantity.** A weak finding is worse than a missed finding. If any of the five fields cannot be articulated cleanly, reconsider before emitting.
