@@ -279,6 +279,77 @@ No new technology — validation not required. Manifest formats are JSON and wer
 - [x] Preflight — PASS with ADVISORY (plan amended ×2; see findings; proceed to `/niko-build`)
 - [x] Build — 2026-05-05: directory renames (`skills/{audit,scout,batch,cross-suite}`), `slobac:*` SKILL names + refs, docs/install/marketplace, plugin manifests (`.cursor-plugin/`, `.claude-plugin/`), `txrk9-agent-plugins` marketplace catalogs; gates: `uv run properdocs build --strict`, `reuse lint`, `reuse --root . lint` from `skills/audit/`
 - [ ] QA — 2026-05-05: **FAIL** (semantic review PASS w/ 1 trivial fix; operator smoke test FAIL — Cursor skill invocation names don't resolve as `/slobac:audit`; Claude Code works correctly). Requires plan revision for Cursor namespacing.
+- [ ] Plan (revision) — Cursor `name` field fix
+- [ ] Build (revision)
+- [ ] QA (re-run)
+
+## Plan Revision: Cursor Name-Field Fix (2026-05-05)
+
+### Root Cause Analysis
+
+Cursor registers plugin skills via **two discovery paths** simultaneously:
+1. **Folder-name discovery**: scans `skills/` for directories containing `SKILL.md`
+2. **Name-field discovery**: reads the `name` frontmatter from each `SKILL.md`
+
+When both paths produce the **same identifier**, Cursor shows duplicate entries. In our case:
+- Folder `audit/` → registers skill `audit`
+- Name field `slobac:audit` → Cursor splits on `:` → registers skill `audit`
+- Result: **two entries for `audit`** in the picker
+
+Evidence from `cursor-warehouse` (working plugin): folder `cw-recall` ≠ name suffix `recall` → no collision, no duplicates.
+
+### Constraint
+
+Claude Code derives invocation from `plugin-name:folder-name` and ignores the `name` field entirely. Folder names **must stay as `audit/`, `scout/`, `batch/`, `cross-suite/`** — changing them would break Claude Code's already-correct `/slobac:audit` invocations.
+
+### Open Question: Does Cursor auto-prefix plugin skills?
+
+When a plugin named `slobac` has a skill with `name: audit`, does Cursor:
+- **(A)** Auto-compose the invocation as `/slobac:audit` (plugin-name:skill-name)? → IDEAL. Both harnesses produce `/slobac:audit`.
+- **(B)** Show the skill as just `/audit` (no plugin prefix)? → Requires `name: slobac-audit` (hyphenated) for namespace in Cursor, accepting that Cursor invocation is `/slobac-audit` while Claude Code is `/slobac:audit`.
+
+### Implementation Plan (Revision)
+
+**Phase R1: Fix name fields (try Option A first)**
+
+1. Update `skills/audit/SKILL.md`: `name: "slobac:audit"` → `name: audit`
+2. Update `skills/scout/SKILL.md`: `name: "slobac:scout"` → `name: scout`
+3. Update `skills/batch/SKILL.md`: `name: "slobac:batch"` → `name: batch`
+4. Update `skills/cross-suite/SKILL.md`: `name: "slobac:cross-suite"` → `name: cross-suite`
+
+**Phase R2: Operator smoke test (Cursor)**
+
+5. Push changes, reinstall plugin in Cursor, verify:
+   - No duplicate entries in skill picker
+   - Determine actual invocation: is it `/slobac:audit` (auto-prefixed) or just `/audit`?
+
+**Phase R3: Adjust if needed (Option B)**
+
+6. If Cursor shows just `/audit` (no auto-prefix), change names to `slobac-audit` etc.:
+   - `name: audit` → `name: slobac-audit`
+   - `name: scout` → `name: slobac-scout`
+   - `name: batch` → `name: slobac-batch`
+   - `name: cross-suite` → `name: slobac-cross-suite`
+   - Accept invocation divergence: Cursor `/slobac-audit`, Claude Code `/slobac:audit`
+
+7. Re-test in Cursor: confirm single entry, no duplicates, correct invocation.
+
+**Phase R4: Final verification**
+
+8. `uv run properdocs build --strict` — should still pass (name fields aren't in docs links)
+9. `reuse --root . lint` from `skills/audit/` — should still pass
+10. Confirm Claude Code invocations remain `/slobac:audit` (no change — folder names untouched)
+
+### Test Plan
+
+- Cursor: install plugin → type `/slob` → single entry per skill, correct invocation name
+- Claude Code: install plugin → type `/slob` → shows `/slobac:audit`, `/slobac:scout`, `/slobac:batch` (unchanged from current working state)
+- CI: `properdocs build --strict` + `reuse --root . lint` from `skills/audit/`
+
+### Challenges
+
+- **Unknown Cursor behavior**: Whether Cursor auto-prefixes is not documented authoritatively. Must test empirically.
+- **Possible invocation divergence**: If Option B is needed, the two harnesses will have slightly different invocation names (hyphen vs colon). This is acceptable — both are clear and discoverable.
 
 ## Preflight Findings (Run 1 — 2026-05-05)
 
