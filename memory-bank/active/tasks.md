@@ -100,6 +100,14 @@ None — implementation approach is clear.
 
 ## Implementation Plan
 
+
+### Phase 0: Establish baselines (TDD — green-before-red)
+
+0. **Establish green baselines** — before any changes, confirm the CI gates currently pass:
+   - Run `properdocs build --strict` from `slobac/` → must pass
+   - Run `reuse --root . lint` from `skills/audit/` (i.e., `skills/slobac-audit/` before rename) → must pass
+   - Also run the pre-implementation grep to confirm complete scope: `grep -rl "slobac-audit\|slobac-batch\|slobac-scout\|slobac-cross-suite" --include="*.md" --include="*.yml" --include="*.yaml" --include="*.toml" .`
+
 ### Phase 1: Rename skill directories
 
 1. **Rename `skills/slobac-audit/` → `skills/audit/`**
@@ -111,6 +119,8 @@ None — implementation approach is clear.
    - Files: directory rename (git mv)
 4. **Rename `skills/slobac-cross-suite/` → `skills/cross-suite/`**
    - Files: directory rename (git mv)
+
+   > **TDD gate (expect RED):** Run `properdocs build --strict` — should now FAIL on broken `../slobac-audit/` cross-references in the sibling SKILL.md files and doc pages. This failure is expected and required to prove the tests are meaningful.
 
 ### Phase 2: Update SKILL.md files
 
@@ -141,21 +151,38 @@ None — implementation approach is clear.
    - `../slobac-audit/references/behavior-summary-format.md` → `../audit/references/...`
    - `../slobac-audit/references/docs/taxonomy/<slug>.md` → `../audit/references/...`
 
-### Phase 3: Update README.md files
+### Phase 3: Update README.md files and properdocs config
 
 9. **`skills/audit/README.md`** — update all `slobac-*` dir references to new names
 10. **`skills/scout/README.md`** — update all `slobac-*` dir and skill name references
 11. **`skills/batch/README.md`** — update all `slobac-*` dir and skill name references
 12. **`skills/cross-suite/README.md`** — update all `slobac-*` dir and skill name references
+13. **`properdocs.yml`** *(moved from Phase 4 — required before Phase 3 TDD gate)* — update two path references:
+    - `docs_dir: skills/slobac-audit/references/docs` → `docs_dir: skills/audit/references/docs`
+    - `edit_uri: edit/main/skills/slobac-audit/references/docs/` → `edit_uri: edit/main/skills/audit/references/docs/`
 
-### Phase 4: Update docs + memory bank
+   > **TDD gate (expect GREEN):** Run `properdocs build --strict` — should pass now that all cross-references inside `skills/` are updated AND properdocs.yml points at the renamed directory. (Note: properdocs fails at startup before Step 13 is applied because `docs_dir` would point to a non-existent path.)
 
-13. **`skills/audit/references/docs/using-slobac.md`** — replace the symlink Install section with marketplace install instructions for Cursor and Claude Code; keep "Other harnesses" section; update all `slobac-*` skill name references in prose
-14. **`memory-bank/techContext.md`** — update harness discovery section to describe marketplace install; note symlink install is legacy
+### Phase 4: Update doc pages + compliance + repo-root files
+
+14. **`skills/audit/references/docs/using-slobac.md`** — replace the symlink Install section with marketplace install instructions for Cursor and Claude Code; keep "Other harnesses" section; update all `slobac-*` skill name references in prose
+15. **`memory-bank/techContext.md`** — update ALL old-path references throughout the file (not just the harness discovery section): `skills/slobac-audit/` → `skills/audit/`, `slobac-scout` → `scout`, `slobac-batch` → `batch`, `slobac-cross-suite` → `cross-suite` in all prose and links; update install section to describe marketplace install; note symlink install is legacy
+16. **`REUSE.toml`** (repo root) *(preflight-discovered missing step)* — update the CC-BY-SA-4.0 license path annotation:
+    - `path = ["skills/slobac-audit/references/docs/**"]` → `path = ["skills/audit/references/docs/**"]`
+17. **`CONTRIBUTING.md`** *(preflight-discovered missing step)* — update old-name references:
+    - `skills/slobac-audit/references/docs/taxonomy/` (×2) → `skills/audit/references/docs/taxonomy/`
+    - `slobac-batch` in detection-scope routing table → `batch`
+    - `slobac-cross-suite` in detection-scope routing table → `cross-suite`
+    - `skills/slobac-audit/references/docs/` in Site section → `skills/audit/references/docs/`
+18. **`README.md`** *(preflight-discovered missing step)* — update old-name references:
+    - Line 15: `skills/slobac-audit/` (×2) → `skills/audit/`
+    - Line 30: `skills/slobac-audit/references/docs/` → `skills/audit/references/docs/`
+
+   > **TDD gate (expect GREEN):** Run `properdocs build --strict` and `reuse --root . lint` from `skills/audit/` — both should pass.
 
 ### Phase 5: Add plugin manifests to slobac
 
-15. **Create `.cursor-plugin/plugin.json`**:
+19. **Create `.cursor-plugin/plugin.json`** *(was step 15)*:
     ```json
     {
       "name": "slobac",
@@ -172,7 +199,9 @@ None — implementation approach is clear.
     }
     ```
 
-16. **Create `.claude-plugin/plugin.json`**:
+    > **TDD gate (stub → validate → fill):** Create the file as `{}` first, validate it fails JSON schema checks (fields missing), then fill with the full content above.
+
+20. **Create `.claude-plugin/plugin.json`** *(was step 16)*:
     ```json
     {
       "name": "slobac",
@@ -185,11 +214,10 @@ None — implementation approach is clear.
       "keywords": ["testing", "test-smells", "audit", "quality"]
     }
     ```
-    *(Claude Code auto-discovers `skills/` so the `skills` field can be omitted; or included explicitly — plan to include for clarity.)*
 
 ### Phase 6: Add marketplace catalogs to txrk9-agent-plugins
 
-17. **Create `txrk9-agent-plugins/.cursor-plugin/marketplace.json`**:
+21. **Create `txrk9-agent-plugins/.cursor-plugin/marketplace.json`** *(was step 17)*:
     ```json
     {
       "name": "txrk9-agent-plugins",
@@ -205,7 +233,7 @@ None — implementation approach is clear.
     }
     ```
 
-18. **Create `txrk9-agent-plugins/.claude-plugin/marketplace.json`**:
+22. **Create `txrk9-agent-plugins/.claude-plugin/marketplace.json`** *(was step 18)*:
     ```json
     {
       "name": "txrk9-agent-plugins",
@@ -221,13 +249,15 @@ None — implementation approach is clear.
     }
     ```
 
-19. **Update `txrk9-agent-plugins/README.md`** — replace TODO with actual description of the marketplace and the slobac plugin
+    > **TDD gate:** Validate JSON syntax of all four manifest files (both `.cursor-plugin/` and `.claude-plugin/` manifests in both repos).
 
-### Phase 7: Run verification
+23. **Update `txrk9-agent-plugins/README.md`** *(was step 19)* — replace TODO with actual description of the marketplace and the slobac plugin
 
-20. Run `properdocs build --strict` from `slobac/` to verify no broken doc links
-21. Run `reuse --root . lint` from `skills/audit/` to verify REUSE compliance
-22. Verify JSON syntax of all four manifest files
+### Phase 7: Final verification sweep
+
+24. Run `properdocs build --strict` from `slobac/` — expect PASS
+25. Run `reuse --root . lint` from `skills/audit/` — expect PASS
+26. Run grep to confirm zero remaining old names: `grep -rl "slobac-audit\|slobac-batch\|slobac-scout\|slobac-cross-suite" --include="*.md" --include="*.yml" --include="*.yaml" --include="*.toml" .` — expect no hits outside `memory-bank/archive/` and `planning/`
 
 ## Technology Validation
 
@@ -244,8 +274,32 @@ No new technology — validation not required. Manifest formats are JSON and wer
 - [x] Component analysis complete
 - [x] Open questions resolved
 - [x] Test planning complete (TDD)
-- [x] Implementation plan complete
+- [x] Implementation plan complete (amended by preflight — see findings below)
 - [x] Technology validation complete
-- [ ] Preflight
-- [ ] Build
+- [x] Preflight — PASS with ADVISORY (plan amended ×2; see findings; proceed to `/niko-build`)
+- [x] Build — 2026-05-05: directory renames (`skills/{audit,scout,batch,cross-suite}`), `slobac:*` SKILL names + refs, docs/install/marketplace, plugin manifests (`.cursor-plugin/`, `.claude-plugin/`), `txrk9-agent-plugins` marketplace catalogs; gates: `uv run properdocs build --strict`, `reuse lint`, `reuse --root . lint` from `skills/audit/`
 - [ ] QA
+
+## Preflight Findings (Run 1 — 2026-05-05)
+
+**FAIL — TDD plan encoding:** All verification was deferred to Phase 7 (end-of-work). Amended plan adds explicit TDD gates: a baseline green-check before any changes (Step 0), a deliberate red-gate after Phase 1 renames (properdocs expected to fail), green re-check after Phase 3 reference updates, and stub-first → validate-fail → fill ordering for JSON manifest files (Steps 19-22).
+
+**FAIL — `properdocs.yml` missing from plan:** After renaming `slobac-audit/` → `audit/`, both `docs_dir` and `edit_uri` in `properdocs.yml` would point at a non-existent directory, causing properdocs to error on startup — before it even validates links. Added as Step 13 in Phase 3 (moved from original Phase 4 Step 15 by Run 2 — see below).
+
+**FAIL — Root `REUSE.toml` missing from plan:** The `path = ["skills/slobac-audit/references/docs/**"]` CC-BY-SA-4.0 annotation in the repo-root `REUSE.toml` targets the old path. After rename, `reuse lint` loses the match, breaking REUSE compliance (the plan's own Step 25 gate). Added as Step 16 in Phase 4.
+
+**FAIL — `CONTRIBUTING.md` missing from plan:** Contains five stale references to old skill paths/names that are reader-visible. Added as Step 17 in Phase 4.
+
+**FAIL — `README.md` missing from plan:** Contains three stale references to `skills/slobac-audit/` paths. Added as Step 18 in Phase 4.
+
+**ADVISORY — `memory-bank/systemPatterns.md` stale post-rename:** Has many references to the old `skills/slobac-audit/`, `slobac-scout` etc. paths but is not a CI gate risk. Can be updated during or after build at operator discretion.
+
+**ADVISORY — Radical Innovation (Step 0 scope verification):** Amended plan adds a pre-implementation grep as part of Step 0. Running `grep -rl "slobac-audit\|slobac-batch\|slobac-scout\|slobac-cross-suite"` before any changes gives the implementer a live inventory of all files to update — preventing mid-implementation discoveries like those that triggered this preflight failure.
+
+## Preflight Findings (Run 2 — 2026-05-05)
+
+**FAIL — Phase 3 TDD gate unreachable (sequencing):** After Phase 1 renames, `properdocs.yml`'s `docs_dir: skills/slobac-audit/references/docs` points to a non-existent directory — properdocs fails at startup before it can validate any links. In Run 1's plan, the `properdocs.yml` fix was Step 15 in Phase 4, but the Phase 3 GREEN gate ran properdocs before that fix was applied, making the gate permanently unreachable. Fixed by moving the properdocs.yml update to Step 13 in Phase 3 (as the last step before the Phase 3 gate). Phase 4 steps renumbered accordingly (14-18).
+
+**ADVISORY — Project brief stale:** `projectbrief.md` still declares "Out of scope: Modifying any SKILL.md file in slobac" but Phase 2 (Steps 5-8) modifies four SKILL.md files. The scope expansion is correctly documented in `progress.md` from the plan phase, but the project brief was not updated. Recommend updating `projectbrief.md` before build.
+
+**ADVISORY — Steps 20-22 missing per-unit stub gates:** Step 19 applies proper stub→RED→fill TDD to `.cursor-plugin/plugin.json`. Steps 20-22 create the remaining three manifest files without individual RED phases — only the Phase 6 collective gate validates them after the fact. The Phase 6 gate is a reasonable approximation but not per-unit TDD. Consider applying the stub-validate pattern to all four manifest files for consistency.

@@ -1,23 +1,23 @@
 ---
-name: slobac-scout
-description: Enumerate and measure a test suite's files, emit a Suite Manifest for the audit orchestrator. Use when slobac-audit dispatches a scout to map the suite before partitioning.
+name: "slobac:scout"
+description: Enumerate and measure a test suite's files, emit a Suite Manifest for the audit orchestrator. Use when slobac:audit dispatches a scout to map the suite before partitioning.
 license: "Public Prompt License - Service Variant (PPL-S); see LICENSES/LicenseRef-PPL-S.txt"
 ---
 
 # Test Suite Scout Workflow
 
-This skill is a subagent of the [`slobac-audit`](../slobac-audit/SKILL.md) orchestrator. It receives a target directory, enumerates all test files, measures their size, and emits a Suite Manifest that the orchestrator uses for partitioning decisions. The scout does not read file contents deeply — it uses filesystem operations and lightweight pattern matching only.
+This skill is a subagent of the [`slobac:audit`](../audit/SKILL.md) orchestrator. It receives a target directory, enumerates all test files, measures their size, and emits a Suite Manifest that the orchestrator uses for partitioning decisions. The scout does not read file contents deeply — it uses filesystem operations and lightweight pattern matching only.
 
 ## Inputs
 
 The orchestrator provides these in the launch prompt:
 
 - **Target directory** — the suite root to scan.
-- **Suite manifest format** — the spec to follow (loaded from `../slobac-audit/references/suite-manifest-format.md`).
+- **Suite manifest format** — the spec to follow (loaded from `../audit/references/suite-manifest-format.md`).
 
 ## Step 1 — load the manifest format spec
 
-Read **`../slobac-audit/references/suite-manifest-format.md`** (relative to this `SKILL.md`). This defines the exact shape of the output you must produce. Do not deviate from the field contracts or table structure defined there.
+Read **`../audit/references/suite-manifest-format.md`** (relative to this `SKILL.md`). This defines the exact shape of the output you must produce. Do not deviate from the field contracts or table structure defined there.
 
 ## Step 2 — load exploration command templates
 

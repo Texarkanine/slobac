@@ -13,10 +13,10 @@ This skill ships `LICENSES/` and `REUSE.toml` so a marketplace or tarball instal
 The audit orchestrates three sibling skills as subagents:
 
 ```
-slobac-audit (orchestrator)
-  ├── slobac-scout → Suite Manifest (file inventory + sizes + tier conventions)
-  ├── slobac-batch (×1 or ×N) → Findings + Behavior Summaries
-  └── slobac-cross-suite → Cross-Suite Findings (if cross-suite smells in scope)
+slobac:audit (orchestrator)
+  ├── slobac:scout → Suite Manifest (file inventory + sizes + tier conventions)
+  ├── slobac:batch (×1 or ×N) → Findings + Behavior Summaries
+  └── slobac:cross-suite → Cross-Suite Findings (if cross-suite smells in scope)
 ```
 
 **For small suites** (fitting in one context budget): the orchestrator launches 1 scout + 1 batch assessor. Functionally identical to a single-agent audit — the orchestration is invisible.
@@ -28,7 +28,7 @@ The behavior summary — a one-sentence-per-test intermediate representation —
 ## Layout
 
 ```
-skills/slobac-audit/
+skills/audit/
 ├── SKILL.md                              # orchestrator workflow
 ├── README.md                             # this file
 └── references/
@@ -48,24 +48,24 @@ skills/slobac-audit/
             ├── naming-lies.md            # canonical smell definition
             └── ... (13 more entries)     # canonical smell definitions
 
-skills/slobac-scout/                      # sibling: suite enumeration
+skills/scout/                             # sibling: suite enumeration
 ├── SKILL.md
 ├── README.md
 └── references/
     └── exploration-commands.md           # shell command templates
 
-skills/slobac-batch/                      # sibling: per-test + per-file assessment
+skills/batch/                             # sibling: per-test + per-file assessment
 ├── SKILL.md
 └── README.md
 
-skills/slobac-cross-suite/                # sibling: cross-suite assessment
+skills/cross-suite/                       # sibling: cross-suite assessment
 ├── SKILL.md
 └── README.md
 ```
 
 ### Cross-skill reference convention
 
-All shared references (taxonomy entries, format specs, manifesto docs) live in `slobac-audit/references/`. Sibling skills reach in via `../slobac-audit/references/...`. No sibling skill reaches into another sibling — the reference flow is unidirectional into `slobac-audit`.
+All shared references (taxonomy entries, format specs, manifesto docs) live in `audit/references/`. Sibling skills reach in via `../audit/references/...`. No sibling skill reaches into another sibling — the reference flow is unidirectional into `audit`.
 
 ## Smoke test
 

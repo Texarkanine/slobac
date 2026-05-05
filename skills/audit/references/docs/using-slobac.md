@@ -14,33 +14,22 @@ Operators invoke the audit with **explicit slug names** — e.g. `tautology-thea
 
 ## Install
 
-The audit is distributed as four sibling skills. Install all four — the orchestrator (`slobac-audit`) dispatches the others.
+The audit ships as a single **plugin** that bundles four skills (`audit`, `scout`, `batch`, `cross-suite`). Install the plugin once; the orchestrator (`slobac:audit`) dispatches the others automatically.
 
 ### Cursor
 
-Cursor discovers skills under `.cursor/skills/` (repo-level) or `~/.cursor/skills/` (user-level).
-
-```bash
-# Repo-level (this checkout only)
-for skill in slobac-audit slobac-scout slobac-batch slobac-cross-suite; do
-  ln -s "$PWD/skills/$skill" ".cursor/skills/$skill"
-done
-
-# User-level (available in all projects)
-for skill in slobac-audit slobac-scout slobac-batch slobac-cross-suite; do
-  ln -s "$PWD/skills/$skill" "$HOME/.cursor/skills/$skill"
-done
-```
+1. Open **Cursor Settings → Marketplace** (or your Cursor version’s equivalent plugin marketplace UI).
+2. Add the marketplace catalog from [`Texarkanine/txrk9-agent-plugins`](https://github.com/Texarkanine/txrk9-agent-plugins) if it is not already configured (that repo publishes `.cursor-plugin/marketplace.json`).
+3. Install the **SLOBAC** plugin (`slobac`). Cursor discovers skills from the plugin’s `skills/` tree and registers invocations using each `SKILL.md` frontmatter `name` (e.g. `/slobac:audit`).
 
 ### Claude Code
 
-Claude Code discovers skills under `.claude/skills/` (repo-level) or `~/.claude/skills/` (user-level). The install pattern mirrors Cursor:
+1. Register the marketplace catalog from [`Texarkanine/txrk9-agent-plugins`](https://github.com/Texarkanine/txrk9-agent-plugins) (see that repo’s `.claude-plugin/marketplace.json`).
+2. Install the **slobac** plugin from the marketplace. Claude Code namespaces skills as `/plugin-name:folder-name` — with plugin name `slobac` and folders `audit/`, `scout/`, etc., you invoke e.g. `/slobac:audit`.
 
-```bash
-for skill in slobac-audit slobac-scout slobac-batch slobac-cross-suite; do
-  ln -s "$PWD/skills/$skill" ".claude/skills/$skill"
-done
-```
+### Legacy: symlink checkout (developers only)
+
+If you are developing SLOBAC from a Git clone and need the pre-marketplace layout, symlink the four skill directories into `.cursor/skills/` or `.claude/skills/` exactly as in older revisions of this page. This path is **not** recommended for end users; prefer marketplace install.
 
 ### Other harnesses
 

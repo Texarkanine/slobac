@@ -1,12 +1,12 @@
 ---
-name: slobac-cross-suite
-description: Detect cross-suite SLOBAC smells by clustering behavior summaries and performing targeted source reads. Use when slobac-audit dispatches a cross-suite assessor during orchestrated audit.
+name: "slobac:cross-suite"
+description: Detect cross-suite SLOBAC smells by clustering behavior summaries and performing targeted source reads. Use when slobac:audit dispatches a cross-suite assessor during orchestrated audit.
 license: "Public Prompt License - Service Variant (PPL-S); see LICENSES/LicenseRef-PPL-S.txt"
 ---
 
 # Cross-Suite Assessor Workflow
 
-This skill is a subagent of the [`slobac-audit`](../slobac-audit/SKILL.md) orchestrator. It receives the merged behavior summaries from all batch assessors, a set of in-scope cross-suite smell slugs, and tier conventions. It clusters summaries, performs targeted source reads, and emits cross-suite findings.
+This skill is a subagent of the [`slobac:audit`](../audit/SKILL.md) orchestrator. It receives the merged behavior summaries from all batch assessors, a set of in-scope cross-suite smell slugs, and tier conventions. It clusters summaries, performs targeted source reads, and emits cross-suite findings.
 
 The cross-suite assessor operates on the compressed intermediate representation (behavior summaries) rather than re-reading the full suite. It only reads source code for candidate groups that clustering identifies — a targeted subset, not the full suite.
 
@@ -14,14 +14,14 @@ The cross-suite assessor operates on the compressed intermediate representation 
 
 The orchestrator provides these in the launch prompt:
 
-- **Behavior summaries** — the merged behavior summary table from all batch assessors (per the format in `../slobac-audit/references/behavior-summary-format.md`).
+- **Behavior summaries** — the merged behavior summary table from all batch assessors (per the format in `../audit/references/behavior-summary-format.md`).
 - **In-scope cross-suite smell slugs** — which cross-suite smells to evaluate (drawn from the taxonomy's `cross-suite` detection scope).
 - **Tier conventions** — the directory-based tier conventions detected by the scout.
 - **Suite root** — the target directory path (for context in findings).
 
 ## Step 1 — load canonical smell definitions
 
-For each slug in the in-scope cross-suite smell list, read **`../slobac-audit/references/docs/taxonomy/<slug>.md`** (relative to this `SKILL.md`). This is the single source of truth for what the smell is, how to detect it, and what the common over-triggers are.
+For each slug in the in-scope cross-suite smell list, read **`../audit/references/docs/taxonomy/<slug>.md`** (relative to this `SKILL.md`). This is the single source of truth for what the smell is, how to detect it, and what the common over-triggers are.
 
 ## Step 2 — cluster behavior summaries
 
