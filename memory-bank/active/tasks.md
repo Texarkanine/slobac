@@ -282,7 +282,7 @@ No new technology — validation not required. Manifest formats are JSON and wer
 - [x] Plan (revision) — 2026-05-05: Single-skill architecture. Fold `scout/`, `batch/`, `cross-suite/` into `audit/references/subagents/`. One visible skill per harness. Name field: `slobac-audit` (Cursor) / folder `audit` (Claude Code → `slobac:audit`).
 - [x] Preflight (revision) — 2026-05-05: PASS with ADVISORY. One FAIL found and fixed: TDD plan encoding — missing baseline + intermediate gates. Plan amended with Phase R0, RED gate after R3, GREEN gate after R4. Proceed to `/niko-build`.
 - [x] Build (revision) — 2026-05-05: Single-skill architecture implemented. Folded scout/batch/cross-suite into `references/subagents/`. Name field `slobac-audit`. Orchestrator dispatches raw subagent prompts. All gates green (properdocs, reuse lint ×2, stale-ref grep clean).
-- [ ] QA (re-run)
+- [x] QA (re-run) — 2026-05-05: PASS. 1 trivial fix (`txrk9-agent-plugins/README.md` stale multi-skill description). 1 accepted deviation (`exploration-commands.md` at `references/` level, not `subagents/`). All gates green.
 
 ## Plan Revision: Single-Skill Architecture (2026-05-05)
 

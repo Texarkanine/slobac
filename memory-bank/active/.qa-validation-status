@@ -1,27 +1,21 @@
-FAIL
-Date: 2026-05-05
-Task: slobac-plugin-distribution
+# QA Validation Status
 
-## Semantic review findings (automated — PASS)
+**Result:** PASS
+**Date:** 2026-05-05
+**Phase:** QA (re-run) — post revision build
 
-- systemPatterns.md had 9 stale path/name references — fixed (trivial)
-- All other QA dimensions clean (KISS, DRY, YAGNI, completeness, regression, integrity, documentation)
-- CI gates green after fix
+## Findings
 
-## Smoke test findings (operator — FAIL)
+### Fixed (trivial)
 
-### Claude Code: PASS
-- Skills resolve as `/slobac:batch`, `/slobac:scout`, `/slobac:audit`
-- Plugin-name:folder-name resolution works as designed
+1. **`txrk9-agent-plugins/README.md` stale multi-skill description** — SLOBAC plugin description said "Ships multiple skills (`audit`, `scout`, `batch`, `cross-suite`)" but the revision collapsed to a single-skill architecture. Corrected to describe one skill with internal subagent dispatch.
 
-### Cursor: FAIL
-- Skills appear as `/audit`, `/batch`, `/cross-suite` (without `slobac:` prefix)
-- Duplicate entries visible (likely name-field AND folder-name both registering)
-- The `name: "slobac:audit"` in SKILL.md frontmatter is NOT used as the literal invocation command
-- Cursor appears to use folder name for skill suffix; plugin name is a filter/group, not a prefix baked into the command
+### Noted (acceptable deviation)
 
-### Root cause
-The plan's namespacing architecture assumed Cursor uses the SKILL.md `name` field as the invocation name. This assumption was wrong — Cursor's actual skill resolution mechanism differs from what was designed against. Research needed into how Cursor actually composes invocation names from plugin + skill metadata.
+2. **`exploration-commands.md` placement** — Plan specified `references/subagents/exploration-commands.md` but file was placed at `references/exploration-commands.md`. Architecturally sound: it's a reference document (shell command templates), not a workflow prompt, so placement alongside other format specs is more consistent. The scout workflow's relative path reference (`../exploration-commands.md`) resolves correctly. The README layout diagram reflects the actual placement.
 
-## Routing
-FAIL (requires plan revision for Cursor namespacing approach)
+## Verification Gates
+
+- `uv run properdocs build --strict` — PASS
+- `reuse --root . lint` from `skills/audit/` — PASS (31/31 files compliant)
+- Stale-ref grep — PASS (hits only in `memory-bank/active/`, expected)
