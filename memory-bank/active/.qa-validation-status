@@ -1,13 +1,27 @@
-PASS (pending operator smoke test)
+FAIL
 Date: 2026-05-05
 Task: slobac-plugin-distribution
 
-Findings:
-- systemPatterns.md had 9 stale path/name references (skills/slobac-audit/ → skills/audit/, etc.) — fixed directly (trivial: mechanical name replacement, no design decisions)
+## Semantic review findings (automated — PASS)
 
-Gates re-verified after fix:
-- properdocs build --strict: PASS
-- reuse --root . lint (skills/audit/): PASS
+- systemPatterns.md had 9 stale path/name references — fixed (trivial)
+- All other QA dimensions clean (KISS, DRY, YAGNI, completeness, regression, integrity, documentation)
+- CI gates green after fix
 
-Deferred to operator:
-- Smoke test: install from txrk9-agent-plugins marketplace → invoke /slobac:audit → verify subagents dispatch
+## Smoke test findings (operator — FAIL)
+
+### Claude Code: PASS
+- Skills resolve as `/slobac:batch`, `/slobac:scout`, `/slobac:audit`
+- Plugin-name:folder-name resolution works as designed
+
+### Cursor: FAIL
+- Skills appear as `/audit`, `/batch`, `/cross-suite` (without `slobac:` prefix)
+- Duplicate entries visible (likely name-field AND folder-name both registering)
+- The `name: "slobac:audit"` in SKILL.md frontmatter is NOT used as the literal invocation command
+- Cursor appears to use folder name for skill suffix; plugin name is a filter/group, not a prefix baked into the command
+
+### Root cause
+The plan's namespacing architecture assumed Cursor uses the SKILL.md `name` field as the invocation name. This assumption was wrong — Cursor's actual skill resolution mechanism differs from what was designed against. Research needed into how Cursor actually composes invocation names from plugin + skill metadata.
+
+## Routing
+FAIL (requires plan revision for Cursor namespacing approach)
