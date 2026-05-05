@@ -278,78 +278,124 @@ No new technology — validation not required. Manifest formats are JSON and wer
 - [x] Technology validation complete
 - [x] Preflight — PASS with ADVISORY (plan amended ×2; see findings; proceed to `/niko-build`)
 - [x] Build — 2026-05-05: directory renames (`skills/{audit,scout,batch,cross-suite}`), `slobac:*` SKILL names + refs, docs/install/marketplace, plugin manifests (`.cursor-plugin/`, `.claude-plugin/`), `txrk9-agent-plugins` marketplace catalogs; gates: `uv run properdocs build --strict`, `reuse lint`, `reuse --root . lint` from `skills/audit/`
-- [ ] QA — 2026-05-05: **FAIL** (semantic review PASS w/ 1 trivial fix; operator smoke test FAIL — Cursor skill invocation names don't resolve as `/slobac:audit`; Claude Code works correctly). Requires plan revision for Cursor namespacing.
-- [ ] Plan (revision) — Cursor `name` field fix
+- [x] QA — 2026-05-05: **FAIL** (semantic review PASS w/ 1 trivial fix; operator smoke test FAIL — Cursor naming + subagent skill clutter). Routing to plan revision.
+- [x] Plan (revision) — 2026-05-05: Single-skill architecture. Fold `scout/`, `batch/`, `cross-suite/` into `audit/references/subagents/`. One visible skill per harness. Name field: `slobac-audit` (Cursor) / folder `audit` (Claude Code → `slobac:audit`).
 - [ ] Build (revision)
 - [ ] QA (re-run)
 
-## Plan Revision: Cursor Name-Field Fix (2026-05-05)
+## Plan Revision: Single-Skill Architecture (2026-05-05)
 
-### Root Cause Analysis
+### Root Cause (from QA + research)
 
-Cursor registers plugin skills via **two discovery paths** simultaneously:
-1. **Folder-name discovery**: scans `skills/` for directories containing `SKILL.md`
-2. **Name-field discovery**: reads the `name` frontmatter from each `SKILL.md`
+1. **Cursor naming**: Colons in `name` field are normalized to hyphens; Cursor does NOT auto-prefix with plugin name. The `name` field IS the invocation (after normalization).
+2. **Subagent skills pollute picker**: `scout`, `batch`, `cross-suite` are implementation details that appear alongside `audit` in both harnesses' command pickers — confusing UX.
+3. **Dual-harness collision**: Folder names must stay short for Claude Code (`slobac:audit` = `plugin:folder`), but Cursor needs the full namespace in `name` (→ `slobac-audit`). With 4 skills, this creates 4 collision/UX problems.
 
-When both paths produce the **same identifier**, Cursor shows duplicate entries. In our case:
-- Folder `audit/` → registers skill `audit`
-- Name field `slobac:audit` → Cursor splits on `:` → registers skill `audit`
-- Result: **two entries for `audit`** in the picker
+### Solution: Fold subagent skills into `audit/references/subagents/`
 
-Evidence from `cursor-warehouse` (working plugin): folder `cw-recall` ≠ name suffix `recall` → no collision, no duplicates.
+Only `audit` is a registered skill. The three subagent workflows become reference documents that the orchestrator reads and uses as raw subagent prompts. This eliminates:
+- All Cursor naming collisions (one skill = one `name` field = one picker entry)
+- User-facing clutter (only `/slobac-audit` or `/slobac:audit` visible)
+- Harness-specific subagent registration (raw prompts work in both Cursor's Task tool and Claude Code's Agent tool)
 
-### Constraint
+### Invocation Names (final)
 
-Claude Code derives invocation from `plugin-name:folder-name` and ignores the `name` field entirely. Folder names **must stay as `audit/`, `scout/`, `batch/`, `cross-suite/`** — changing them would break Claude Code's already-correct `/slobac:audit` invocations.
+| Harness | Mechanism | Invocation |
+|---------|-----------|------------|
+| Cursor | `name` field (colon→hyphen normalization) | `/slobac-audit` |
+| Claude Code | `plugin-name:folder-name` | `/slobac:audit` |
 
-### Open Question: Does Cursor auto-prefix plugin skills?
+Slight cosmetic difference (hyphen vs colon) is the best achievable given platform constraints. Both are discoverable by typing `/slob`.
 
-When a plugin named `slobac` has a skill with `name: audit`, does Cursor:
-- **(A)** Auto-compose the invocation as `/slobac:audit` (plugin-name:skill-name)? → IDEAL. Both harnesses produce `/slobac:audit`.
-- **(B)** Show the skill as just `/audit` (no plugin prefix)? → Requires `name: slobac-audit` (hyphenated) for namespace in Cursor, accepting that Cursor invocation is `/slobac-audit` while Claude Code is `/slobac:audit`.
+### Affected Components
+
+**Delete (content migrated):**
+- `skills/scout/` → body becomes `skills/audit/references/subagents/scout.md`
+- `skills/batch/` → body becomes `skills/audit/references/subagents/batch.md`
+- `skills/cross-suite/` → body becomes `skills/audit/references/subagents/cross-suite.md`
+- `skills/scout/references/exploration-commands.md` → moves to `skills/audit/references/subagents/exploration-commands.md`
+
+**Modify:**
+- `skills/audit/SKILL.md` — name field + subagent dispatch rewrite (skill refs → raw prompt dispatch)
+- `skills/audit/README.md` — architecture section (reflects single-skill layout)
+- `skills/audit/references/docs/using-slobac.md` — simplify install (one skill, not four)
+- `CONTRIBUTING.md` — detection-scope routing table (no more skill names for subagents)
+- `memory-bank/techContext.md` — update sibling skill references
+- `memory-bank/systemPatterns.md` — update module boundary description
+
+**No change needed:**
+- `.cursor-plugin/plugin.json` — `"skills": "./skills/"` still works (discovers only `audit/`)
+- `.claude-plugin/plugin.json` — unchanged
+- `txrk9-agent-plugins/` — unchanged
+- `properdocs.yml` — unchanged (docs_dir still `skills/audit/references/docs`)
+- Root `REUSE.toml` — `skills/**` still covers `skills/audit/references/subagents/`
+- `skills/audit/REUSE.toml` — subagent files are under skill root, covered by PPL-S
 
 ### Implementation Plan (Revision)
 
-**Phase R1: Fix name fields (try Option A first)**
+**Phase R1: Create subagent reference files**
 
-1. Update `skills/audit/SKILL.md`: `name: "slobac:audit"` → `name: audit`
-2. Update `skills/scout/SKILL.md`: `name: "slobac:scout"` → `name: scout`
-3. Update `skills/batch/SKILL.md`: `name: "slobac:batch"` → `name: batch`
-4. Update `skills/cross-suite/SKILL.md`: `name: "slobac:cross-suite"` → `name: cross-suite`
+1. Create `skills/audit/references/subagents/` directory
+2. Move `skills/scout/SKILL.md` body (no frontmatter) → `skills/audit/references/subagents/scout.md`
+   - Update internal path refs: `../audit/references/` → `../` (now inside `audit/references/subagents/`)
+   - Add header explaining this is a subagent workflow dispatched by the orchestrator
+3. Move `skills/scout/references/exploration-commands.md` → `skills/audit/references/subagents/exploration-commands.md`
+4. Move `skills/batch/SKILL.md` body → `skills/audit/references/subagents/batch.md`
+   - Update path refs: `../audit/references/` → `../`
+5. Move `skills/cross-suite/SKILL.md` body → `skills/audit/references/subagents/cross-suite.md`
+   - Update path refs: `../audit/references/` → `../`
 
-**Phase R2: Operator smoke test (Cursor)**
+**Phase R2: Rewrite orchestrator dispatch**
 
-5. Push changes, reinstall plugin in Cursor, verify:
-   - No duplicate entries in skill picker
-   - Determine actual invocation: is it `/slobac:audit` (auto-prefixed) or just `/audit`?
+6. Update `skills/audit/SKILL.md`:
+   - `name: "slobac:audit"` → `name: slobac-audit`
+   - Steps 3, 5, 7: replace "Launch a readonly subagent with the `slobac:scout` skill" → "Read `references/subagents/scout.md`. Launch a readonly subagent whose task is the content of that file, supplemented with [context variables]."
+   - Add instruction for the orchestrator to resolve its own `references/` absolute path and pass it to subagents so they can read taxonomy/format files
 
-**Phase R3: Adjust if needed (Option B)**
+**Phase R3: Delete sibling skill directories**
 
-6. If Cursor shows just `/audit` (no auto-prefix), change names to `slobac-audit` etc.:
-   - `name: audit` → `name: slobac-audit`
-   - `name: scout` → `name: slobac-scout`
-   - `name: batch` → `name: slobac-batch`
-   - `name: cross-suite` → `name: slobac-cross-suite`
-   - Accept invocation divergence: Cursor `/slobac-audit`, Claude Code `/slobac:audit`
+7. `git rm -r skills/scout/`
+8. `git rm -r skills/batch/`
+9. `git rm -r skills/cross-suite/`
 
-7. Re-test in Cursor: confirm single entry, no duplicates, correct invocation.
+**Phase R4: Update documentation**
 
-**Phase R4: Final verification**
+10. `skills/audit/README.md` — rewrite architecture section:
+    - Remove references to sibling skills as separate registered skills
+    - Show new layout with `references/subagents/`
+    - Update the "Cross-skill reference convention" section
+11. `skills/audit/references/docs/using-slobac.md` — simplify:
+    - Install section: "one skill" (not "four skills")
+    - Remove references to subagent skills in user-facing text
+12. `CONTRIBUTING.md` — detection-scope routing table:
+    - Remove `slobac:batch` / `slobac:cross-suite` skill name references
+    - Replace with internal mechanism description (or just "batch assessor" / "cross-suite assessor")
+13. `memory-bank/techContext.md` — update:
+    - Remove sibling skill layout description
+    - Add `references/subagents/` to the layout
+14. `memory-bank/systemPatterns.md` — update:
+    - Module boundary description (no longer "four skills", now "one skill with subagent workflows")
+    - Reference flow (all content under `audit/`, no `../audit/` escapes)
 
-8. `uv run properdocs build --strict` — should still pass (name fields aren't in docs links)
-9. `reuse --root . lint` from `skills/audit/` — should still pass
-10. Confirm Claude Code invocations remain `/slobac:audit` (no change — folder names untouched)
+**Phase R5: Verification**
+
+15. `uv run properdocs build --strict` — must pass
+16. `reuse --root . lint` from `skills/audit/` — must pass
+17. Grep for stale refs: `grep -rl "slobac:scout\|slobac:batch\|slobac:cross-suite\|skills/scout\|skills/batch\|skills/cross-suite" --include="*.md" --include="*.yml" --include="*.toml" .` — expect no hits outside `memory-bank/active/` and `planning/`
+18. Operator smoke test: install in Cursor + Claude Code → single entry, audit dispatches subagents correctly
 
 ### Test Plan
 
-- Cursor: install plugin → type `/slob` → single entry per skill, correct invocation name
-- Claude Code: install plugin → type `/slob` → shows `/slobac:audit`, `/slobac:scout`, `/slobac:batch` (unchanged from current working state)
 - CI: `properdocs build --strict` + `reuse --root . lint` from `skills/audit/`
+- Cursor: install plugin → type `/slob` → single entry `/slobac-audit`, no duplicates
+- Claude Code: install plugin → type `/slob` → single entry `/slobac:audit`
+- Functional: invoke audit against `tests/fixtures/audit/deliverable-fossils/` → orchestrator reads `references/subagents/scout.md`, launches scout subagent, receives manifest, launches batch subagent, produces report
 
-### Challenges
+### Challenges & Mitigations
 
-- **Unknown Cursor behavior**: Whether Cursor auto-prefixes is not documented authoritatively. Must test empirically.
-- **Possible invocation divergence**: If Option B is needed, the two harnesses will have slightly different invocation names (hyphen vs colon). This is acceptable — both are clear and discoverable.
+- **Subagent path resolution**: The orchestrator must pass an absolute path to `references/` so subagents can read taxonomy entries and format specs. Mitigation: the orchestrator knows its own skill root; it resolves the absolute path and includes it in the subagent launch prompt.
+- **Subagent workflow reliability**: Raw-prompt subagents don't get the structured "you are running skill X" context. Mitigation: each `references/subagents/*.md` file begins with a clear role statement and self-contained instructions.
+- **Invocation name cosmetic difference**: Cursor shows `/slobac-audit`, Claude Code shows `/slobac:audit`. Mitigation: both are discoverable by typing `/slob`; the difference is inherent to platform constraints.
 
 ## Preflight Findings (Run 1 — 2026-05-05)
 
