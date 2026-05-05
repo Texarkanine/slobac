@@ -55,6 +55,36 @@ For a list of available slugs, see the [taxonomy catalog](taxonomy/README.md).
 
 Pass your context window size in the invocation — `"Audit tests/ — 1M context window"` — to skip the one-time question the orchestrator asks when it encounters a large suite without a stated budget.
 
+## Verify your install
+
+The repo ships fixture suites under [`tests/fixtures/audit/`](https://github.com/Texarkanine/slobac/tree/main/tests/fixtures/audit) with documented expected findings. Invoke the skill against a fixture path and compare the emitted `slobac-audit.md` to the fixture's `expected-findings.md`. Phrasing need not be byte-identical — the shape contract is that every expected finding is emitted with its correct smell slug, remediation arm, and a rationale citing the canonical docs entry.
+
+### Per-test smells (batch assessor)
+
+1. `"Audit tests/fixtures/audit/deliverable-fossils/ for deliverable-fossils."` — 4 findings, 1 negative.
+2. `"Audit tests/fixtures/audit/naming-lies/ for naming-lies."` — Compare against `expected-findings.md`.
+3. `"Audit tests/fixtures/audit/both-smells/ for all smells."` — Exercises scope honoring with mixed smells.
+4. `"Audit tests/fixtures/audit/clean/."` — Expect no findings.
+5. `"Audit tests/fixtures/audit/tautology-theatre/ for tautology-theatre."` — 2 findings, 1 negative; remediation **delete**.
+6. `"Audit tests/fixtures/audit/pseudo-tested/ for pseudo-tested."` — 2 findings, 1 negative.
+7. `"Audit tests/fixtures/audit/vacuous-assertion/ for vacuous-assertion."` — 2 findings, 1 negative.
+8. `"Audit tests/fixtures/audit/over-specified-mock/ for over-specified-mock."` — 2 findings, 1 negative.
+9. `"Audit tests/fixtures/audit/implementation-coupled/ for implementation-coupled."` — 2 findings, 1 negative.
+10. `"Audit tests/fixtures/audit/presentation-coupled/ for presentation-coupled."` — 2 findings, 1 negative.
+11. `"Audit tests/fixtures/audit/conditional-logic/ for conditional-logic."` — 2 findings, 1 negative.
+12. `"Audit tests/fixtures/audit/mystery-guest/ for mystery-guest."` — 2 findings, 1 negative.
+13. `"Audit tests/fixtures/audit/rotten-green/ for rotten-green."` — 2 findings, 1 negative.
+
+### Per-file smells (batch assessor)
+
+14. `"Audit tests/fixtures/audit/shared-state/ for shared-state."` — 2 findings, 2 negatives.
+15. `"Audit tests/fixtures/audit/monolithic-test-file/ for monolithic-test-file."` — 1 finding, 1 negative.
+
+### Cross-suite smells (cross-suite assessor)
+
+16. `"Audit tests/fixtures/audit/semantic-redundancy/ for semantic-redundancy."` — 1 cross-file redundancy finding, 1 negative.
+17. `"Audit tests/fixtures/audit/wrong-level/ for wrong-level."` — 2 findings, 1 negative.
+
 ## Troubleshooting
 
 **The skill emits a finding but the rationale is vague.** The canonical entry's *False-positive guards* section exists to prevent this. If the skill cannot cite a specific signal from the entry's *Signals* section, the finding should not have emitted — reconsider. See the [taxonomy entry](taxonomy/README.md) for the slug.
