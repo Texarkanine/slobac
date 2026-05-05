@@ -16,7 +16,7 @@ Read **`../suite-manifest-format.md`** (relative to this file; at runtime, use t
 
 ## Step 2 — load exploration command templates
 
-Read **`exploration-commands.md`** (in the same directory as this file; at runtime, use the orchestrator-supplied absolute references path + `subagents/exploration-commands.md`). This contains ready-made shell command templates for efficient test-suite exploration across ecosystems. Adapt the commands to the target suite's ecosystem rather than reinventing the wheel.
+Read **`../exploration-commands.md`** (relative to this file; at runtime, use the orchestrator-supplied absolute references path + `exploration-commands.md`). This contains ready-made shell command templates for efficient test-suite exploration across ecosystems. Adapt the commands to the target suite's ecosystem rather than reinventing the wheel.
 
 ## Step 3 — detect ecosystem
 

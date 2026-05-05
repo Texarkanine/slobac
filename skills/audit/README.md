@@ -37,12 +37,11 @@ skills/audit/
     ├── report-template.md                # audit report shape
     ├── behavior-summary-format.md        # IR spec for cross-suite assessor
     ├── suite-manifest-format.md          # scout output spec
+    ├── exploration-commands.md            # shell command templates (used by scout)
     ├── subagents/                        # raw subagent workflow prompts
-    │   ├── README.md                     # dispatch contract documentation
     │   ├── scout.md                      # suite enumeration workflow
     │   ├── batch.md                      # per-test + per-file assessment workflow
-    │   ├── cross-suite.md                # cross-suite assessment workflow
-    │   └── exploration-commands.md       # shell command templates (used by scout)
+    │   └── cross-suite.md                # cross-suite assessment workflow
     └── docs/                             # the full SLOBAC manifesto + published site
         ├── .pages                        # properdocs nav ordering
         ├── index.md                      # site landing page
