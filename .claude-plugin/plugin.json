@@ -1,7 +1,7 @@
 {
   "name": "slobac",
   "description": "Test-suite audit: find and fix smells in mature test suites.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": { "name": "Texarkanine" },
   "homepage": "https://github.com/Texarkanine/slobac",
   "repository": "https://github.com/Texarkanine/slobac",
