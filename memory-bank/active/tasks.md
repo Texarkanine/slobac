@@ -278,7 +278,140 @@ No new technology — validation not required. Manifest formats are JSON and wer
 - [x] Technology validation complete
 - [x] Preflight — PASS with ADVISORY (plan amended ×2; see findings; proceed to `/niko-build`)
 - [x] Build — 2026-05-05: directory renames (`skills/{audit,scout,batch,cross-suite}`), `slobac:*` SKILL names + refs, docs/install/marketplace, plugin manifests (`.cursor-plugin/`, `.claude-plugin/`), `txrk9-agent-plugins` marketplace catalogs; gates: `uv run properdocs build --strict`, `reuse lint`, `reuse --root . lint` from `skills/audit/`
-- [ ] QA
+- [x] QA — 2026-05-05: **FAIL** (semantic review PASS w/ 1 trivial fix; operator smoke test FAIL — Cursor naming + subagent skill clutter). Routing to plan revision.
+- [x] Plan (revision) — 2026-05-05: Single-skill architecture. Fold `scout/`, `batch/`, `cross-suite/` into `audit/references/subagents/`. One visible skill per harness. Name field: `slobac-audit` (Cursor) / folder `audit` (Claude Code → `slobac:audit`).
+- [x] Preflight (revision) — 2026-05-05: PASS with ADVISORY. One FAIL found and fixed: TDD plan encoding — missing baseline + intermediate gates. Plan amended with Phase R0, RED gate after R3, GREEN gate after R4. Proceed to `/niko-build`.
+- [x] Build (revision) — 2026-05-05: Single-skill architecture implemented. Folded scout/batch/cross-suite into `references/subagents/`. Name field `slobac-audit`. Orchestrator dispatches raw subagent prompts. All gates green (properdocs, reuse lint ×2, stale-ref grep clean).
+- [x] QA (re-run) — 2026-05-05: PASS. 1 trivial fix (`txrk9-agent-plugins/README.md` stale multi-skill description). 1 accepted deviation (`exploration-commands.md` at `references/` level, not `subagents/`). All gates green.
+
+## Plan Revision: Single-Skill Architecture (2026-05-05)
+
+### Root Cause (from QA + research)
+
+1. **Cursor naming**: Colons in `name` field are normalized to hyphens; Cursor does NOT auto-prefix with plugin name. The `name` field IS the invocation (after normalization).
+2. **Subagent skills pollute picker**: `scout`, `batch`, `cross-suite` are implementation details that appear alongside `audit` in both harnesses' command pickers — confusing UX.
+3. **Dual-harness collision**: Folder names must stay short for Claude Code (`slobac:audit` = `plugin:folder`), but Cursor needs the full namespace in `name` (→ `slobac-audit`). With 4 skills, this creates 4 collision/UX problems.
+
+### Solution: Fold subagent skills into `audit/references/subagents/`
+
+Only `audit` is a registered skill. The three subagent workflows become reference documents that the orchestrator reads and uses as raw subagent prompts. This eliminates:
+- All Cursor naming collisions (one skill = one `name` field = one picker entry)
+- User-facing clutter (only `/slobac-audit` or `/slobac:audit` visible)
+- Harness-specific subagent registration (raw prompts work in both Cursor's Task tool and Claude Code's Agent tool)
+
+### Invocation Names (final)
+
+| Harness | Mechanism | Invocation |
+|---------|-----------|------------|
+| Cursor | `name` field (colon→hyphen normalization) | `/slobac-audit` |
+| Claude Code | `plugin-name:folder-name` | `/slobac:audit` |
+
+Slight cosmetic difference (hyphen vs colon) is the best achievable given platform constraints. Both are discoverable by typing `/slob`.
+
+### Affected Components
+
+**Delete (content migrated):**
+- `skills/scout/` → body becomes `skills/audit/references/subagents/scout.md`
+- `skills/batch/` → body becomes `skills/audit/references/subagents/batch.md`
+- `skills/cross-suite/` → body becomes `skills/audit/references/subagents/cross-suite.md`
+- `skills/scout/references/exploration-commands.md` → moves to `skills/audit/references/subagents/exploration-commands.md`
+
+**Modify:**
+- `skills/audit/SKILL.md` — name field + subagent dispatch rewrite (skill refs → raw prompt dispatch)
+- `skills/audit/README.md` — architecture section (reflects single-skill layout)
+- `skills/audit/references/docs/using-slobac.md` — simplify install (one skill, not four)
+- `CONTRIBUTING.md` — detection-scope routing table (no more skill names for subagents)
+- `memory-bank/techContext.md` — update sibling skill references
+- `memory-bank/systemPatterns.md` — update module boundary description
+
+**No change needed:**
+- `.cursor-plugin/plugin.json` — `"skills": "./skills/"` still works (discovers only `audit/`)
+- `.claude-plugin/plugin.json` — unchanged
+- `txrk9-agent-plugins/` — unchanged
+- `properdocs.yml` — unchanged (docs_dir still `skills/audit/references/docs`)
+- Root `REUSE.toml` — `skills/**` still covers `skills/audit/references/subagents/`
+- `skills/audit/REUSE.toml` — subagent files are under skill root, covered by PPL-S
+
+### Implementation Plan (Revision)
+
+**Phase R0: Establish baselines (TDD — green-before-red)**
+
+0. Before any changes, confirm the CI gates currently pass:
+   - Run `uv run properdocs build --strict` from `slobac/` → must pass
+   - Run `reuse --root . lint` from `skills/audit/` → must pass
+   - Run stale-ref grep: `rg -l "slobac:scout|slobac:batch|slobac:cross-suite|skills/scout|skills/batch|skills/cross-suite" --glob '*.md' --glob '*.yml' --glob '*.toml' .` → document current hit list as inventory of files to touch
+
+**Phase R1: Create subagent reference files**
+
+1. Create `skills/audit/references/subagents/` directory
+2. Move `skills/scout/SKILL.md` body (no frontmatter) → `skills/audit/references/subagents/scout.md`
+   - Update internal path refs: `../audit/references/` → `../` (now inside `audit/references/subagents/`)
+   - Add header explaining this is a subagent workflow dispatched by the orchestrator
+3. Move `skills/scout/references/exploration-commands.md` → `skills/audit/references/subagents/exploration-commands.md`
+4. Move `skills/batch/SKILL.md` body → `skills/audit/references/subagents/batch.md`
+   - Update path refs: `../audit/references/` → `../`
+5. Move `skills/cross-suite/SKILL.md` body → `skills/audit/references/subagents/cross-suite.md`
+   - Update path refs: `../audit/references/` → `../`
+
+**Phase R2: Rewrite orchestrator dispatch**
+
+6. Update `skills/audit/SKILL.md`:
+   - `name: "slobac:audit"` → `name: slobac-audit`
+   - Steps 3, 5, 7: replace "Launch a readonly subagent with the `slobac:scout` skill" → "Read `references/subagents/scout.md`. Launch a readonly subagent whose task is the content of that file, supplemented with [context variables]."
+   - Add instruction for the orchestrator to resolve its own `references/` absolute path and pass it to subagents so they can read taxonomy/format files
+   - Path resolution contract: the orchestrator passes the absolute `references/` path as a context variable; subagent workflow files use relative paths (`../docs/taxonomy/<slug>.md`) for human readability but subagents use the orchestrator-supplied absolute path at runtime
+
+**Phase R3: Delete sibling skill directories**
+
+7. `git rm -r skills/scout/`
+8. `git rm -r skills/batch/`
+9. `git rm -r skills/cross-suite/`
+
+   > **TDD gate (expect RED):** Run stale-ref grep — should find references in Phase R4 target files (`CONTRIBUTING.md`, `using-slobac.md`, `audit/README.md`, `techContext.md`, `systemPatterns.md`). Hits in files being deleted (sibling SKILL.md/README.md) are gone; hits in Phase R4 targets prove the grep is meaningful and Phase R4 is necessary.
+
+**Phase R4: Update documentation**
+
+10. `skills/audit/README.md` — rewrite architecture section:
+    - Remove references to sibling skills as separate registered skills
+    - Show new layout with `references/subagents/`
+    - Update the "Cross-skill reference convention" section
+11. `skills/audit/references/docs/using-slobac.md` — simplify:
+    - Install section: "one skill" (not "four skills")
+    - Remove references to subagent skills in user-facing text
+    - Update Cursor/Claude Code install sections for single-skill invocation names
+    - Update Legacy symlink section (one directory, not four)
+    - Update "Other harnesses" section (one skill directory)
+12. `CONTRIBUTING.md` — detection-scope routing table:
+    - Remove `slobac:batch` / `slobac:cross-suite` skill name references
+    - Replace with internal mechanism description (or just "batch assessor" / "cross-suite assessor")
+13. `memory-bank/techContext.md` — update:
+    - Remove sibling skill layout description
+    - Add `references/subagents/` to the layout
+14. `memory-bank/systemPatterns.md` — update:
+    - Module boundary description (no longer "four skills", now "one skill with subagent workflows")
+    - Reference flow (all content under `audit/`, no `../audit/` escapes)
+
+   > **TDD gate (expect GREEN):** Run `uv run properdocs build --strict`, `reuse --root . lint` from `skills/audit/`, and stale-ref grep — all should pass. Grep should find no hits outside `memory-bank/active/` and `planning/`.
+
+**Phase R5: Final verification sweep**
+
+15. `uv run properdocs build --strict` — must pass
+16. `reuse --root . lint` from `skills/audit/` — must pass
+17. Grep for stale refs: `rg -l "slobac:scout|slobac:batch|slobac:cross-suite|skills/scout|skills/batch|skills/cross-suite" --glob '*.md' --glob '*.yml' --glob '*.toml' .` — expect no hits outside `memory-bank/active/` and `planning/`
+18. Operator smoke test: install in Cursor + Claude Code → single entry, audit dispatches subagents correctly
+
+### Test Plan
+
+- CI: `properdocs build --strict` + `reuse --root . lint` from `skills/audit/`
+- Cursor: install plugin → type `/slob` → single entry `/slobac-audit`, no duplicates
+- Claude Code: install plugin → type `/slob` → single entry `/slobac:audit`
+- Functional: invoke audit against `tests/fixtures/audit/deliverable-fossils/` → orchestrator reads `references/subagents/scout.md`, launches scout subagent, receives manifest, launches batch subagent, produces report
+
+### Challenges & Mitigations
+
+- **Subagent path resolution**: The orchestrator must pass an absolute path to `references/` so subagents can read taxonomy entries and format specs. Mitigation: the orchestrator knows its own skill root; it resolves the absolute path and includes it in the subagent launch prompt.
+- **Subagent workflow reliability**: Raw-prompt subagents don't get the structured "you are running skill X" context. Mitigation: each `references/subagents/*.md` file begins with a clear role statement and self-contained instructions.
+- **Invocation name cosmetic difference**: Cursor shows `/slobac-audit`, Claude Code shows `/slobac:audit`. Mitigation: both are discoverable by typing `/slob`; the difference is inherent to platform constraints.
 
 ## Preflight Findings (Run 1 — 2026-05-05)
 
@@ -303,3 +436,13 @@ No new technology — validation not required. Manifest formats are JSON and wer
 **ADVISORY — Project brief stale:** `projectbrief.md` still declares "Out of scope: Modifying any SKILL.md file in slobac" but Phase 2 (Steps 5-8) modifies four SKILL.md files. The scope expansion is correctly documented in `progress.md` from the plan phase, but the project brief was not updated. Recommend updating `projectbrief.md` before build.
 
 **ADVISORY — Steps 20-22 missing per-unit stub gates:** Step 19 applies proper stub→RED→fill TDD to `.cursor-plugin/plugin.json`. Steps 20-22 create the remaining three manifest files without individual RED phases — only the Phase 6 collective gate validates them after the fact. The Phase 6 gate is a reasonable approximation but not per-unit TDD. Consider applying the stub-validate pattern to all four manifest files for consistency.
+
+## Preflight Findings (Run 3 — Revision Plan — 2026-05-05)
+
+**FAIL — TDD plan encoding: missing baselines and intermediate gates (fixed in-place).** The revision plan deferred all verification to Phase R5 (Steps 15-18) — the same anti-pattern that caused the Run 1 FAIL on the original plan. Amended plan adds: Phase R0 (establish baselines before changes), a RED gate after Phase R3 (stale-ref grep expected to find hits in Phase R4 target files, proving the test is meaningful), and a GREEN gate after Phase R4 (all verification commands pass before entering Phase R5 final sweep).
+
+**ADVISORY — Subagent path resolution dual-mechanism.** The plan updates relative paths in migrated workflow files (Steps 2, 4, 5: `../audit/references/` → `../`) AND has the orchestrator pass an absolute `references/` path (Step 6). The intent is coherent — relative paths serve human readers navigating the files; the absolute path is what subagents use at runtime — but the plan should make this distinction explicit to prevent the implementer from being confused about which mechanism the subagent actually uses. Amended Step 6 with a "path resolution contract" clarification.
+
+**ADVISORY — Project brief stale (carried forward from Run 2).** `projectbrief.md` still describes the original multi-skill architecture. The revision substantially changes the plan. Recommend updating before build, but this is an ephemeral file that will be archived with the task — not blocking.
+
+**ADVISORY — Radical innovation: `references/subagents/README.md`.** A small (~15 line) README inside the new `subagents/` directory would document the dispatch contract for contributors: what these files are (raw workflow prompts, not registered skills), how the orchestrator uses them, and what context variables the orchestrator passes. Cost: trivial. Benefit: prevents future confusion about why these files aren't standard SKILL.md skills. Within current complexity level and scope — can be added during Phase R1.

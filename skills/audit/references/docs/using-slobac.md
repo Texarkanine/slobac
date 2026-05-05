@@ -14,26 +14,26 @@ Operators invoke the audit with **explicit slug names** — e.g. `tautology-thea
 
 ## Install
 
-The audit ships as a single **plugin** that bundles four skills (`audit`, `scout`, `batch`, `cross-suite`). Install the plugin once; the orchestrator (`slobac:audit`) dispatches the others automatically.
+The audit ships as a single **plugin** with one registered skill (`audit`). Install the plugin once; the orchestrator dispatches subagents internally from workflow prompts bundled in `references/subagents/`.
 
 ### Cursor
 
-1. Open **Cursor Settings → Marketplace** (or your Cursor version’s equivalent plugin marketplace UI).
+1. Open **Cursor Settings → Marketplace** (or your Cursor version's equivalent plugin marketplace UI).
 2. Add the marketplace catalog from [`Texarkanine/txrk9-agent-plugins`](https://github.com/Texarkanine/txrk9-agent-plugins) if it is not already configured (that repo publishes `.cursor-plugin/marketplace.json`).
-3. Install the **SLOBAC** plugin (`slobac`). Cursor discovers skills from the plugin’s `skills/` tree and registers invocations using each `SKILL.md` frontmatter `name` (e.g. `/slobac:audit`).
+3. Install the **SLOBAC** plugin (`slobac`). Cursor registers the invocation `/slobac-audit` from the `SKILL.md` frontmatter `name` field.
 
 ### Claude Code
 
-1. Register the marketplace catalog from [`Texarkanine/txrk9-agent-plugins`](https://github.com/Texarkanine/txrk9-agent-plugins) (see that repo’s `.claude-plugin/marketplace.json`).
-2. Install the **slobac** plugin from the marketplace. Claude Code namespaces skills as `/plugin-name:folder-name` — with plugin name `slobac` and folders `audit/`, `scout/`, etc., you invoke e.g. `/slobac:audit`.
+1. Register the marketplace catalog from [`Texarkanine/txrk9-agent-plugins`](https://github.com/Texarkanine/txrk9-agent-plugins) (see that repo's `.claude-plugin/marketplace.json`).
+2. Install the **slobac** plugin from the marketplace. Claude Code namespaces skills as `/plugin-name:folder-name` — with plugin name `slobac` and folder `audit/`, you invoke `/slobac:audit`.
 
 ### Legacy: symlink checkout (developers only)
 
-If you are developing SLOBAC from a Git clone and need the pre-marketplace layout, symlink the four skill directories into `.cursor/skills/` or `.claude/skills/` exactly as in older revisions of this page. This path is **not** recommended for end users; prefer marketplace install.
+If you are developing SLOBAC from a Git clone and need the pre-marketplace layout, symlink the `skills/audit/` directory into `.cursor/skills/` or `.claude/skills/` exactly as in older revisions of this page. This path is **not** recommended for end users; prefer marketplace install.
 
 ### Other harnesses
 
-If your harness supports the AgentSkills.io shape, point its skill loader at all four skill directories. The `SKILL.md` frontmatter (`name`, `description`) and the `references/` subtree follow the standard convention; no harness-specific glue is required.
+If your harness supports the AgentSkills.io shape, point its skill loader at the `skills/audit/` directory. The `SKILL.md` frontmatter (`name`, `description`) and the `references/` subtree follow the standard convention; no harness-specific glue is required.
 
 ## Invoke
 

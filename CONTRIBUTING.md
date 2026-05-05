@@ -85,9 +85,9 @@ Severity is a prioritization hint, not a mandate.
 
 | Value | Handled by |
 |---|---|
-| `per-test` | `batch` assessor (`slobac:batch`) |
-| `per-file` | `batch` assessor (`slobac:batch`) |
-| `cross-suite` | `cross-suite` assessor (`slobac:cross-suite`) |
+| `per-test` | batch assessor (dispatched from `skills/audit/references/subagents/batch.md`) |
+| `per-file` | batch assessor (dispatched from `skills/audit/references/subagents/batch.md`) |
+| `cross-suite` | cross-suite assessor (dispatched from `skills/audit/references/subagents/cross-suite.md`) |
 
 ### After adding an entry
 
