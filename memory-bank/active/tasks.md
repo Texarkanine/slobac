@@ -84,5 +84,5 @@ No new runtime dependencies. `googleapis/release-please-action@v4` and `actions/
 - [x] Implementation plan complete
 - [x] Technology validation complete
 - [x] Preflight
-- [ ] Build
+- [x] Build
 - [ ] QA

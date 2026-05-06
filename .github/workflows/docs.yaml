@@ -1,9 +1,9 @@
 name: Build and Deploy Docs Site
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types:
+      - published
   pull_request:
     # Build on all PRs so link-validation / strict-mode gates docs changes at review time.
     # Deploy job is skipped for PRs (see the `if:` on `deploy:` below).
