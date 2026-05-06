@@ -1,0 +1,11 @@
+# Active Context
+
+## Current Task: Add release-please CI pipeline
+**Phase:** COMPLEXITY-ANALYSIS - COMPLETE
+
+## What Was Done
+- Classified task as Level 2 (Simple Enhancement): adding CI config files, self-contained, no code logic, moderate risk (CI/release pipeline)
+- Intent clarified and approved: `simple` release type (with `version.txt`), GitHub App token, bark/woof PR header, docs-on-tag-only trigger
+
+## Next Step
+- Load Level 2 workflow and execute Plan phase
