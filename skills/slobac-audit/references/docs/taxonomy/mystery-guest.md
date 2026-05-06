@@ -2,7 +2,7 @@
 
 | Slug | Severity | Detection Scope | Protects |
 |---|---|---|---|
-| `mystery-guest` | Low | per-test | [Understandable](../principles.md#understandable), [Clear failure message](../principles.md#clear-failure-message) |
+| `mystery-guest` | Low | per-test | [Understandable](../principles/test-qualities.md#understandable), [Clear failure message](../principles/test-qualities.md#clear-failure-message) |
 
 ## Summary
 
@@ -47,12 +47,12 @@ External-data signals over-trigger in three shapes the audit must not flag:
 
 ## Prescribed Fix
 
-1. [Describe-before-edit](../principles.md#behavior-articulation-before-change): identify which fixture property the assertion really depends on.
+1. [Describe-before-edit](../principles/refactor-qualities.md#behavior-articulation-before-change): identify which fixture property the assertion really depends on.
 2. Add a ≤3-line comment stating the relevant fixture shape, not the whole shape.
 3. Where an assertion expects a derived count, make the derivation explicit: `expected = USERS + ASSISTANTS` rather than `assert count == 6`.
 4. Where heredocs have no name, bind them to a `let` / constant with a name that expresses the fixture's role.
 5. Where fixtures are copy-pasted across related repos, note the opportunity for a shared support module — this is a cross-repo refactor, not a per-pass move.
-6. Gate: [preservation of regression-detection power](../principles.md#preservation-of-regression-detection-power). Zero AST changes to assertions; only surrounding comments and constants change.
+6. Gate: [preservation of regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power). Zero AST changes to assertions; only surrounding comments and constants change.
 
 ## Example
 

@@ -2,7 +2,7 @@
 
 | Slug | Severity | Detection Scope | Protects |
 |---|---|---|---|
-| `monolithic-test-file` | Medium | per-file | [Understandable](../principles.md#understandable), [Maintainable](../principles.md#maintainable) |
+| `monolithic-test-file` | Medium | per-file | [Understandable](../principles/test-qualities.md#understandable), [Maintainable](../principles/test-qualities.md#maintainable) |
 
 ## Summary
 
@@ -20,7 +20,7 @@ A single test file mixes multiple behavior domains — parser tests next to inte
 
 The suite-level analogue of a single test that does too much — a file, not a test, that has outgrown its subject. Often co-occurs with and amplifies [`semantic-redundancy`](./semantic-redundancy.md) (authors don't see what's already there), [`wrong-level`](./wrong-level.md) (levels mix), and [`deliverable-fossils`](./deliverable-fossils.md) (each checklist item got its own `describe` block in the same file).
 
-The semantic judgment: cluster the file's tests by behavior domain ([describe-before-edit](../principles.md#behavior-articulation-before-change) plus embedding clusters), and decide which clusters deserve their own file. This requires naming the behavior domains in a way that matches the *product*, not the *implementation* — the same capability that powers [`deliverable-fossils`](./deliverable-fossils.md).
+The semantic judgment: cluster the file's tests by behavior domain ([describe-before-edit](../principles/refactor-qualities.md#behavior-articulation-before-change) plus embedding clusters), and decide which clusters deserve their own file. This requires naming the behavior domains in a way that matches the *product*, not the *implementation* — the same capability that powers [`deliverable-fossils`](./deliverable-fossils.md).
 
 ## Signals
 
@@ -40,12 +40,12 @@ File-shape signals over-trigger when applied as if size alone were the violation
 
 ## Prescribed Fix
 
-1. [Describe-before-edit](../principles.md#behavior-articulation-before-change) over every test in the file.
+1. [Describe-before-edit](../principles/refactor-qualities.md#behavior-articulation-before-change) over every test in the file.
 2. Cluster by behavior domain; propose a per-domain target file with a behavior-shaped name.
 3. Emit a **split plan**: `original.test.ts` → `{ a.test.ts, b.test.ts, c.test.ts }`, with each destination's test list and the rationale for the grouping.
 4. Execute the split via codemod; imports and shared helpers follow.
 5. If shared setup warrants it, extract a small `test-support/` module rather than duplicating.
-6. Gate: [preservation of regression-detection power](../principles.md#preservation-of-regression-detection-power) plus same total test count plus CI green on each new file.
+6. Gate: [preservation of regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power) plus same total test count plus CI green on each new file.
 
 This move pairs with [`deliverable-fossils`](./deliverable-fossils.md): run the rename pass first so clusters form around product capabilities rather than checklist items.
 

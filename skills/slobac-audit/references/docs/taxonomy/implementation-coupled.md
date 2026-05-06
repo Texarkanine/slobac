@@ -2,7 +2,7 @@
 
 | Slug | Severity | Detection Scope | Protects |
 |---|---|---|---|
-| `implementation-coupled` | High | per-test | [Maintainable](../principles.md#maintainable), [Independent of implementation](../principles.md#independent-of-implementation) |
+| `implementation-coupled` | High | per-test | [Maintainable](../principles/test-qualities.md#maintainable), [Independent of implementation](../principles/test-qualities.md#independent-of-implementation) |
 
 ## Summary
 
@@ -53,10 +53,10 @@ The "reaches into internals" signals are language-conditional and over-trigger w
 
 1. Drive the library's public API instead of reaching for internals (`program.helpInformation()` rather than `(cmd as any).options`).
 2. If a private field encodes a real contract:
-   - Ask: is the helper cohesive enough to extract as a pure public function? If yes, extract it with its own tiny unit-test file. This is the *only* "refactor-for-testability" move the taxonomy permits, and only because it clarifies architecture — see the [no-extract-for-testability governor rule](../principles.md#no-extract-for-testability).
+   - Ask: is the helper cohesive enough to extract as a pure public function? If yes, extract it with its own tiny unit-test file. This is the *only* "refactor-for-testability" move the taxonomy permits, and only because it clarifies architecture — see the [no-extract-for-testability governor rule](../principles/refactor-qualities.md#no-extract-for-testability).
    - Otherwise, cover the behavior through integration via the public surface.
 3. For third-party internal fields: ask the upstream to expose, or encapsulate behind a project-level adapter so the coupling lives in one place.
-4. Gate: [preservation of regression-detection power](../principles.md#preservation-of-regression-detection-power). The transform often reveals [`semantic-redundancy`](./semantic-redundancy.md) (private-method tests duplicate public-API tests) — fold in the same pass.
+4. Gate: [preservation of regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power). The transform often reveals [`semantic-redundancy`](./semantic-redundancy.md) (private-method tests duplicate public-API tests) — fold in the same pass.
 
 ## Example
 

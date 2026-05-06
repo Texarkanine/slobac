@@ -142,7 +142,7 @@ These require comparing tests across files or understanding suite-wide conventio
 
 ## The Intermediate Representation: Behavior Summaries
 
-A critical insight: the manifesto's own [describe-before-edit](../../../skills/slobac-audit/references/docs/principles.md#behavior-articulation-before-change) principle already prescribes the exact intermediate representation we need. Every test gets a one-sentence behavior statement: "what this test actually verifies."
+A critical insight: the manifesto's own [describe-before-edit](../../../skills/slobac-audit/references/docs/qualities.md#behavior-articulation-before-change) principle already prescribes the exact intermediate representation we need. Every test gets a one-sentence behavior statement: "what this test actually verifies."
 
 This is the **compression layer** between file-reading agents and cross-suite agents. Instead of passing full test content between phases, pass only the structured behavior summaries:
 

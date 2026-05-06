@@ -1,38 +1,32 @@
-# Using the SLOBAC audit
-
-The SLOBAC manifesto ships alongside an agentic audit capability: a set of [AgentSkills.io](https://agentskills.io/)-shaped skills that audit a test suite against this manifesto and emit a portable markdown report. This page covers installing, invoking, and troubleshooting the audit.
-
-If you are here to read about what tests should be — not run a tool — you are already in the right place. The manifesto pages ([Principles](principles.md), [Taxonomy](taxonomy/README.md), [Workflows](workflows.md), [Glossary](glossary.md)) stand on their own; no software is required.
+# Running the SLOBAC Audit
 
 ## Install
 
-The audit ships as a single **plugin** with one registered skill directory (`slobac-audit/`). Install the plugin once; the orchestrator dispatches subagents internally from workflow prompts bundled in `references/subagents/`.
+Install the [txrk9-agent-plugins](https://github.com/Texarkanine/txrk9-agent-plugins) Plugin Marketplace into your harness of choice.
 
-### Cursor
+Then, install the `slobac` plugin from that marketplace.
 
-1. Open **Cursor Settings → Marketplace** (or your Cursor version's equivalent plugin marketplace UI).
-2. Add the marketplace catalog from [`Texarkanine/txrk9-agent-plugins`](https://github.com/Texarkanine/txrk9-agent-plugins) if it is not already configured (that repo publishes `.cursor-plugin/marketplace.json`).
-3. Install the **SLOBAC** plugin (`slobac`). Cursor registers the slash command **`/slobac-audit`** from the skill directory name (`skills/slobac-audit/` in this repo — the folder name is the invocation token, not the `SKILL.md` `name` field).
-
-### Claude Code
-
-1. Register the marketplace catalog from [`Texarkanine/txrk9-agent-plugins`](https://github.com/Texarkanine/txrk9-agent-plugins) (see that repo's `.claude-plugin/marketplace.json`).
-2. Install the **slobac** plugin from the marketplace. Claude Code namespaces skills as `/plugin-name:folder-name`. With plugin name `slobac` and skill folder `slobac-audit/`, you invoke **`/slobac:slobac-audit`** (the plugin namespace repeats before the folder-derived token — this is expected).
+This will give your harness access to the `/slobac-audit` [Agent Skill](https://agentskills.io).
 
 ## Scope
 
 The audit is intended to be **read-only**: it reports findings; it does not modify test code. A report is created that you can feed into your chosen remediation process.
 
-The detection prose in every taxonomy entry is language-neutral, but **Python is the only validated ecosystem** today. The [Polyglot notes](taxonomy/README.md) section in each entry describes the per-language detection surface for future work.
+You may run the audit against a single test, a single test suite, a directory tree, or multiple trees of tests within your repository - it will ask you to choose.
 
-Operators invoke the audit with **explicit slug names** — e.g. `tautology-theatre`, `vacuous-assertion`. Free-text or fuzzy-phrase requests are refused with the supported-slug list. The unscoped wildcard `all` (or an unscoped invocation) resolves to the full supported set.
+You may run the audit looking for a subset of the [taxonomy](./taxonomy/README.md) of test smells. If you don't specify, it will ask you to choose. You can use `all` to search for all smells.
+
+    /slobac-audit src/test/java/ all smells
 
 ## Context window
 
-**For best results, run SLOBAC with the most-capable model and largest context window available.** In Cursor, enable MAX mode. In Claude Code, use Opus or Sonnet with the 1M context window. Larger context means fewer batches, richer cross-suite analysis, and better recall on redundancy detection. SLOBAC works at 200K context but shards more aggressively, trading recall on cross-suite smells for safety.
+**For best results, run SLOBAC with the most-capable model and largest context window available.** 
 
-Pass your context window size in the invocation — `"Audit tests/ — 1M context window"` — to skip the one-time question the orchestrator asks when it encounters a large suite without a stated budget.
+* In Cursor, enable MAX mode and pick a heavyweight, frontier model.
+* In Claude Code, use Opus with the 1M context window.
 
-## TL;DR
+Larger context means fewer batches, richer cross-suite analysis, and better recall on redundancy detection. SLOBAC works at 200K context but shards more aggressively, trading recall on cross-suite smells for safety.
 
-You probably want to run `/slobac:slobac-audit all - 1M Context window` (after making sure that you've picked a beefy model and actually set that 1M context window).
+Pass your context window size in the invocation to skip the one-time question the orchestrator asks when it encounters a large suite without a stated budget.
+
+    /slobac-audit src/test/java/ all smells - 1M context window

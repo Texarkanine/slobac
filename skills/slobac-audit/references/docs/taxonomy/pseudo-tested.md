@@ -2,7 +2,7 @@
 
 | Slug | Severity | Detection Scope | Protects |
 |---|---|---|---|
-| `pseudo-tested` | High | per-test | [Necessary](../principles.md#necessary), [Granular](../principles.md#granular) |
+| `pseudo-tested` | High | per-test | [Necessary](../principles/test-qualities.md#necessary), [Granular](../principles/test-qualities.md#granular) |
 
 ## Summary
 
@@ -20,9 +20,9 @@ Replace the SUT body with `return;` / `return null` / `return input` — every t
 
 ## Description
 
-This is the [extreme-mutation / pseudo-tested-methods](../glossary.md#extreme-mutation--pseudo-tested-methods) smell: methods whose bodies can be replaced with a no-op without any test noticing. Niedermayr et al.[^niedermayr] measured a median of 10.1% of methods in studied Java suites being pseudo-tested — a cheap, high-signal mutation class (often run via [Descartes](../glossary.md#descartes) on JVM, `mutmut --simple-mutations` on Python, `cargo-mutants` on Rust, or Stryker's block-statement mutator on JS/TS).
+This is the [extreme-mutation / pseudo-tested-methods](../principles/glossary.md#extreme-mutation--pseudo-tested-methods) smell: methods whose bodies can be replaced with a no-op without any test noticing. Niedermayr et al.[^niedermayr] measured a median of 10.1% of methods in studied Java suites being pseudo-tested — a cheap, high-signal mutation class (often run via [Descartes](../principles/glossary.md#descartes) on JVM, `mutmut --simple-mutations` on Python, `cargo-mutants` on Rust, or Stryker's block-statement mutator on JS/TS).
 
-This entry is the mutation-adjacent sibling of [`vacuous-assertion`](./vacuous-assertion.md). The [Tautology Theatre](../glossary.md#tautology-theatre) operational test — "would this test still pass if all production code were deleted?" — has `pseudo-tested` as a strict subset ("would it still pass if production code were no-opped?").
+This entry is the mutation-adjacent sibling of [`vacuous-assertion`](./vacuous-assertion.md). The [Tautology Theatre](../principles/glossary.md#tautology-theatre) operational test — "would this test still pass if all production code were deleted?" — has `pseudo-tested` as a strict subset ("would it still pass if production code were no-opped?").
 
 A reader can *conjecture* without running a mutator: "if `short_digest` returned `''`, would any existing test fail?" Read the suite, answer yes/no, and add the missing assertion. A real mutation run later confirms.
 
@@ -32,7 +32,7 @@ A reader can *conjecture* without running a mutator: "if `short_digest` returned
 - Assertions after the SUT call check only "non-empty" or "has this key".
 - SUT return value is never compared to an expected value.
 - A file-touching SUT is tested by checking a file exists, not its content.
-- Confirmatory cross-check: run [Descartes](../glossary.md#descartes) / `mutmut --simple-mutations` / equivalent; any surviving no-op mutant is evidence for this mode.
+- Confirmatory cross-check: run [Descartes](../principles/glossary.md#descartes) / `mutmut --simple-mutations` / equivalent; any surviving no-op mutant is evidence for this mode.
 
 ## False-positive guards
 
@@ -46,7 +46,7 @@ The no-op-survival signal over-triggers in two cases:
 1. For the canonical test in the cluster, identify the SUT's actual output contract.
 2. Add the one assertion that would fail under `return default`: compare to an expected value, parse the output and assert on its shape, hash the file content, etc.
 3. Keep the fix local — one well-placed assertion in the canonical test, not N across N tests.
-4. Gate: [preservation of regression-detection power](../principles.md#preservation-of-regression-detection-power), *stricter* than the default — at least one previously-surviving no-op mutant now dies. [Mutation kill-set](../glossary.md#mutation-kill-set) delta must be strictly positive.
+4. Gate: [preservation of regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power), *stricter* than the default — at least one previously-surviving no-op mutant now dies. [Mutation kill-set](../principles/glossary.md#mutation-kill-set) delta must be strictly positive.
 
 ## Example
 
@@ -79,13 +79,13 @@ Now `pass` fails (`result` is `None`; attribute access raises). A no-op mutation
 
 - [`vacuous-assertion`](./vacuous-assertion.md) — same family; asserts *something*, but insufficient.
 - [`tautology-theatre`](./tautology-theatre.md) — SUT never runs at all.
-- [`rotten-green`](./rotten-green.md) — SUT call with zero assertions; hard to distinguish from pseudo-tested without [describe-before-edit](../principles.md#behavior-articulation-before-change).
+- [`rotten-green`](./rotten-green.md) — SUT call with zero assertions; hard to distinguish from pseudo-tested without [describe-before-edit](../principles/refactor-qualities.md#behavior-articulation-before-change).
 
 ## Polyglot notes
 
 Every ecosystem has at least one extreme-mutation driver:
 
-- **JVM:** [Descartes](../glossary.md#descartes) engine for PIT.
+- **JVM:** [Descartes](../principles/glossary.md#descartes) engine for PIT.
 - **Python:** `mutmut --simple-mutations`, Cosmic Ray.
 - **Rust:** `cargo-mutants`.
 - **JS/TS/.NET:** Stryker's block-statement mutator.

@@ -2,7 +2,7 @@
 
 | Slug | Severity | Detection Scope | Protects |
 |---|---|---|---|
-| `tautology-theatre` | Critical | per-test | [Necessary](../principles.md#necessary), [Independent of implementation](../principles.md#independent-of-implementation) |
+| `tautology-theatre` | Critical | per-test | [Necessary](../principles/test-qualities.md#necessary), [Independent of implementation](../principles/test-qualities.md#independent-of-implementation) |
 
 ## Summary
 
@@ -22,14 +22,14 @@ The test doesn't exercise production code at all. The mock was configured to ret
 
 ## Description
 
-This entry belongs to the larger [Tautology Theatre](../glossary.md#tautology-theatre) umbrella. Under the diagnostic question *"would this test still pass if all production code were deleted?"*, this is the strictest case: **yes, trivially, because the production code was never called.**
+This entry belongs to the larger [Tautology Theatre](../principles/glossary.md#tautology-theatre) umbrella. Under the diagnostic question *"would this test still pass if all production code were deleted?"*, this is the strictest case: **yes, trivially, because the production code was never called.**
 
 Two distinct shapes fit here:
 
 - **Mock tautology.** Configure a mock to return X; assert the mock returns X; no SUT call between them. Logically `x = 5; assert x == 5`.
 - **No production code exercised.** Every object in the test is a mock, or the mock *is* the unit under test (`jest.spyOn(sutInstance, 'method').mockReturnValue(...)`).
 
-Severity is Critical because these tests produce the worst false-confidence signal in the suite *and* have the safest transform: **delete them.** A deleted tautology cannot reduce the [mutation kill-set](../glossary.md#mutation-kill-set) — it was killing no mutants.
+Severity is Critical because these tests produce the worst false-confidence signal in the suite *and* have the safest transform: **delete them.** A deleted tautology cannot reduce the [mutation kill-set](../principles/glossary.md#mutation-kill-set) — it was killing no mutants.
 
 ## Signals
 
@@ -56,10 +56,10 @@ Mock-shaped signals over-trigger in three classes the audit must distinguish:
 
 A tautology test provably verifies nothing; regression-detection power cannot regress because nothing was covered.
 
-1. [Describe-before-edit](../principles.md#behavior-articulation-before-change): confirm the test genuinely verifies nothing (two-reader rule — proposer and reviewer must agree).
+1. [Describe-before-edit](../principles/refactor-qualities.md#behavior-articulation-before-change): confirm the test genuinely verifies nothing (two-reader rule — proposer and reviewer must agree).
 2. Delete the test; delete its now-orphan fixtures and mocks.
 3. If a reviewer believes behavior *should* be covered but isn't, emit a **coverage gap note** to the plan artifact — do not add a new test, since net-new test generation is out of scope for this catalog; hand off to a coverage-generator tool.
-4. Gate: [preservation of regression-detection power](../principles.md#preservation-of-regression-detection-power), with a relaxed coverage rule — coverage may drop if and only if the rationale is "deleted tautology, no lost mutants."
+4. Gate: [preservation of regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power), with a relaxed coverage rule — coverage may drop if and only if the rationale is "deleted tautology, no lost mutants."
 
 ### Alternative: rewrite
 
@@ -88,7 +88,7 @@ The rationale message reads:
 
 ## Related modes
 
-- [`pseudo-tested`](./pseudo-tested.md), [`vacuous-assertion`](./vacuous-assertion.md) — siblings in the [Tautology Theatre](../glossary.md#tautology-theatre) umbrella; weaker forms.
+- [`pseudo-tested`](./pseudo-tested.md), [`vacuous-assertion`](./vacuous-assertion.md) — siblings in the [Tautology Theatre](../principles/glossary.md#tautology-theatre) umbrella; weaker forms.
 - [`over-specified-mock`](./over-specified-mock.md) — different mock-shaped smell where the SUT *does* run but the assertions over-constrain it.
 - [`rotten-green`](./rotten-green.md) — covers the trivial-tautology variant (`assertTrue(true)`).
 

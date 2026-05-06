@@ -6,7 +6,7 @@ The intermediate representation (IR) emitted by batch assessors and consumed by 
 
 Behavior summaries compress the "what does each test verify?" question into a structured table. This enables the cross-suite assessor to detect `semantic-redundancy`, `wrong-level`, and other cross-suite smells without re-reading the full source of every test — only performing targeted reads of candidates identified via summary clustering.
 
-The format implements the manifesto's [describe-before-edit](docs/principles.md#behavior-articulation-before-change) principle as a first-class architectural boundary between file-reading agents and cross-suite agents.
+The format implements the manifesto's [describe-before-edit](docs/qualities.md#behavior-articulation-before-change) principle as a first-class architectural boundary between file-reading agents and cross-suite agents.
 
 ## Table Shape
 
@@ -28,8 +28,8 @@ The format implements the manifesto's [describe-before-edit](docs/principles.md#
 | **Line** | Positive integer | Yes | Line number where the test function/method/block begins. |
 | **Test ID** | String | Yes | The test's identifier as it appears in the source — function name, `it`/`test` string, method name. No transformation. |
 | **Behavior** | Prose sentence | Yes | One sentence describing what the test actually verifies (not what its name claims). Written in present tense, active voice. Length varies by richness tier. |
-| **Tier** | Enum string | Yes | The test's apparent pyramid tier as inferred from directory structure, framework markers, or import patterns. Values: `unit`, `integration`, `e2e`, `smoke`, `contract`, `unknown`. |
-| **Smells Found** | Comma-separated slugs | Yes | Per-test and per-file smells detected in this test by the batch assessor. `—` if none. Append `?` to a slug if the assessor suspects but cannot confirm (e.g., `wrong-level?` when tier inference is ambiguous). |
+| **Tier** | Enum string | Yes | The test's apparent **test level** ([glossary](docs/principles/glossary.md#test-level)) as inferred from directory structure, framework markers, or import patterns — a coarse bucket for clustering, not the full simple/component/functional ladder. Values: `unit`, `integration`, `e2e`, `smoke`, `contract`, `unknown`. |
+| **Smells Found** | Comma-separated slugs | Yes | Per-test and per-file smells detected in this test by the batch assessor. `—` if none. Append `?` to a slug if the assessor suspects but cannot confirm (e.g., `wrong-level?` when level inference is ambiguous). |
 
 ## Richness Tiers
 

@@ -2,7 +2,7 @@
 
 | Slug | Severity | Detection Scope | Protects |
 |---|---|---|---|
-| `vacuous-assertion` | High | per-test | [Granular](../principles.md#granular), [Necessary](../principles.md#necessary) |
+| `vacuous-assertion` | High | per-test | [Granular](../principles/test-qualities.md#granular), [Necessary](../principles/test-qualities.md#necessary) |
 
 ## Summary
 
@@ -22,7 +22,7 @@ The test *does* assert, and the assertion runs against real SUT output — but t
 
 ## Description
 
-This is one of three members of the [Tautology Theatre](../glossary.md#tautology-theatre) umbrella, distinguished by *where* the weakness lives:
+This is one of three members of the [Tautology Theatre](../principles/glossary.md#tautology-theatre) umbrella, distinguished by *where* the weakness lives:
 
 - [`tautology-theatre`](./tautology-theatre.md) — SUT never runs at all.
 - [`pseudo-tested`](./pseudo-tested.md) — SUT runs, but a no-op replacement would still pass.
@@ -52,11 +52,11 @@ Two over-triggers must be suppressed:
 
 ## Prescribed Fix
 
-1. Identify the real claim via [describe-before-edit](../principles.md#behavior-articulation-before-change).
+1. Identify the real claim via [describe-before-edit](../principles/refactor-qualities.md#behavior-articulation-before-change).
 2. Replace the weak check with the strongest *available* assertion. Prefer in order: structural equality > matcher-based object containment > regex > prefix/length.
 3. If the real claim is a side-effect absence, replace `not_to raise_error` with `not_to have_received(:cp)` or equivalent.
 4. Collapse `toBeDefined` + subsequent dereference into one matcher: `expect(x).toMatchObject({ foo: 'bar' })`.
-5. Gate: [preservation of regression-detection power](../principles.md#preservation-of-regression-detection-power), *stricter* than the default — the [mutation kill-set](../glossary.md#mutation-kill-set) must *increase*, not just stay flat.
+5. Gate: [preservation of regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power), *stricter* than the default — the [mutation kill-set](../principles/glossary.md#mutation-kill-set) must *increase*, not just stay flat.
 
 ## Example
 
@@ -86,7 +86,7 @@ The original assertions would pass for `{}` or `{ description: ' ' }`. Strengthe
 
 ## Related modes
 
-- [`pseudo-tested`](./pseudo-tested.md), [`tautology-theatre`](./tautology-theatre.md) — adjacent members of the [Tautology Theatre](../glossary.md#tautology-theatre) umbrella.
+- [`pseudo-tested`](./pseudo-tested.md), [`tautology-theatre`](./tautology-theatre.md) — adjacent members of the [Tautology Theatre](../principles/glossary.md#tautology-theatre) umbrella.
 - [`naming-lies`](./naming-lies.md) — a vacuous body often pairs with a title that over-promises.
 - [`presentation-coupled`](./presentation-coupled.md) — the opposite failure mode: assertions too *strong* on the wrong thing.
 

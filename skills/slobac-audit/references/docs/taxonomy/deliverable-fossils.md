@@ -2,7 +2,7 @@
 
 | Slug | Severity | Detection Scope | Protects |
 |---|---|---|---|
-| `deliverable-fossils` | High | per-test, cross-suite | [Understandable](../principles.md#understandable), [Necessary](../principles.md#necessary), [Well-named](../principles.md#well-named) |
+| `deliverable-fossils` | High | per-test, cross-suite | [Understandable](../principles/test-qualities.md#understandable), [Necessary](../principles/test-qualities.md#necessary), [Well-named](../principles/test-qualities.md#well-named) |
 
 ## Summary
 
@@ -30,7 +30,7 @@ When a team ships from a design document with a checklist, tests tend to get aut
 
 The semantic judgment is threefold. **Intent extraction** — read a test, decide in one sentence what behavior it actually verifies (not what its name claims). **Canonical naming** — propose a new name that shouts the behavior (e.g. "when lid opens, printer stops" rather than "after lid-sensor refactor"). **Canonical grouping** — propose a file and describe-block organization keyed to product capabilities, not work items.
 
-A linter cannot do any of the three. Embedding-based clustering can do some of the grouping in isolation, but without [describe-before-edit](../principles.md#behavior-articulation-before-change) input the clusters are shaped like the code, which is exactly the non-improvement this taxonomy is trying to escape.
+A linter cannot do any of the three. Embedding-based clustering can do some of the grouping in isolation, but without [describe-before-edit](../principles/refactor-qualities.md#behavior-articulation-before-change) input the clusters are shaped like the code, which is exactly the non-improvement this taxonomy is trying to escape.
 
 ## Signals
 
@@ -54,18 +54,18 @@ A two-phase move. Phase A (rename) is safe and reversible. Phase B (regroup) is 
 
 ### Phase A — rename per behavior
 
-1. [Describe-before-edit](../principles.md#behavior-articulation-before-change): for each flagged test, emit a one-sentence behavior statement.
+1. [Describe-before-edit](../principles/refactor-qualities.md#behavior-articulation-before-change): for each flagged test, emit a one-sentence behavior statement.
 2. Propose a new test name that encodes that statement. Style: active voice, a claim about the product, not about the work.
 3. Strip fossil vocabulary (ticket IDs, refactor references, milestone markers) unless the *reason* the test exists is "guards a specific regression". If so, cite the bug as a code comment, not in the name.
-4. Gate: [preservation of regression-detection power](../principles.md#preservation-of-regression-detection-power). Rename-only must not change the call graph; only the test identifier or description string changes.
+4. Gate: [preservation of regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power). Rename-only must not change the call graph; only the test identifier or description string changes.
 
 ### Phase B — regroup per product capability
 
 1. Cluster renamed tests by behavior-sentence embedding similarity.
-2. For each cluster, propose a [canonical location](../glossary.md#canonical-location) — a file or `describe` block keyed to a product capability name (e.g. "selection keys", "URL encoding", "auth token refresh").
-3. Emit a [suite table of contents](../glossary.md#suite-table-of-contents) diff: behavior → tests, before/after. Reviewers read this to decide whether the regrouping makes sense before any code moves.
+2. For each cluster, propose a [canonical location](../principles/glossary.md#canonical-location) — a file or `describe` block keyed to a product capability name (e.g. "selection keys", "URL encoding", "auth token refresh").
+3. Emit a [suite table of contents](../principles/glossary.md#suite-table-of-contents) diff: behavior → tests, before/after. Reviewers read this to decide whether the regrouping makes sense before any code moves.
 4. Execute the moves as a codemod (ast-grep / LibCST / jscodeshift) so imports and fixture references follow.
-5. Gate: [preservation of regression-detection power](../principles.md#preservation-of-regression-detection-power) plus identical test count pre/post plus no new cross-file imports that weren't already implicit.
+5. Gate: [preservation of regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power) plus identical test count pre/post plus no new cross-file imports that weren't already implicit.
 
 ## Example
 
