@@ -1,13 +1,13 @@
-# The Suite Life of Bobs and Code
+# What is SLOBAC?
 
-... a point of view about what tests should be, what test suites should be, and the named ways both go wrong.
+The **Suite Life of Bobs and Code** is a point of view about what tests should be, what test suites should be, and the named ways both go wrong.
 
 SLOBAC ships several things:
 
 1. A Manifesto: a **self-contained read**. No software is required to use it. A reader who finishes these pages should be able to audit their own test suite by hand and classify real tests against the named failure modes.
     1. [Principles](principles/test-qualities.md) — what a test *should* be, and the bounds a disciplined test-suite refactor must respect.
     2. [Taxonomy](taxonomy/README.md) — a catalog of ways tests and test suites can go wrong.
-2. An [Agent Skill](https://agentskills.io/): Instructions for AI agents to audit a codebases's test suite against the manifesto.
+2. An [Agent Skill](using-slobac.md): Instructions for AI agents to audit a codebases's test suite against the manifesto.
 
 ## What This Is Not
 

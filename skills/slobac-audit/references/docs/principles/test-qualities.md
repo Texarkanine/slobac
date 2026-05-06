@@ -53,3 +53,7 @@ Tests verify *what* the code does, not *how*. Classically described as black-box
 ### Clear failure message
 
 When the test fails, the message should point a reader toward the real cause. `expected 6, got 5` is worse than `expected 6 messages (3 user + 3 assistant), got 5`.
+
+[^farley]: Dave Farley, originally as an eight-tweet thread summarizing his view of good tests. Captured and extended in citypaul's `test-design-reviewer` skill: <https://github.com/citypaul/.dotfiles/blob/main/claude/.claude/skills/test-design-reviewer/SKILL.md>. Farley's own writing: Farley, D. (2021). *Modern Software Engineering*, Addison-Wesley; and talks at <https://www.youtube.com/@ContinuousDelivery>.
+
+[^wright]: Wright, G. *Ten Properties of Good Unit Tests*. Medium, 2021. <https://medium.com/@gregwright_1301/ten-properties-of-good-unit-tests-3bbd49222754>.

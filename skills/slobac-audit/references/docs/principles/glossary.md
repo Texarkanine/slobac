@@ -1,6 +1,6 @@
 # Glossary
 
-General-purpose terminology used across the [taxonomy](../taxonomy/README.md) and the sibling [principles](./test-qualities.md) and [workflows](./workflows.md) documents. Entries are alphabetical. External sources are footnoted so this document stands alone.
+Terms used within SLOBAC, with the meanings that they have to us, here and now, in this context. You know, a Glossary.
 
 ## Canonical location
 
