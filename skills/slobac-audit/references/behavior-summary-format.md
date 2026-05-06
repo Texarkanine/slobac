@@ -6,7 +6,7 @@ The intermediate representation (IR) emitted by batch assessors and consumed by 
 
 Behavior summaries compress the "what does each test verify?" question into a structured table. This enables the cross-suite assessor to detect `semantic-redundancy`, `wrong-level`, and other cross-suite smells without re-reading the full source of every test — only performing targeted reads of candidates identified via summary clustering.
 
-The format implements the manifesto's [describe-before-edit](docs/qualities.md#behavior-articulation-before-change) principle as a first-class architectural boundary between file-reading agents and cross-suite agents.
+The format implements the manifesto's [describe-before-edit](docs/principles/refactor-qualities.md#behavior-articulation-before-change) principle as a first-class architectural boundary between file-reading agents and cross-suite agents.
 
 ## Table Shape
 
