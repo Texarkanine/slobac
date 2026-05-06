@@ -12,7 +12,7 @@ The canonical source is [`skills/slobac-audit/`](../skills/slobac-audit/). Layou
 - `references/report-template.md` — report shape.
 - `references/behavior-summary-format.md` — intermediate representation spec for cross-suite assessor.
 - `references/suite-manifest-format.md` — scout output spec for orchestrator partitioning.
-- `references/docs/` — the **full SLOBAC manifesto**: `index.md`, `principles.md`, `glossary.md`, `workflows.md`, `.pages`, and `taxonomy/` (15 canonical smell definitions + `README.md` shape SoT). Hand-authored; the SKILL.md workflow reads one taxonomy file per in-scope smell at runtime — no second file, no augmentation layer. ProperDocs builds the published site directly from this directory.
+- `references/docs/` — the **full SLOBAC manifesto**: `index.md`, `qualities.md`, `glossary.md`, `workflows.md`, `.pages`, and `taxonomy/` (15 canonical smell definitions + `README.md` shape SoT). Hand-authored; the SKILL.md workflow reads one taxonomy file per in-scope smell at runtime — no second file, no augmentation layer. ProperDocs builds the published site directly from this directory.
 
 Subagent workflows (`references/subagents/scout.md`, `batch.md`, `cross-suite.md`) are dispatched by the orchestrator as raw task prompts. All shared content (taxonomy, format specs) lives under `references/` — subagents resolve it via the absolute path passed by the orchestrator at runtime.
 
@@ -22,7 +22,7 @@ Per-harness discovery paths are operator-install concerns, not architectural one
 
 The entire manifesto lives at `skills/slobac-audit/references/docs/`. `properdocs.yml` `docs_dir` points directly at this directory — no snippet indirection, no wrapper files, no `docs/` directory at repo root. At agent-runtime the skill reads only files inside its own root — invariant #11 (skill-root self-containment) is satisfied architecturally. At build-time properdocs renders the site directly from the same files.
 
-Relative links in canonical files (e.g. `[Understandable](../principles.md#understandable)` inside a taxonomy entry) resolve at their actual filesystem location because properdocs renders from the directory where the files live. No link-path footgun — links work both for the rendered site and for raw-GitHub rendering.
+Relative links in canonical files (e.g. `[Understandable](../principles/qualities.md#understandable)` inside a taxonomy entry) resolve at their actual filesystem location because properdocs renders from the directory where the files live. No link-path footgun — links work both for the rendered site and for raw-GitHub rendering.
 
 No generator, no CI drift-check, no copy-with-sync discipline. There is one document per smell; forking is structurally impossible. Phase-5 marketplace distribution is trivially supported: the committed layout is the install layout.
 
@@ -32,12 +32,13 @@ Planted test suites live at [`tests/fixtures/audit/<scenario>/`](../tests/fixtur
 
 ## Environment Setup
 
-**To read/edit the manifesto:** a Markdown-capable editor is sufficient. The entire manifesto lives at `skills/slobac-audit/references/docs/` — per-smell entries at `taxonomy/<slug>.md`, principles at `principles.md`, glossary at `glossary.md`, workflows at `workflows.md`. There are no wrappers or indirection; this is both the authoring surface and the properdocs build source.
+**To read/edit the manifesto:** a Markdown-capable editor is sufficient. The entire manifesto lives at `skills/slobac-audit/references/docs/` — per-smell entries at `taxonomy/<slug>.md`, principles at `qualities.md`, glossary at `glossary.md`, workflows at `workflows.md`. There are no wrappers or indirection; this is both the authoring surface and the properdocs build source.
 
 **To preview the built docs site locally:** `uv` (which auto-provisions Python per `pyproject.toml`), then `uv sync --group docs` + `uv run properdocs serve`.
 
 ## Build Tools
 
+- **release-please** (automated versioning and changelog). Configured via `release-please-config.json` and `.release-please-manifest.json` at repo root; driven by `googleapis/release-please-action@v4` in `.github/workflows/release-please.yaml`. Uses `release-type: simple` (`version.txt` as canonical, `.cursor-plugin/plugin.json` and `.claude-plugin/plugin.json` as sync'd extras). Conventional commits on `main` produce Release PRs; merging a Release PR creates the GitHub release and tag.
 - **properdocs + mkdocs-material** (docs site generator; Phase 0 publishing). ProperDocs is a drop-in replacement for MkDocs 1.x by its last active maintainer; the config file, plugin names, and CLI semantics are identical except the command is `properdocs` instead of `mkdocs`.
 - **mkdocs-awesome-pages-plugin** (nav ordering via `.pages` files).
 - **mkdocs-redirects** (pre-positioned for future rename resilience; empty `redirect_maps` until first taxonomy rename).
