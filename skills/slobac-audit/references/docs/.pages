@@ -1,7 +1,3 @@
 nav:
   - index.md
-  - principles.md
-  - workflows.md
-  - taxonomy
-  - glossary.md
-  - using-slobac.md
+  - ...

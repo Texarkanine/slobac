@@ -2,7 +2,7 @@
 
 | Slug | Severity | Detection Scope | Protects |
 |---|---|---|---|
-| `shared-state` | Medium | per-file | [Atomic](../principles.md#atomic), [Repeatable](../principles.md#repeatable) |
+| `shared-state` | Medium | per-file | [Atomic](../principles/test-qualities.md#atomic), [Repeatable](../principles/test-qualities.md#repeatable) |
 
 ## Summary
 
@@ -49,7 +49,7 @@ Module-level binding signals over-trigger in three classes the audit must not fl
 3. Use install-and-restore patterns (`jest.spyOn(console, 'warn')` with `afterEach`) instead of permanent global mutation.
 4. Consolidate duplicate `sys.path` / env-var mutations into one conftest.
 5. Optional: enable order randomization in CI to prevent regression.
-6. Gate: [preservation of regression-detection power](../principles.md#preservation-of-regression-detection-power) plus the file must pass shuffled runs N times.
+6. Gate: [preservation of regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power) plus the file must pass shuffled runs N times.
 
 ## Example
 

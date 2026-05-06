@@ -2,7 +2,7 @@
 
 | Slug | Severity | Detection Scope | Protects |
 |---|---|---|---|
-| `over-specified-mock` | High | per-test | [Maintainable](../principles.md#maintainable), [Independent of implementation](../principles.md#independent-of-implementation) |
+| `over-specified-mock` | High | per-test | [Maintainable](../principles/test-qualities.md#maintainable), [Independent of implementation](../principles/test-qualities.md#independent-of-implementation) |
 
 ## Summary
 
@@ -56,7 +56,7 @@ Strict-interaction signals over-trigger when the interaction *is* the contract:
 3. For incidental interactions: delete the mock assertions entirely; rely on output assertions.
 4. Replace ordered `mockResolvedValueOnce` queues with a lookup-keyed fake (`(txid) => fixtures[txid]`).
 5. For mock-queues-as-contract: extract a minimal `Fake<Client>` class once per suite; tests reference its observable behavior, not the queue.
-6. Gate: [preservation of regression-detection power](../principles.md#preservation-of-regression-detection-power). Tests should now survive an internal refactor of the SUT that preserves the external contract — verify with a targeted codemod that reorders an internal call.
+6. Gate: [preservation of regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power). Tests should now survive an internal refactor of the SUT that preserves the external contract — verify with a targeted codemod that reorders an internal call.
 
 ## Example
 

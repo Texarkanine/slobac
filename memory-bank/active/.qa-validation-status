@@ -1,6 +1,0 @@
-PASS
-Task: slobac-skill-rename-invocation-parity
-Date: 2026-05-06
-Gates: properdocs build --strict=0, reuse lint=0, stale-ref grep=clean, fixtures dir=untouched, artifact filename=unchanged, sibling-repo README=updated
-Semantic review: KISS/DRY/YAGNI/Completeness/Regression/Integrity/Documentation all PASS
-Pending operator: Cursor /slobac-audit smoke test, Claude Code /slobac:slobac-audit smoke test

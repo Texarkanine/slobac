@@ -2,7 +2,7 @@
 
 | Slug | Severity | Detection Scope | Protects |
 |---|---|---|---|
-| `rotten-green` | Low | per-test | [Necessary](../principles.md#necessary), [Granular](../principles.md#granular) |
+| `rotten-green` | Low | per-test | [Necessary](../principles/test-qualities.md#necessary), [Granular](../principles/test-qualities.md#granular) |
 
 ## Summary
 
@@ -46,9 +46,9 @@ Two over-triggers must be suppressed:
 Two transforms, depending on intent:
 
 1. **Dead scaffold, no intent to test.** Delete the file, block, or fixture. Clean and safe; the preservation gate allows coverage to drop here with a named rationale, since the deleted code killed no mutants.
-2. **Stub that was meant to test something.** Mark explicitly: either convert to the runner's pending/xit marker (`it.todo(...)`, `xit`, `@pytest.mark.skip`) so it shows as "known gap" in reports, or write the missing assertion using [describe-before-edit](../principles.md#behavior-articulation-before-change) to guess intent from the name. If the intent is ambiguous, prefer explicit pending.
+2. **Stub that was meant to test something.** Mark explicitly: either convert to the runner's pending/xit marker (`it.todo(...)`, `xit`, `@pytest.mark.skip`) so it shows as "known gap" in reports, or write the missing assertion using [describe-before-edit](../principles/refactor-qualities.md#behavior-articulation-before-change) to guess intent from the name. If the intent is ambiguous, prefer explicit pending.
 
-Gate: [preservation of regression-detection power](../principles.md#preservation-of-regression-detection-power). `.todo` / `skip` conversions must include a reason string.
+Gate: [preservation of regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power). `.todo` / `skip` conversions must include a reason string.
 
 ## Example
 
@@ -91,7 +91,7 @@ The first test is now explicitly pending — it surfaces as TODO in CI reports i
 ## Related modes
 
 - [`vacuous-assertion`](./vacuous-assertion.md) — adjacent; rotten-green has *no* assertion, vacuous has a weak one.
-- [`pseudo-tested`](./pseudo-tested.md) — SUT runs but no oracle; hard to distinguish from rotten-green without [describe-before-edit](../principles.md#behavior-articulation-before-change).
+- [`pseudo-tested`](./pseudo-tested.md) — SUT runs but no oracle; hard to distinguish from rotten-green without [describe-before-edit](../principles/refactor-qualities.md#behavior-articulation-before-change).
 - [`shared-state`](./shared-state.md) — dead shared setup is a rotten-green subcase.
 
 ## Polyglot notes

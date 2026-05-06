@@ -2,7 +2,7 @@
 
 | Slug | Severity | Detection Scope | Protects |
 |---|---|---|---|
-| `naming-lies` | Medium | per-test | [Understandable](../principles.md#understandable), [Well-named](../principles.md#well-named), [Clear failure message](../principles.md#clear-failure-message) |
+| `naming-lies` | Medium | per-test | [Understandable](../principles/test-qualities.md#understandable), [Well-named](../principles/test-qualities.md#well-named), [Clear failure message](../principles/test-qualities.md#clear-failure-message) |
 
 ## Summary
 
@@ -49,9 +49,9 @@ For each flagged test, the LLM decides among three paths:
 
 - **Body is correct, title lies.** Rename to match the body. Safest move; the preservation gate is trivial (rename only).
 - **Title is the real intent, body is weak.** Strengthen assertions (handoff to [`vacuous-assertion`](./vacuous-assertion.md)); rename only if still necessary after.
-- **Both are stale.** Investigate with [describe-before-edit](../principles.md#behavior-articulation-before-change); may reveal a [`deliverable-fossil`](./deliverable-fossils.md).
+- **Both are stale.** Investigate with [describe-before-edit](../principles/refactor-qualities.md#behavior-articulation-before-change); may reveal a [`deliverable-fossil`](./deliverable-fossils.md).
 
-Gate: [preservation of regression-detection power](../principles.md#preservation-of-regression-detection-power). For rename-only, verify the call graph is unchanged. For strengthen, verify the [mutation kill-set](../glossary.md#mutation-kill-set) delta is ≥ 0.
+Gate: [preservation of regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power). For rename-only, verify the call graph is unchanged. For strengthen, verify the [mutation kill-set](../principles/glossary.md#mutation-kill-set) delta is ≥ 0.
 
 ## Example
 

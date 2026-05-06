@@ -2,11 +2,11 @@
 
 | Slug | Severity | Detection Scope | Protects |
 |---|---|---|---|
-| `conditional-logic` | Medium | per-test | [Simple](../principles.md#simple), [Granular](../principles.md#granular) |
+| `conditional-logic` | Medium | per-test | [Simple](../principles/test-qualities.md#simple), [Granular](../principles/test-qualities.md#granular) |
 
 ## Summary
 
-`if X: assert(...)` or `try { sut() } catch(e) { assert(...) }` inside a test body. [Cyclomatic complexity](../principles.md#simple) > 1 means there's at least one path through the test that never reaches an assertion — vacuous by omission.
+`if X: assert(...)` or `try { sut() } catch(e) { assert(...) }` inside a test body. [Cyclomatic complexity](../principles/test-qualities.md#simple) > 1 means there's at least one path through the test that never reaches an assertion — vacuous by omission.
 
 ## Aliases
 
@@ -51,7 +51,7 @@ Branch-in-test-body signals over-trigger in three shapes the audit must not flag
 | Platform skip in body | Convert to `it.skip` / `pytest.mark.skipif` / `//go:build !windows` with a skip reason. |
 | Loop without exit assertion | Assert on the collected results after the loop. |
 
-Gate: [preservation of regression-detection power](../principles.md#preservation-of-regression-detection-power). Test-count delta > 0 is acceptable (splits produce more tests).
+Gate: [preservation of regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power). Test-count delta > 0 is acceptable (splits produce more tests).
 
 ## Example
 

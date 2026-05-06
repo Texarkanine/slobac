@@ -12,7 +12,7 @@ Ordered roughly by how much semantic reasoning the required judgment demands. Hi
 |---|---|---|---|---|
 | 1 | [`deliverable-fossils`](./deliverable-fossils.md) | rename + regroup per product behavior | High | per-test, cross-suite |
 | 2 | [`semantic-redundancy`](./semantic-redundancy.md) | cluster, pick canonical, fold/delete the rest | High | cross-suite |
-| 3 | [`wrong-level`](./wrong-level.md) | relocate to correct pyramid tier | Medium | cross-suite |
+| 3 | [`wrong-level`](./wrong-level.md) | relocate to correct test level | Medium | cross-suite |
 | 4 | [`naming-lies`](./naming-lies.md) | rename test or strengthen body to match the claim | Medium | per-test |
 | 5 | [`vacuous-assertion`](./vacuous-assertion.md) | strengthen the oracle | High | per-test |
 | 6 | [`pseudo-tested`](./pseudo-tested.md) | add assertion that kills the no-op mutant | High | per-test |
@@ -39,7 +39,7 @@ These are covered by existing tooling. Where a linter, mutation tool, or codemod
 
 ## Governor rules
 
-Every prescribed fix in the catalog is bounded by the [governor rules in principles](../principles.md#governor-rules): knowledge-DRY not syntactic-DRY, no extract-for-testability, no speculative code, commit-before-refactor. And by the broader principle that a refactor must [preserve regression-detection power](../principles.md#preservation-of-regression-detection-power).
+Every prescribed fix in the catalog is bounded by the [governor rules in principles](../principles/refactor-qualities.md#governor-rules): knowledge-DRY not syntactic-DRY, no extract-for-testability, no speculative code, commit-before-refactor. And by the broader principle that a refactor must [preserve regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power).
 
 [^testsmells20]: Panichella, A. et al. (2023). *Test Smells 20 Years Later: a Large-Scale Study*. Empirical Software Engineering, 28(4). <https://link.springer.com/article/10.1007/s10664-022-10207-5>. Concludes that classical smell catalogs correlate poorly with real maintenance pain, and warns specifically against optimizing smell counts as a KPI.
 

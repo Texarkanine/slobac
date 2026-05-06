@@ -2,7 +2,7 @@
 
 | Slug | Severity | Detection Scope | Protects |
 |---|---|---|---|
-| `presentation-coupled` | Medium | per-test | [Maintainable](../principles.md#maintainable), [Independent of implementation](../principles.md#independent-of-implementation) |
+| `presentation-coupled` | Medium | per-test | [Maintainable](../principles/test-qualities.md#maintainable), [Independent of implementation](../principles/test-qualities.md#independent-of-implementation) |
 
 ## Summary
 
@@ -48,7 +48,7 @@ String-equality signals over-trigger when rendering itself is the deliverable:
 2. Parse the output; assert on the structural fragment that encodes the behavior.
 3. For intentionally-rendered output (docs, UI copy), keep golden-snapshot tests but mark them explicitly as `presentation` tests at a separate tier — they should not block unit-level CI. (See [`wrong-level`](./wrong-level.md) for the tiering vocabulary.)
 4. For terminal / log output, assert on a structured event shape when the emitter supports it; otherwise extract via regex with a normalized matcher.
-5. Gate: [preservation of regression-detection power](../principles.md#preservation-of-regression-detection-power). The test should survive a cosmetic reformat of the SUT output.
+5. Gate: [preservation of regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power). The test should survive a cosmetic reformat of the SUT output.
 
 ## Example
 

@@ -53,7 +53,7 @@ skills/slobac-audit/
 └── references/
     ├── docs/                             # full SLOBAC manifesto (canonical authoring surface)
     │   ├── index.md
-    │   ├── principles.md
+    │   ├── qualities.md
     │   ├── glossary.md
     │   ├── workflows.md
     │   ├── .pages
@@ -155,7 +155,7 @@ tests/fixtures/audit/
 - All 15 snippet-include wrappers (pure indirection, zero content).
 - The `pymdownx.snippets` dependency for content composition.
 - The "link-path footgun" from the second rework (canonical files' relative links now resolve at their actual filesystem location because properdocs renders from that location).
-- The published-URL workaround in SKILL.md's governor-rule cite (`principles.md` is now inside the skill root).
+- The published-URL workaround in SKILL.md's governor-rule cite (`qualities.md` is now inside the skill root).
 
 **The four-pass progression summarized:**
 1. OQ2: external `docs/` path read at runtime → invalidated by Invariant #11.
@@ -171,7 +171,7 @@ tests/fixtures/audit/
 | `skills/slobac-audit/references/docs/taxonomy/deliverable-fossils.md` | Migrated from `docs/taxonomy/`; Phase-1 False-positive guards section added. |
 | `skills/slobac-audit/references/docs/taxonomy/naming-lies.md` | Migrated from `docs/taxonomy/`; Phase-1 False-positive guards section added. |
 | `skills/slobac-audit/references/docs/taxonomy/<13 other slugs>.md` | Migrated from `docs/taxonomy/`; stub False-positive guards section added. |
-| `skills/slobac-audit/references/docs/principles.md` | Migrated from `docs/principles.md`. |
+| `skills/slobac-audit/references/docs/qualities.md` | Migrated from `docs/qualities.md`. |
 | `skills/slobac-audit/references/docs/glossary.md` | Migrated from `docs/glossary.md`. |
 | `skills/slobac-audit/references/docs/workflows.md` | Migrated from `docs/workflows.md`. |
 | `skills/slobac-audit/references/docs/index.md` | Migrated from `docs/index.md`. |
@@ -240,7 +240,7 @@ Fixtures and expected-findings were authored **before** SKILL.md workflow prose 
 | B7 — Both harnesses | Operator-gated (manual harness validation); per plan, not a ship gate |
 | B9 — Invariant #11 spot-check | `rg '(\.\./\.\./|^\s*docs/)' skills/slobac-audit/` → zero results |
 | B10 — Docs build under new `docs_dir` | `properdocs build --strict` passes clean |
-| B13 — Relative links resolve natively | Canonical files' `../principles.md#anchor` links resolve at filesystem location since properdocs renders from that location |
+| B13 — Relative links resolve natively | Canonical files' `../principles/qualities.md#anchor` links resolve at filesystem location since properdocs renders from that location |
 
 ### Verification Gates (Final Build)
 

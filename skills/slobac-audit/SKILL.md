@@ -135,7 +135,7 @@ Tell the operator where the report was written and which scopes were covered. Do
 
 - **Read-only.** This skill does not modify test code. If the operator asks the skill to apply fixes, that is a future capability that does not exist yet — decline and direct them to treat the report as input to a separate step.
 - **Canonical entries are the single source of truth.** The canonical smell definitions in this skill bundle are the manifesto. If a detection feels right but the canonical entry's Signals don't cover it, that is a signal the canonical entry needs extending — stop and surface it as a manifesto gap, do not carry detection content outside the canonical entry.
-- **Preserve regression-detection power.** Every prescribed remediation in a finding is bounded by the [preservation-of-regression-detection-power](references/docs/principles.md#preservation-of-regression-detection-power) governor rule.
+- **Preserve regression-detection power.** Every prescribed remediation in a finding is bounded by the [preservation-of-regression-detection-power](references/docs/principles/refactor-qualities.md#preservation-of-regression-detection-power) governor rule.
 - **Fossil vocabulary is a signal, not a verdict.** The word "refactor" in a title does not make a fossil; a ticket ID in a docstring does not make a fossil. The judgment is whether the vocabulary describes the test's reason-for-existence vs. the behavior it verifies.
 - **Naming-lie detection is semantic.** Title/body tokenization is a first pass, not a verdict.
 - **Cross-suite findings require targeted source reads.** The cross-suite assessor must read source before confirming a finding — behavior summary clustering alone is insufficient evidence.

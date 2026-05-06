@@ -2,11 +2,11 @@
 
 | Slug | Severity | Detection Scope | Protects |
 |---|---|---|---|
-| `semantic-redundancy` | High | cross-suite | [Necessary](../principles.md#necessary), [Maintainable](../principles.md#maintainable), [Fast](../principles.md#fast) |
+| `semantic-redundancy` | High | cross-suite | [Necessary](../principles/test-qualities.md#necessary), [Maintainable](../principles/test-qualities.md#maintainable), [Fast](../principles/test-qualities.md#fast) |
 
 ## Summary
 
-Two or more tests exercise the same observable behavior with different names, fixtures, or mock styles. One is the [canonical location](../glossary.md#canonical-location); the others should fold into it or be deleted with a named absorber.
+Two or more tests exercise the same observable behavior with different names, fixtures, or mock styles. One is the [canonical location](../principles/glossary.md#canonical-location); the others should fold into it or be deleted with a named absorber.
 
 ## Aliases
 
@@ -24,12 +24,12 @@ Two or more tests exercise the same observable behavior with different names, fi
 
 Token-level deduplication (jscpd[^jscpd], PMD CPD[^cpd]) catches copy-paste. Embedding-based clustering[^ltm] catches near-duplicates. Neither can decide *which* is canonical, or justify the choice.
 
-This entry respects the [knowledge-DRY governor rule](../principles.md#knowledge-dry-not-syntactic-dry): two tests that *look* similar but guard different knowledge — e.g. a test that intentionally duplicates `STORAGE_KEYS` in-test as a contract check against the production definition — must not be merged.
+This entry respects the [knowledge-DRY governor rule](../principles/refactor-qualities.md#knowledge-dry-not-syntactic-dry): two tests that *look* similar but guard different knowledge — e.g. a test that intentionally duplicates `STORAGE_KEYS` in-test as a contract check against the production definition — must not be merged.
 
 ## Signals
 
 - Adjacent `it`/`test`/`def test_` blocks that call the same SUT entry point with identical arguments, with assertion sets that are subsets of each other.
-- Cross-file behavior-sentence clusters with cosine similarity ≥ 0.85 over [describe-before-edit](../principles.md#behavior-articulation-before-change) sentences.
+- Cross-file behavior-sentence clusters with cosine similarity ≥ 0.85 over [describe-before-edit](../principles/refactor-qualities.md#behavior-articulation-before-change) sentences.
 - Two tests cover inverse or parallel operations where one has a strictly weaker oracle.
 - Mirrored suites across near-isomorphic components (`plugin-cursor.test.ts` vs `plugin-claude.test.ts`) with identical scenario matrices and only plugin-specific fixtures differing.
 - Repeated mock data or shared fixture literals across N tests in the same describe block.
@@ -39,12 +39,12 @@ This entry respects the [knowledge-DRY governor rule](../principles.md#knowledge
 Embedding-cluster signals over-trigger in three classes the audit must suppress:
 
 - **Mirrored components are intentional duplication.** When the redundancy spans two files testing two implementations of the same contract (`plugin-cursor.test.ts` vs `plugin-claude.test.ts`), the duplication is the *deliverable shape*: both products are independent, and a regression in either must be caught by its own suite. Flag only when a parameterized or shared-example refactor would not change *which* products' contracts are verified. If parameterization would collapse two product surfaces into one, the duplication is intentional and the right move is documenting the divergence, not merging.
-- **Same surface, different business concept.** Two tests whose bodies match the embedding threshold can encode different domain rules (validation-by-presence vs validation-by-format; the user-facing rejection path vs the internal-audit logging path). Token similarity is not concept similarity. Run [describe-before-edit](../principles.md#behavior-articulation-before-change) on both candidates; if the one-sentence behavior summaries disagree, keep both. This is the [knowledge-DRY governor rule](../principles.md#knowledge-dry-not-syntactic-dry) applied to the cluster.
+- **Same surface, different business concept.** Two tests whose bodies match the embedding threshold can encode different domain rules (validation-by-presence vs validation-by-format; the user-facing rejection path vs the internal-audit logging path). Token similarity is not concept similarity. Run [describe-before-edit](../principles/refactor-qualities.md#behavior-articulation-before-change) on both candidates; if the one-sentence behavior summaries disagree, keep both. This is the [knowledge-DRY governor rule](../principles/refactor-qualities.md#knowledge-dry-not-syntactic-dry) applied to the cluster.
 - **Contract-duplication of production constants.** A test that re-states a production constant — `STORAGE_KEYS`, schema versions, magic IDs, error codes — on purpose, as a regression guard against silent drift between test and production, must not be merged with a test that *uses* the constant. The cue is a deliberate inline literal whose production home is what the test guards. An explicit metacomment (`# test-design: contract-duplication`) or an allowlist is the operator-side complement to this guard.
 
 ## Prescribed Fix
 
-1. [Describe-before-edit](../principles.md#behavior-articulation-before-change): emit a one-sentence behavior docstring for every test in scope.
+1. [Describe-before-edit](../principles/refactor-qualities.md#behavior-articulation-before-change): emit a one-sentence behavior docstring for every test in scope.
 2. Cluster sentences by embedding similarity (τ configurable; default 0.85).
 3. For each cluster, emit a decision record:
    ```
@@ -53,7 +53,7 @@ Embedding-cluster signals over-trigger in three classes the audit must suppress:
    delete: path:line — reason (strict subset)
    ```
 4. Mechanical transform: delete the losers, or fold their unique assertions into the canonical; rename the survivor to express the deduped intent.
-5. Gate: [preservation of regression-detection power](../principles.md#preservation-of-regression-detection-power). The [mutation kill-set](../glossary.md#mutation-kill-set) must not shrink; lost kills are a veto.
+5. Gate: [preservation of regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power). The [mutation kill-set](../principles/glossary.md#mutation-kill-set) must not shrink; lost kills are a veto.
 6. Commit per cluster with the decision record in the message body.
 
 For mirrored-component families (plugin A vs plugin B), prefer a parameterized or shared-example transform: extract the scenario matrix once, vary per plugin. Do this only when the mirror is intentional; otherwise the two suites are different products and should stay separate.
@@ -87,7 +87,7 @@ it('parses typescript fixture into the expected plugin list', async () => {
 });
 ```
 
-The second test was a strict subset of the first; its name referred to the return shape rather than the behavior. Folded into the first; strengthened the oracle to a structural match rather than a length check. [Mutation kill-set](../glossary.md#mutation-kill-set) unchanged.
+The second test was a strict subset of the first; its name referred to the return shape rather than the behavior. Folded into the first; strengthened the oracle to a structural match rather than a length check. [Mutation kill-set](../principles/glossary.md#mutation-kill-set) unchanged.
 
 ## Related modes
 
@@ -97,7 +97,7 @@ The second test was a strict subset of the first; its name referred to the retur
 
 ## Polyglot notes
 
-Embeddings are language-agnostic; the [describe-before-edit](../principles.md#behavior-articulation-before-change) technique works identically in any runner. The codemod layer is per-language (LibCST, jscodeshift, OpenRewrite, ast-grep) but the decision record is the same shape everywhere.
+Embeddings are language-agnostic; the [describe-before-edit](../principles/refactor-qualities.md#behavior-articulation-before-change) technique works identically in any runner. The codemod layer is per-language (LibCST, jscodeshift, OpenRewrite, ast-grep) but the decision record is the same shape everywhere.
 
 [^jscpd]: Kucherenko, A. *jscpd* — polyglot copy-paste detector for 150+ formats, ships an `ai` reporter. MIT. <https://github.com/kucherenko/jscpd>.
 
