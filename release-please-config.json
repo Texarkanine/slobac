@@ -1,0 +1,23 @@
+{
+    "release-type": "simple",
+    "bump-minor-pre-major": true,
+    "bump-patch-for-minor-pre-major": false,
+    "include-component-in-tag": false,
+    "packages": {
+        ".": {
+            "extra-files": [
+                {
+                    "type": "json",
+                    "path": ".cursor-plugin/plugin.json",
+                    "jsonpath": "$.version"
+                },
+                {
+                    "type": "json",
+                    "path": ".claude-plugin/plugin.json",
+                    "jsonpath": "$.version"
+                }
+            ],
+            "pull-request-header": ":service_dog: I have created a release \\*bark\\* \\*woof\\*"
+        }
+    }
+}
