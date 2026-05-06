@@ -12,7 +12,7 @@ An agentic skill toolkit for cleaning up software test suites.
 
 ## Audit capability (Phase 1)
 
-- 🔍 **Audit skill:** [`skills/audit/`](skills/audit/) — an AgentSkills.io-shaped skill that audits a test suite for `deliverable-fossils` and `naming-lies`, then emits a portable markdown report. Install and smoke-test instructions in [`skills/audit/README.md`](skills/audit/README.md).
+- 🔍 **Audit skill:** [`skills/slobac-audit/`](skills/slobac-audit/) — an AgentSkills.io-shaped skill that audits a test suite for `deliverable-fossils` and `naming-lies`, then emits a portable markdown report. Install and invocation guidance is in [`skills/slobac-audit/references/docs/using-slobac.md`](skills/slobac-audit/references/docs/using-slobac.md).
 - 🧪 **Fixtures:** [`tests/fixtures/audit/`](tests/fixtures/audit/) — planted test suites with documented expected findings. Use them to verify any install, and as worked examples of what the audit considers in- or out-of-scope.
 
 ## Project context
@@ -27,7 +27,7 @@ Working rules (TDD discipline, markdown style, git safety, the Niko workflow) li
 
 ## Docs publishing
 
-The manifesto at `skills/audit/references/docs/` is published to GitHub Pages by [`.github/workflows/docs.yaml`](.github/workflows/docs.yaml). The workflow uses [ProperDocs](https://properdocs.org/) (a drop-in continuation of MkDocs 1.x) with the [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) theme and strict-mode link validation — a PR that breaks a cross-link fails CI.
+The manifesto at `skills/slobac-audit/references/docs/` is published to GitHub Pages by [`.github/workflows/docs.yaml`](.github/workflows/docs.yaml). The workflow uses [ProperDocs](https://properdocs.org/) (a drop-in continuation of MkDocs 1.x) with the [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) theme and strict-mode link validation — a PR that breaks a cross-link fails CI.
 
 **Local preview:**
 
