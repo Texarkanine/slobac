@@ -12,7 +12,7 @@ The canonical source is [`skills/slobac-audit/`](../skills/slobac-audit/). Layou
 - `references/report-template.md` — report shape.
 - `references/behavior-summary-format.md` — intermediate representation spec for cross-suite assessor.
 - `references/suite-manifest-format.md` — scout output spec for orchestrator partitioning.
-- `references/docs/` — the **full SLOBAC manifesto**: `index.md`, `qualities.md`, `glossary.md`, `workflows.md`, `.pages`, and `taxonomy/` (15 canonical smell definitions + `README.md` shape SoT). Hand-authored; the SKILL.md workflow reads one taxonomy file per in-scope smell at runtime — no second file, no augmentation layer. ProperDocs builds the published site directly from this directory.
+- `references/docs/` — the **full SLOBAC manifesto**: `what-is-slobac.md`, `using-slobac.md`, `.pages`, `principles/` (`test-qualities.md`, `refactor-qualities.md`, `glossary.md`, `workflows.md`), and `taxonomy/` (15 canonical smell definitions + `README.md` shape SoT). Hand-authored; the SKILL.md workflow reads one taxonomy file per in-scope smell at runtime — no second file, no augmentation layer. ProperDocs builds the published site directly from this directory.
 
 Subagent workflows (`references/subagents/scout.md`, `batch.md`, `cross-suite.md`) are dispatched by the orchestrator as raw task prompts. All shared content (taxonomy, format specs) lives under `references/` — subagents resolve it via the absolute path passed by the orchestrator at runtime.
 
@@ -22,7 +22,7 @@ Per-harness discovery paths are operator-install concerns, not architectural one
 
 The entire manifesto lives at `skills/slobac-audit/references/docs/`. `properdocs.yml` `docs_dir` points directly at this directory — no snippet indirection, no wrapper files, no `docs/` directory at repo root. At agent-runtime the skill reads only files inside its own root — invariant #11 (skill-root self-containment) is satisfied architecturally. At build-time properdocs renders the site directly from the same files.
 
-Relative links in canonical files (e.g. `[Understandable](../principles/qualities.md#understandable)` inside a taxonomy entry) resolve at their actual filesystem location because properdocs renders from the directory where the files live. No link-path footgun — links work both for the rendered site and for raw-GitHub rendering.
+Relative links in canonical files (e.g. `[Understandable](../principles/test-qualities.md#understandable)` inside a taxonomy entry) resolve at their actual filesystem location because properdocs renders from the directory where the files live. No link-path footgun — links work both for the rendered site and for raw-GitHub rendering.
 
 No generator, no CI drift-check, no copy-with-sync discipline. There is one document per smell; forking is structurally impossible. Phase-5 marketplace distribution is trivially supported: the committed layout is the install layout.
 
@@ -32,7 +32,7 @@ Planted test suites live at [`tests/fixtures/audit/<scenario>/`](../tests/fixtur
 
 ## Environment Setup
 
-**To read/edit the manifesto:** a Markdown-capable editor is sufficient. The entire manifesto lives at `skills/slobac-audit/references/docs/` — per-smell entries at `taxonomy/<slug>.md`, principles at `qualities.md`, glossary at `glossary.md`, workflows at `workflows.md`. There are no wrappers or indirection; this is both the authoring surface and the properdocs build source.
+**To read/edit the manifesto:** a Markdown-capable editor is sufficient. The entire manifesto lives at `skills/slobac-audit/references/docs/` — per-smell entries at `taxonomy/<slug>.md`, principles at `principles/test-qualities.md` and `principles/refactor-qualities.md`, glossary at `principles/glossary.md`, workflows at `principles/workflows.md`. There are no wrappers or indirection; this is both the authoring surface and the properdocs build source.
 
 **To preview the built docs site locally:** `uv` (which auto-provisions Python per `pyproject.toml`), then `uv sync --group docs` + `uv run properdocs serve`.
 
@@ -62,7 +62,7 @@ None yet for functional behavior. When implementation begins, the test target wi
 
 ## Anticipated Tooling (Phase 1+)
 
-These are referenced by the manifesto and will be **orchestrated**, never reimplemented. Listed here so a future contributor doesn't waste time rediscovering them. Canonical per-ecosystem pointers live in [`glossary.md`](../skills/slobac-audit/references/docs/glossary.md#mutation-testing) and [`planning/research/report.md`](../planning/research/report.md).
+These are referenced by the manifesto and will be **orchestrated**, never reimplemented. Listed here so a future contributor doesn't waste time rediscovering them. Canonical per-ecosystem pointers live in [`glossary.md`](../skills/slobac-audit/references/docs/principles/glossary.md#mutation-testing) and [`planning/research/report.md`](../planning/research/report.md).
 
 - Mutation testing (JVM PIT+Descartes, JS/TS Stryker, Python mutmut/Cosmic Ray, Rust cargo-mutants, Go go-mutesting, .NET Stryker.NET). Required for the preservation-of-regression-detection-power gate.
 - Existing test-smell linters — deferred to per-ecosystem tooling, not reimplemented.

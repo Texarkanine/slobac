@@ -9,7 +9,7 @@ Taxonomy entries live at `skills/slobac-audit/references/docs/taxonomy/<slug>.md
 ~~~markdown
 | Slug | Severity | Detection Scope | Protects |
 |---|---|---|---|
-| `<slug>` | Critical / High / Medium / Low | per-test / per-file / cross-suite | [Principle](../principles/qualities.md#anchor) |
+| `<slug>` | Critical / High / Medium / Low | per-test / per-file / cross-suite | [Quality](../principles/test-qualities.md#anchor) |
 
 ## Summary
 
@@ -41,7 +41,7 @@ What the smell is, why it matters, and what semantic judgment is required (i.e. 
 |---|---|
 | Describe the smell shape | The mechanical move |
 
-Gate: [preservation of regression-detection power](../principles/qualities.md#preservation-of-regression-detection-power).
+Gate: [preservation of regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power).
 
 ## Example
 
@@ -93,7 +93,7 @@ Severity is a prioritization hint, not a mandate.
 
 1. Add the slug row to the catalog table in `skills/slobac-audit/references/docs/taxonomy/README.md`.
 2. Run `uv run properdocs build --strict` — must stay green.
-3. Verify all cross-links in the new entry resolve (`../principles/qualities.md#anchor`, `../principles/glossary.md#term`, sibling entries).
+3. Verify all cross-links in the new entry resolve (`../principles/test-qualities.md#anchor`, `../principles/refactor-qualities.md#anchor`, `../principles/glossary.md#term`, sibling entries).
 
 ## Skill architecture
 

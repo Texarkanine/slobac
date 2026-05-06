@@ -16,9 +16,9 @@ If a change would weaken the manifesto, it transitively weakens everything downs
 
 **2. The manifesto tree is a tightly cross-linked web. Treat renames and anchor changes as ripple events.**
 
-- Taxonomy entries cross-link to [`qualities.md`](../skills/slobac-audit/references/docs/qualities.md) anchors (e.g., `#maintainable`, `#preservation-of-regression-detection-power`) and [`glossary.md`](../skills/slobac-audit/references/docs/glossary.md) anchors. Renaming an anchor breaks every citation of it.
+- Taxonomy entries cross-link to [`test-qualities.md`](../skills/slobac-audit/references/docs/principles/test-qualities.md) anchors (e.g., `#maintainable`), [`refactor-qualities.md`](../skills/slobac-audit/references/docs/principles/refactor-qualities.md) anchors (e.g., `#preservation-of-regression-detection-power`), and [`glossary.md`](../skills/slobac-audit/references/docs/principles/glossary.md) anchors. Renaming an anchor breaks every citation of it.
 - [`CONTRIBUTING.md`](../CONTRIBUTING.md) defines the uniform entry shape (header table, summary, aliases, description, signals, false-positive guards, prescribed fix, example, related, polyglot notes). **That file is the source of truth for taxonomy file shape** — don't restate it elsewhere. Changes to the shape require updating every existing entry.
-- [`workflows.md`](../skills/slobac-audit/references/docs/workflows.md) codifies the RED-GREEN-MUTATE-KILL-REFACTOR cycle that the taxonomy *assumes* when it talks about transform safety. A new taxonomy entry whose prescribed fix does not fit this workflow is suspect and needs its rationale spelled out.
+- [`workflows.md`](../skills/slobac-audit/references/docs/principles/workflows.md) codifies the RED-GREEN-MUTATE-KILL-REFACTOR cycle that the taxonomy *assumes* when it talks about transform safety. A new taxonomy entry whose prescribed fix does not fit this workflow is suspect and needs its rationale spelled out.
 
 Before changing any manifesto file, re-read the cross-links it receives and sends. `grep` for the anchor or filename across `skills/slobac-audit/references/docs/` and `planning/` before renaming. CI runs `properdocs build --strict` with `validation.anchors: warn` as a secondary mechanical gate — it will fail the PR build on any broken internal link or missing anchor — but CI is slower feedback than grep; grep discipline stays primary. The CI gate is guaranteed to catch drift within the manifesto tree; it does **not** catch manifesto → `planning/` links (those would need to be absolute URLs anyway) or external-URL rot.
 
@@ -32,7 +32,7 @@ Every canonical taxonomy entry under `skills/slobac-audit/references/docs/taxono
 
 ## Principles and taxonomy are bidirectionally coupled by design
 
-Taxonomy entries cite principles (`**Protects:** [Maintainable](../principles/qualities.md#maintainable)`), and principles are only useful insofar as taxonomy entries reference them. Adding a principle that no taxonomy entry cites is a code smell in the docs; so is adding a taxonomy entry that protects no named principle. When editing either side, check the other.
+Taxonomy entries cite principles (`**Protects:** [Maintainable](../principles/test-qualities.md#maintainable)`), and principles are only useful insofar as taxonomy entries reference them. Adding a principle that no taxonomy entry cites is a code smell in the docs; so is adding a taxonomy entry that protects no named principle. When editing either side, check the other.
 
 ## Phased-delivery order is not a free choice
 
@@ -44,7 +44,7 @@ An AgentSkills.io skill's runtime root is its own install directory (`~/.claude/
 
 Under the full-manifesto-in-bundle architecture, this invariant is satisfied **structurally**: the skill's canonical content — including the full manifesto (principles, glossary, workflows, all taxonomy entries) — lives inside the skill root by architectural construction. The skill reads `references/docs/taxonomy/<slug>.md` — a path rooted in its own `references/` tree. No generator, no copy-with-sync discipline, no procedural enforcement needed.
 
-Relative links inside the canonical files (e.g. `[Understandable](../principles/qualities.md#understandable)`) resolve at their actual filesystem location — properdocs builds directly from the directory where these files live, so links work both at build-time and for raw-GitHub rendering.
+Relative links inside the canonical files (e.g. `[Understandable](../principles/test-qualities.md#understandable)`) resolve at their actual filesystem location — properdocs builds directly from the directory where these files live, so links work both at build-time and for raw-GitHub rendering.
 
 This invariant applies to every skill SLOBAC ships, not just **slobac-audit**. When Phase-2 additions land, the same self-containment rule holds.
 
@@ -60,4 +60,4 @@ The **slobac-audit** skill is the only multi-license skill (PPL-S for skill payl
 
 ## Vocabulary discipline: "describe-before-edit"
 
-The manifesto's [behavior-articulation principle](../skills/slobac-audit/references/docs/qualities.md#behavior-articulation-before-change) applies to SLOBAC's own authorship: before proposing any change to a taxonomy entry or principle, state in one sentence what the entry is supposed to claim about testing. Drift in this document tends to happen when contributors preserve shape without restating intent.
+The manifesto's [behavior-articulation principle](../skills/slobac-audit/references/docs/principles/refactor-qualities.md#behavior-articulation-before-change) applies to SLOBAC's own authorship: before proposing any change to a taxonomy entry or principle, state in one sentence what the entry is supposed to claim about testing. Drift in this document tends to happen when contributors preserve shape without restating intent.
