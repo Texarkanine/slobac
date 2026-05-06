@@ -73,4 +73,4 @@ No new technology — validation not required. All gates (`properdocs`, `reuse`)
 - [x] Technology validation complete
 - [x] Preflight
 - [x] Build
-- [ ] QA
+- [x] QA
