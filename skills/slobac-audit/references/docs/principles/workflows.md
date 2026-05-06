@@ -20,7 +20,7 @@ When authoring code from scratch, vanilla TDD "works" to ensure that the specifi
 
 When refactoring a test suite, the test suite can't guard against incorrect changes to itself - the production code becomes the "test suite" and the test suite becomes the system-under-test.
 
-But, you probably had a 1:N relationship between "important production code behavior" and "tests for that behavior." You probably had tests for all sorts of edge cases, input combinations, etc. When you flip the script, each of the 10 tests you might refactor are all guarded by just that one unit of production code. This makes it much easier to break the gurantee that passing tests mean the code works right.
+But, you probably had a 1:N relationship between "important production code behavior" and "tests for that behavior." You probably had tests for all sorts of edge cases, input combinations, etc. When you flip the script, each of the 10 tests you might refactor are all guarded by just that one unit of production code. This makes it much easier to break the guarantee that passing tests mean the code works right.
 
 Mutation testing is a way to address this - it creats a bunch of variants (mutants) of your production code and runs the modified test suite against them. You would expect the *same* sets of passing and failing mutants before and after a test suite refactor. If you get *different* sets, that signals that your test suite refactor *changed* what the tests actually cover and that - even if your refactored test suite passes, it's **not** providing the same guarantee it was before.
 
