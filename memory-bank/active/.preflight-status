@@ -1,5 +1,0 @@
-status: PASS
-advisory_count: 4
-run: 3
-date: 2026-05-05
-note: One FAIL found (TDD plan encoding — missing baselines + intermediate gates) and fixed in-place. Four advisory items documented. Plan unblocked for /niko-build.
