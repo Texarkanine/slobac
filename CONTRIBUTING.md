@@ -2,7 +2,7 @@
 
 ## Adding a taxonomy entry
 
-Taxonomy entries live at `skills/audit/references/docs/taxonomy/<slug>.md`. Each entry follows a uniform shape — this is the authoritative template.
+Taxonomy entries live at `skills/slobac-audit/references/docs/taxonomy/<slug>.md`. Each entry follows a uniform shape — this is the authoritative template.
 
 ### Entry shape
 
@@ -85,19 +85,19 @@ Severity is a prioritization hint, not a mandate.
 
 | Value | Handled by |
 |---|---|
-| `per-test` | batch assessor (dispatched from `skills/audit/references/subagents/batch.md`) |
-| `per-file` | batch assessor (dispatched from `skills/audit/references/subagents/batch.md`) |
-| `cross-suite` | cross-suite assessor (dispatched from `skills/audit/references/subagents/cross-suite.md`) |
+| `per-test` | batch assessor (dispatched from `skills/slobac-audit/references/subagents/batch.md`) |
+| `per-file` | batch assessor (dispatched from `skills/slobac-audit/references/subagents/batch.md`) |
+| `cross-suite` | cross-suite assessor (dispatched from `skills/slobac-audit/references/subagents/cross-suite.md`) |
 
 ### After adding an entry
 
-1. Add the slug row to the catalog table in `skills/audit/references/docs/taxonomy/README.md`.
+1. Add the slug row to the catalog table in `skills/slobac-audit/references/docs/taxonomy/README.md`.
 2. Run `uv run properdocs build --strict` — must stay green.
 3. Verify all cross-links in the new entry resolve (`../principles.md#anchor`, `../glossary.md#term`, sibling entries).
 
 ## Skill architecture
 
-The audit orchestrator (`skills/audit/SKILL.md`) dispatches three subagent workflows:
+The audit orchestrator (`skills/slobac-audit/SKILL.md`) dispatches three subagent workflows:
 
 ```
 slobac-audit (orchestrator — SKILL.md)
@@ -106,16 +106,16 @@ slobac-audit (orchestrator — SKILL.md)
   └── cross-suite → Cross-Suite Findings (if cross-suite smells in scope)
 ```
 
-Subagent workflows are **raw prompt documents** at `skills/audit/references/subagents/`, not registered skills. The orchestrator reads each file and launches a readonly subagent whose task is that file's content, supplemented with runtime context variables (target directory, absolute `references/` path, format specs).
+Subagent workflows are **raw prompt documents** at `skills/slobac-audit/references/subagents/`, not registered skills. The orchestrator reads each file and launches a readonly subagent whose task is that file's content, supplemented with runtime context variables (target directory, absolute `references/` path, format specs).
 
-All shared references (taxonomy entries, format specs, subagent workflows) live under `skills/audit/references/`. No `../` escapes — the skill is self-contained for standalone/marketplace installs.
+All shared references (taxonomy entries, format specs, subagent workflows) live under `skills/slobac-audit/references/`. No `../` escapes — the skill is self-contained for standalone/marketplace installs.
 
 ## REUSE compliance
 
-`skills/audit/` is the only subtree with its own `REUSE.toml` (it carries two licenses: PPL-S for the skill payload and CC-BY-SA-4.0 for `references/docs/**`). Validate its standalone compliance with:
+`skills/slobac-audit/` is the only subtree with its own `REUSE.toml` (it carries two licenses: PPL-S for the skill payload and CC-BY-SA-4.0 for `references/docs/**`). Validate its standalone compliance with:
 
 ```bash
-reuse --root . lint   # run from skills/audit/
+reuse --root . lint   # run from skills/slobac-audit/
 ```
 
 The `--root .` flag is mandatory — omitting it causes `reuse` to ascend to the `.git` boundary and lint the full monorepo instead.
@@ -126,4 +126,4 @@ The `--root .` flag is mandatory — omitting it causes `reuse` to ascend to the
 uv run properdocs serve
 ```
 
-The site builds from `skills/audit/references/docs/`. `properdocs build --strict` is the CI gate — warnings are errors.
+The site builds from `skills/slobac-audit/references/docs/`. `properdocs build --strict` is the CI gate — warnings are errors.

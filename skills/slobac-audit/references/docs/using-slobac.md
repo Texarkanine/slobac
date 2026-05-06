@@ -6,18 +6,18 @@ If you are here to read about what tests should be — not run a tool — you ar
 
 ## Install
 
-The audit ships as a single **plugin** with one registered skill (`audit`). Install the plugin once; the orchestrator dispatches subagents internally from workflow prompts bundled in `references/subagents/`.
+The audit ships as a single **plugin** with one registered skill directory (`slobac-audit/`). Install the plugin once; the orchestrator dispatches subagents internally from workflow prompts bundled in `references/subagents/`.
 
 ### Cursor
 
 1. Open **Cursor Settings → Marketplace** (or your Cursor version's equivalent plugin marketplace UI).
 2. Add the marketplace catalog from [`Texarkanine/txrk9-agent-plugins`](https://github.com/Texarkanine/txrk9-agent-plugins) if it is not already configured (that repo publishes `.cursor-plugin/marketplace.json`).
-3. Install the **SLOBAC** plugin (`slobac`). Cursor registers the invocation `/slobac-audit` from the `SKILL.md` frontmatter `name` field.
+3. Install the **SLOBAC** plugin (`slobac`). Cursor registers the slash command **`/slobac-audit`** from the skill directory name (`skills/slobac-audit/` in this repo — the folder name is the invocation token, not the `SKILL.md` `name` field).
 
 ### Claude Code
 
 1. Register the marketplace catalog from [`Texarkanine/txrk9-agent-plugins`](https://github.com/Texarkanine/txrk9-agent-plugins) (see that repo's `.claude-plugin/marketplace.json`).
-2. Install the **slobac** plugin from the marketplace. Claude Code namespaces skills as `/plugin-name:folder-name` — with plugin name `slobac` and folder `audit/`, you invoke `/slobac:audit`.
+2. Install the **slobac** plugin from the marketplace. Claude Code namespaces skills as `/plugin-name:folder-name`. With plugin name `slobac` and skill folder `slobac-audit/`, you invoke **`/slobac:slobac-audit`** (the plugin namespace repeats before the folder-derived token — this is expected).
 
 ## Scope
 
@@ -35,4 +35,4 @@ Pass your context window size in the invocation — `"Audit tests/ — 1M contex
 
 ## TL;DR
 
-You probably want to run `/slobac:audit all - 1M Context window` (after making sure that you've picked a beefy model and actually set that 1M context window).
+You probably want to run `/slobac:slobac-audit all - 1M Context window` (after making sure that you've picked a beefy model and actually set that 1M context window).
