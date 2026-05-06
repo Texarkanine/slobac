@@ -1,3 +1,5 @@
 nav:
-  - index.md
+  - Overview:
+    - what-is-slobac.md
+    - using-slobac.md
   - ...
