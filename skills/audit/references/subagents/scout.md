@@ -1,27 +1,22 @@
----
-name: "slobac:scout"
-description: Enumerate and measure a test suite's files, emit a Suite Manifest for the audit orchestrator. Use when slobac:audit dispatches a scout to map the suite before partitioning.
-license: "Public Prompt License - Service Variant (PPL-S); see LICENSES/LicenseRef-PPL-S.txt"
----
-
 # Test Suite Scout Workflow
 
-This skill is a subagent of the [`slobac:audit`](../audit/SKILL.md) orchestrator. It receives a target directory, enumerates all test files, measures their size, and emits a Suite Manifest that the orchestrator uses for partitioning decisions. The scout does not read file contents deeply — it uses filesystem operations and lightweight pattern matching only.
+This is a subagent of the [audit orchestrator](../../SKILL.md). It receives a target directory, enumerates all test files, measures their size, and emits a Suite Manifest that the orchestrator uses for partitioning decisions. The scout does not read file contents deeply — it uses filesystem operations and lightweight pattern matching only.
 
 ## Inputs
 
 The orchestrator provides these in the launch prompt:
 
 - **Target directory** — the suite root to scan.
-- **Suite manifest format** — the spec to follow (loaded from `../audit/references/suite-manifest-format.md`).
+- **Suite manifest format** — the spec to follow (loaded from `../suite-manifest-format.md`).
+- **References path** — the absolute filesystem path to the `references/` directory, for resolving any additional reference files at runtime.
 
 ## Step 1 — load the manifest format spec
 
-Read **`../audit/references/suite-manifest-format.md`** (relative to this `SKILL.md`). This defines the exact shape of the output you must produce. Do not deviate from the field contracts or table structure defined there.
+Read **`../suite-manifest-format.md`** (relative to this file; at runtime, use the orchestrator-supplied absolute references path). This defines the exact shape of the output you must produce. Do not deviate from the field contracts or table structure defined there.
 
 ## Step 2 — load exploration command templates
 
-Read **`references/exploration-commands.md`** (relative to this `SKILL.md`). This contains ready-made shell command templates for efficient test-suite exploration across ecosystems. Adapt the commands to the target suite's ecosystem rather than reinventing the wheel.
+Read **`../exploration-commands.md`** (relative to this file; at runtime, use the orchestrator-supplied absolute references path + `exploration-commands.md`). This contains ready-made shell command templates for efficient test-suite exploration across ecosystems. Adapt the commands to the target suite's ecosystem rather than reinventing the wheel.
 
 ## Step 3 — detect ecosystem
 

@@ -85,15 +85,40 @@ Severity is a prioritization hint, not a mandate.
 
 | Value | Handled by |
 |---|---|
-| `per-test` | `batch` assessor (`slobac:batch`) |
-| `per-file` | `batch` assessor (`slobac:batch`) |
-| `cross-suite` | `cross-suite` assessor (`slobac:cross-suite`) |
+| `per-test` | batch assessor (dispatched from `skills/audit/references/subagents/batch.md`) |
+| `per-file` | batch assessor (dispatched from `skills/audit/references/subagents/batch.md`) |
+| `cross-suite` | cross-suite assessor (dispatched from `skills/audit/references/subagents/cross-suite.md`) |
 
 ### After adding an entry
 
 1. Add the slug row to the catalog table in `skills/audit/references/docs/taxonomy/README.md`.
 2. Run `uv run properdocs build --strict` — must stay green.
 3. Verify all cross-links in the new entry resolve (`../principles.md#anchor`, `../glossary.md#term`, sibling entries).
+
+## Skill architecture
+
+The audit orchestrator (`skills/audit/SKILL.md`) dispatches three subagent workflows:
+
+```
+slobac-audit (orchestrator — SKILL.md)
+  ├── scout    → Suite Manifest (file inventory + sizes + tier conventions)
+  ├── batch    → Findings + Behavior Summaries (×1 or ×N in parallel)
+  └── cross-suite → Cross-Suite Findings (if cross-suite smells in scope)
+```
+
+Subagent workflows are **raw prompt documents** at `skills/audit/references/subagents/`, not registered skills. The orchestrator reads each file and launches a readonly subagent whose task is that file's content, supplemented with runtime context variables (target directory, absolute `references/` path, format specs).
+
+All shared references (taxonomy entries, format specs, subagent workflows) live under `skills/audit/references/`. No `../` escapes — the skill is self-contained for standalone/marketplace installs.
+
+## REUSE compliance
+
+`skills/audit/` is the only subtree with its own `REUSE.toml` (it carries two licenses: PPL-S for the skill payload and CC-BY-SA-4.0 for `references/docs/**`). Validate its standalone compliance with:
+
+```bash
+reuse --root . lint   # run from skills/audit/
+```
+
+The `--root .` flag is mandatory — omitting it causes `reuse` to ascend to the `.git` boundary and lint the full monorepo instead.
 
 ## Running the doc-site locally
 

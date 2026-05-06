@@ -1,17 +1,5 @@
-PASS_WITH_ADVISORY
-task: slobac-plugin-distribution
+status: PASS
+advisory_count: 4
+run: 3
 date: 2026-05-05
-run: 2
-
-findings:
-  - id: phase3-gate-sequencing
-    severity: FAIL (fixed in plan)
-    summary: properdocs.yml update moved from Phase 4 to Phase 3 (Step 13); Phase 3 GREEN gate is now reachable
-  - id: projectbrief-stale
-    severity: ADVISORY
-    summary: projectbrief.md still says SKILL.md edits are out of scope; scope was expanded; recommend updating before build
-  - id: steps-20-22-stub-gates
-    severity: ADVISORY
-    summary: Steps 20-22 create manifest files without per-unit stub-RED-fill cycles; Phase 6 collective gate is the only validation
-
-gate: PASS — /niko-build is unblocked
+note: One FAIL found (TDD plan encoding — missing baselines + intermediate gates) and fixed in-place. Four advisory items documented. Plan unblocked for /niko-build.
