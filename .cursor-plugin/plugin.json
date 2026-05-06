@@ -2,12 +2,19 @@
   "name": "slobac",
   "displayName": "SLOBAC",
   "description": "Test-suite audit: find and fix smells in mature test suites.",
-  "version": "0.2.0",
-  "author": { "name": "Texarkanine" },
+  "version": "0.3.0",
+  "author": {
+    "name": "Texarkanine"
+  },
   "homepage": "https://github.com/Texarkanine/slobac",
   "repository": "https://github.com/Texarkanine/slobac",
   "license": "LicenseRef-PPL-S",
-  "keywords": ["testing", "test-smells", "audit", "quality"],
+  "keywords": [
+    "testing",
+    "test-smells",
+    "audit",
+    "quality"
+  ],
   "category": "developer-tools",
   "skills": "./skills/"
 }
