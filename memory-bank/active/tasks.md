@@ -1,69 +1,81 @@
-# Task: Align skill invocation name across Cursor & Claude Code
+# Task: Add release-please CI pipeline
 
-* Task ID: slobac-skill-rename-invocation-parity
+* Task ID: release-please-ci
 * Complexity: Level 2
-* Type: Simple enhancement (rename + reference sweep)
+* Type: Simple Enhancement (CI/CD configuration)
 
-Canonical skill path: `skills/slobac-audit/` so the visible invocation token is `slobac-audit` in both harnesses (Cursor `/slobac-audit`, Claude Code `/slobac:slobac-audit`).
+Add manifest-style release-please configuration and a GitHub Actions workflow to automate versioned releases from conventional commits. Also update the docs workflow to publish only on tag push, not on every `main` push.
 
-**Harness behavior (corrected by operator):**
-- **Cursor** uses the **directory name** as the slash command. When the directory was still named with the short token, invocation was unbranded. The SKILL.md `name` field is *not* used by Cursor for the slash command; renaming the directory is what changes the Cursor invocation. The current `name: slobac-audit` was effectively ornamental for Cursor until the directory was aligned.
-- **Claude Code** uses `/plugin-name:dir`. Formerly `/slobac:` plus the short directory name; after rename: `/slobac:slobac-audit`.
+**Files touched:**
+- `release-please-config.json` (new)
+- `.release-please-manifest.json` (new)
+- `.github/workflows/release-please.yaml` (new)
+- `.github/workflows/docs.yaml` (modified)
 
-Investigation confirms no harness-native mechanism produces stricter parity; the doubled prefix in Claude Code is the accepted cost. The build updated the docs build config, the REUSE manifest, the memory bank, and the sibling-repo marketplace README. Drive-by doc fixes: (a) `README.md` no longer links to a removed skill `README.md`; (b) `using-slobac.md` Cursor section documents directory-name–based slash registration.
 
 ## Test Plan (TDD)
 
 ### Behaviors to Verify
 
-There is no functional unit-test suite (per `techContext.md` "Testing Process: None yet"). Verification gates and smoke tests stand in for tests:
+- `release-please-config.json` is valid JSON and contains required fields (`release-type: simple`, `bump-minor-pre-major: true`, `packages."."` with extra-files for both plugin JSONs and the bark/woof PR header)
+- `.release-please-manifest.json` is valid JSON with `".": "0.2.0"`
+- `.github/workflows/release-please.yaml` is valid YAML, triggers on `push: branches: [main]`, defines correct permissions, uses GitHub App token step, and invokes `googleapis/release-please-action@v4` with manifest mode
+- `.github/workflows/docs.yaml` push trigger is changed from `branches: [main]` to `tags: ['v*']`; `pull_request` and `workflow_dispatch` triggers are preserved; deploy job condition remains `github.event_name != 'pull_request'`
+- Extra-files entries reference the correct JSON paths (`$.version`) for both `.cursor-plugin/plugin.json` and `.claude-plugin/plugin.json`
 
-- **Skill discovery (Cursor)**: install the plugin from the local `txrk9-agent-plugins` checkout → `/sl…` autocomplete in Cursor lists `/slobac-audit` (no legacy unbranded token for the old folder name). Operator smoke test.
-- **Skill discovery (Claude Code)**: install the plugin → `/sloba…` autocomplete in Claude Code lists `/slobac:slobac-audit` with display name `slobac-audit`. Operator smoke test.
-- **`properdocs build --strict`**: passes with no warnings after `docs_dir`/`edit_uri` paths point at `skills/slobac-audit/references/docs/`. CI-style gate run locally.
-- **`reuse --root . lint` from `skills/slobac-audit/`**: returns success; no SPDX/license errors. CI-style gate run locally.
-- **Stale-reference grep** (`git grep -E 'skills/(audit)\b'` excluding `memory-bank/archive/` and `planning/`): returns no matches. Manual gate.
-- **Stale-link grep** (`git grep "skills/.*README"` for the removed README path): returns no matches (the prior-task drive-by fix).
-- **Edge — fixtures path untouched**: `git grep "tests/fixtures/audit"` still resolves to the same fixture directory; `tests/fixtures/audit/` is **not** renamed. Confirm by `ls tests/fixtures/audit/`.
-- **Edge — report-artifact filename unchanged**: the audit's own output file `slobac-audit.md` (in `SKILL.md` step "write report" and `references/report-template.md`) is the runtime artifact, not the skill name; it stays `slobac-audit.md`. Verify by `git grep "slobac-audit.md"` → only the two intended occurrences.
-- **Sibling-repo invocation-line accuracy**: `txrk9-agent-plugins/README.md` plugin row reflects the new Claude-Code invocation `/slobac:slobac-audit`. Manual review.
+### Edge Cases
+
+- JSON extra-files use correct `jsonpath` key (not `json-path` or `path`): `"jsonpath": "$.version"`
+- `include-component-in-tag: false` is set at the package level (single-package repo)
+- Concurrency group on the release-please workflow uses `cancel-in-progress: false` (matching the reference pattern — release PRs must not be cancelled)
+- The docs deploy `if:` condition handles the new triggers correctly (tag push → deploy; PR → build only; workflow_dispatch → deploy)
 
 ### Test Infrastructure
 
-- Framework: none (no functional tests). Verification is via `properdocs build --strict`, `reuse lint`, `git grep`, and operator-driven slash-command smoke tests in Cursor and Claude Code.
-- Test location: N/A.
-- Conventions: follow the prior `slobac-plugin-distribution` task's verification pattern (its archive enumerates the same gates).
-- New test files: none.
+- Framework: none (CI config — no unit test runner in slobac for YAML/JSON files)
+- Test location: N/A
+- Conventions: N/A
+- New test files: none
+- Validation method: `python3 -m json.tool` for JSON files; `python3 -c "import yaml, sys; yaml.safe_load(open(sys.argv[1]))"` for YAML (or equivalent)
 
-## Implementation Plan (executed)
+## Implementation Plan
 
-1. Investigation — no native parity mechanism found (recorded in preflight / progress).
-2. `git mv` of the skill directory to `skills/slobac-audit/` (history-preserving).
-3. Root `properdocs.yml` and `REUSE.toml` paths updated to `skills/slobac-audit/references/docs/`.
-4. `README.md`, `CONTRIBUTING.md`, `tests/fixtures/audit/README.md` updated.
-5. `memory-bank/productContext.md`, `systemPatterns.md`, `techContext.md` updated.
-6. `skills/slobac-audit/references/docs/using-slobac.md` — Cursor/Claude invocation documentation corrected.
-7. Sibling repo `txrk9-agent-plugins/README.md` — Claude invocation line (separate commit in that repo).
-8. Final gate sweep (`properdocs`, `reuse`, greps for legacy path and Claude invocation tokens).
-9. Memory-bank ephemerals updated; Build marked complete.
+1. Create `release-please-config.json`
+   - Files: `release-please-config.json`
+   - Changes: New file. `release-type: simple`, `bump-minor-pre-major: true`, `bump-patch-for-minor-pre-major: false`, `include-component-in-tag: false`. Package `"."` with `extra-files` array containing two JSON-type entries for `.cursor-plugin/plugin.json` and `.claude-plugin/plugin.json` (both `$.version`), and `pull-request-header` set to the bark/woof string.
+
+2. Create `.release-please-manifest.json`
+   - Files: `.release-please-manifest.json`
+   - Changes: New file. Single entry: `".": "0.2.0"` (current version from both plugin.json files).
+
+3. Create `.github/workflows/release-please.yaml`
+   - Files: `.github/workflows/release-please.yaml`
+   - Changes: New file. Trigger: `push: branches: [main]`. Permissions: `contents: write`, `pull-requests: write`, `issues: write`. Concurrency: group `${{ github.workflow }}-${{ github.ref }}`, `cancel-in-progress: false`. Single job `release-please` with two steps: (a) `actions/create-github-app-token@v1` using `vars.HELPER_APP_ID` and `secrets.HELPER_APP_PRIVATE_KEY`, (b) `googleapis/release-please-action@v4` with `token: ${{ steps.generate-token.outputs.token }}` and no `release-type` (manifest mode default).
+
+4. Modify `.github/workflows/docs.yaml`
+   - Files: `.github/workflows/docs.yaml`
+   - Changes: Replace `push: branches: [main]` trigger block with `push: tags: ['v*']`. Deploy job `if:` condition stays as `github.event_name != 'pull_request'` (correct for tag push + workflow_dispatch → deploy; PR → build only).
+
+5. Validate all files locally
+   - Files: all four above
+   - Changes: Run JSON and YAML syntax validation to confirm no parse errors before committing.
 
 ## Technology Validation
 
-No new technology — validation not required. All gates (`properdocs`, `reuse`) are already in use; no new dependencies.
+No new runtime dependencies. `googleapis/release-please-action@v4` and `actions/create-github-app-token@v1` are well-established GitHub Actions — no local installation required. Validation is purely syntax-checking the config files.
 
 ## Dependencies
 
-- `properdocs` (already pinned in `pyproject.toml [dependency-groups] docs`)
-- `reuse` CLI (operator-installed via `pipx`, per `techContext.md`)
-- Sibling repo `txrk9-agent-plugins` checked out at `/home/mobaxterm/git/txrk9-agent-plugins`
-- No code dependencies; this is a rename + docs sweep.
+- `vars.HELPER_APP_ID` and `secrets.HELPER_APP_PRIVATE_KEY` must be configured in the slobac GitHub repository settings (operator responsibility; out of scope for this task).
+- `googleapis/release-please-action@v4` must be accessible from GitHub Actions runners (public action, no additional setup needed).
 
 ## Challenges & Mitigations
 
-- **Challenge**: The obsolete skill subtree path and unrelated prose tokens (e.g. `tests/fixtures/audit/`, the `slobac-audit.md` report filename, the literal word "audit"). **Mitigation**: anchor searches with regex boundaries; manually inspect each hit; never use `sed -i` blindly.
-- **Challenge**: `properdocs build --strict` may surface broken cross-links if any taxonomy file referenced an absolute repo path (it does not — those are relative). **Mitigation**: gate runs after path-touching edits catch breakage early.
-- **Challenge**: Two repos must be updated and committed. Marketplace JSON files do **not** reference the folder name (the `skills` field in `.cursor-plugin/plugin.json` is a glob `./skills/`). **Mitigation**: sibling-repo change limited to `README.md` where needed.
-- **Challenge**: Harness naming behavior must be smoke-tested by the operator. **Mitigation**: QA gate; if actual invocation differs, treat as QA FAIL and re-plan.
+- **`extra-files` JSON path key name**: release-please uses `jsonpath` (not `json-path`). Validated against the release-please-action documentation and the source.
+- **`simple` type creates `version.txt`**: intentional; this is the canonical version file for release-please. The two plugin.json files are secondary extras. No consumer reads `version.txt` today.
+- **docs deploy condition after trigger change**: `github.event_name != 'pull_request'` correctly covers `release: [published]` and workflow_dispatch deploys without modification. No change needed to the deploy job beyond the trigger update.
+- **GitHub App token action version**: Use `actions/create-github-app-token@v3` (matching jekyll-auto-thumbnails reference).
+- **Preflight advisory (applied)**: Changed docs trigger from `push: tags: ['v*']` to `release: types: [published]` — semantically more precise; fires when GitHub release is actually published (not just when tag is pushed).
 
 ## Status
 
