@@ -37,5 +37,22 @@ docs = [
     "pymdown-extensions ~= 10.7",
 ]
 
+# Dev tooling for the in-repo Python utilities (currently: the taxonomy-index
+# generator under scripts/ + slobac_tools/). Only ever needed for local dev
+# and CI; never required to read or render the manifesto.
+dev = [
+    "pytest ~= 8.3",
+]
+
+[tool.pytest.ini_options]
+# Scope test discovery to tests/python so the audit-fixture tree under
+# tests/fixtures/audit/ (which is input data for the audit skill, not pytest
+# input) is never swept.
+testpaths = ["tests/python"]
+# Make the in-repo `slobac_tools/` package importable in tests without
+# requiring an editable install. The repo's [project] block is a stub and
+# does not declare packages.
+pythonpath = ["."]
+
 [tool.uv]
 required-version = ">=0.5"

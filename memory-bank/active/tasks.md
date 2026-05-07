@@ -416,6 +416,28 @@ existing docs build. No new runner image, no new external services.
 - [x] Test planning complete (TDD)
 - [x] Implementation plan complete
 - [x] Technology validation complete
-- [ ] Preflight
+- [x] Preflight
 - [ ] Build
 - [ ] QA
+
+### Build progress
+
+- [x] Step 1 — Bootstrap Python test infrastructure
+- [x] Step 2 — Stub generator module + failing test stubs
+- [x] Step 3 — TDD: parse_entry happy path + multi-scope
+- [x] Step 4 — TDD: parse_entry error paths
+- [x] Step 5 — TDD: order_entries
+- [x] Step 6 — TDD: render_table for both link targets
+- [x] Step 7 — TDD: replace_between_sentinels happy path + missing-markers error
+- [x] Step 8 — TDD: regenerate end-to-end against fixture taxonomy dir
+- [ ] Step 9 — Add sentinel markers + initial generated table to the two real targets; reconcile README preamble
+- [ ] Step 10 — Rewrite SKILL.md Step 2 partition rule
+- [ ] Step 11 — A1 — Output budget in Step 4
+- [ ] Step 12 — A2 — IR integrity check (new Step 6.5)
+- [ ] Step 13 — A3 — Mandatory scout + manifest in report
+- [ ] Step 14 — C8 — Cross-suite richness in report
+- [ ] Step 15 — B5 — Subagent-required note in repo README.md
+- [ ] Step 16 — Update CONTRIBUTING.md regen workflow
+- [ ] Step 17 — techContext.md exception note
+- [ ] Step 18 — CI drift-check job
+- [ ] Step 19 — Final verification
