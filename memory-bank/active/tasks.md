@@ -418,7 +418,7 @@ existing docs build. No new runner image, no new external services.
 - [x] Technology validation complete
 - [x] Preflight
 - [x] Build
-- [ ] QA
+- [x] QA
 
 ### Build progress
 

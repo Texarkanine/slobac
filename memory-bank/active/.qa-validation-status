@@ -1,0 +1,25 @@
+PASS
+date: 2026-05-07
+findings:
+  - severity: minor
+    title: Step 8 of SKILL.md was out of sync with the new report-template fields
+    resolution: Step 8 now explicitly tells the orchestrator to populate the Suite manifest header line, and references the report-template contract for the Summary paragraph (binding budget, IR-integrity status, cross-suite richness). DRY — the contract lives in report-template.md; SKILL.md Step 8 points at it instead of duplicating.
+  - severity: trivial
+    title: Output-budget caps in SKILL.md Step 4b end with "tune downward if a target model has a notably small output cap"
+    resolution: Left as-is; this is an LLM-readable orchestrator nudge, not a programmable knob. The concrete caps in the table are the binding numbers.
+acceptance_criteria_check:
+  - AC1 output budget: PASS (SKILL.md Step 4b)
+  - AC2 IR integrity check: PASS (SKILL.md Step 6.5)
+  - AC3 mandatory scout + manifest in report: PASS (SKILL.md Step 3 prohibition + report-template Suite manifest line)
+  - AC4 generated taxonomy index dual-target with CI drift-check: PASS (sentinel-bracketed in SKILL.md and taxonomy/README.md; CI job verified to detect committed hand-edits via side-branch simulation)
+  - AC5 subagent assumption documented: PASS (repo README.md "Required: a subagent-capable harness")
+  - AC6 cross-suite richness in report: PASS (cross-suite.md Consumed richness line + report-template Summary)
+  - AC7 B6 captured as future work: PASS (memory-bank/active/progress.md Follow-ups)
+  - techContext.md exception: PASS (documented exception preserves "no generator" rule force for canonical content)
+mechanical_gates:
+  - pytest: PASS (22/22 green)
+  - generator idempotency on live targets: PASS
+  - properdocs build --strict: PASS
+  - drift-check simulation on committed hand-edit: PASS (CI sequence detected drift)
+no_debug_artifacts: PASS (no TODO/FIXME/XXX/print debug introduced)
+no_speculative_code: PASS (every new symbol is exercised by tests or used by callers)

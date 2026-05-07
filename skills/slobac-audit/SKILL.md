@@ -180,9 +180,10 @@ Write the report using the shape in [`references/report-template.md`](./referenc
 - Default path: `./slobac-audit.md` in the operator's current working directory.
 - If the operator named a different path, use that.
 - If a file already exists at the chosen path, emit at `slobac-audit-2.md`, `slobac-audit-3.md`, … — do not clobber a prior report.
+- Populate the `Suite manifest` line in the report header with the scout's headline counts (file count, total chars, total tests). This is the orchestrator's contract for letting a reviewer audit whether scout actually ran.
 - Include a "Tests considered but not flagged" section from batch assessor results.
 - Include an explicit "No findings for scope `<slug>`" line when a requested in-scope smell produces zero findings.
-- In the Summary section, note the orchestration metadata: how many batch assessors were launched, whether cross-suite analysis ran, and the summary richness level used.
+- In the Summary paragraph, note the orchestration shape per the contract in `references/report-template.md`: how many batch assessors ran, which budget (input chars vs output tests) was binding, whether the Step 6.5 integrity gate passed cleanly (or required a retry, or halted), and — if the cross-suite assessor ran — the richness tier it declared in its `Consumed richness` line.
 
 ## Step 9 — close
 

@@ -25,6 +25,11 @@ inline-fallback subagent workflow.
   confirmed on side branch. Two minor in-flight deviations recorded in
   activeContext (out-of-docs-root link replacements in step 9 to keep
   properdocs --strict green).
+- 2026-05-07: QA — PASS. One minor reconciliation applied (SKILL.md Step 8 now
+  references the report-template's Summary contract instead of duplicating it,
+  and explicitly tells the orchestrator to populate the new Suite manifest
+  header line). All 7 acceptance criteria verified; all mechanical gates
+  green; no debug artifacts; no speculative code.
 
 ## Follow-ups (not in this task)
 
