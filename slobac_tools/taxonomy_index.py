@@ -213,11 +213,11 @@ def replace_between_sentinels(
     begin_idx = text.index(begin)
     try:
         end_idx = text.index(end, begin_idx + len(begin))
-    except ValueError:
+    except ValueError as exc:
         raise TaxonomyIndexError(
             f"sentinel END appears before BEGIN for marker {marker_id!r}",
             field="marker",
-        )
+        ) from exc
 
     body = content if content.endswith("\n") else content + "\n"
     return (
