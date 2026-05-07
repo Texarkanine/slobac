@@ -20,6 +20,11 @@ inline-fallback subagent workflow.
   (1) explicit per-cycle TDD ordering in steps 3–8; (2) README preamble rewrite in
   step 9 to match new severity-desc ordering. One advisory captured (future
   scope-vs-subagent cross-validation).
+- 2026-05-07: BUILD — Complete. All 19 steps green. 22 pytest tests pass; generator
+  idempotent on live targets; properdocs --strict clean; drift-check simulation
+  confirmed on side branch. Two minor in-flight deviations recorded in
+  activeContext (out-of-docs-root link replacements in step 9 to keep
+  properdocs --strict green).
 
 ## Follow-ups (not in this task)
 
