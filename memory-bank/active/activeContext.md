@@ -1,7 +1,7 @@
 # Active Context
 
 - **Current Task:** slobac-audit post-release v1 hardening
-- **Phase:** BUILD - COMPLETE
+- **Phase:** REFLECT - COMPLETE
 - **What Was Done:** All 19 build steps executed in order with TDD discipline.
   - Generator (`slobac_tools/taxonomy_index.py` + `scripts/gen_taxonomy_index.py`)
     built test-first; 22 unit + end-to-end tests cover happy paths, every error
@@ -51,4 +51,6 @@
   command. (2) The README's link to `SKILL.md` was similarly out-of-docs-root;
   rendered as plain text instead. Neither changes contract or function; both
   preserve the doc-site build gate.
-- **Next Step:** QA phase — invoke `niko-qa` skill.
+- **QA result:** PASS. Reconciliation note in `.qa-validation-status`.
+- **Reflection:** `memory-bank/active/reflection/reflection-slobac-audit-postrelease-v1.md`. Persistent files reconciled: `systemPatterns.md` line on the full-manifesto-in-bundle pattern updated to acknowledge the generator as a build-time artifact while preserving invariant #11.
+- **Next Step:** Operator runs `/niko-archive` to finalize and archive the task.
