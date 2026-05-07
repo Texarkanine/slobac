@@ -33,24 +33,29 @@ opus run was — regardless of which model executes the orchestrator.
    measuring the suite itself; the suite manifest is named in the report header so a
    reader can audit whether scout actually ran.
 4. **Generated taxonomy index (B4)**:
-   - A Python script under `pyproject.toml` parses every
+   - A Python script (declared in `pyproject.toml`, runnable via `uv run`) parses every
      `skills/slobac-audit/references/docs/taxonomy/<slug>.md` (excluding `README.md`),
-     reads the canonical header table at the top of the file, and (re)generates the
-     index table currently maintained by hand in
-     `skills/slobac-audit/references/docs/taxonomy/README.md` (lines ~11–27 today).
-   - The script lives where `pyproject.toml` can run it via `uv run` / a script entry.
-   - `SKILL.md` Step 2 points at `taxonomy/README.md` for the supported-slug list +
-     detection scopes — replacing the inline 15-file fan-out.
-   - CI runs a drift check (regenerate, diff against committed) and fails the PR on
-     drift.
-   - `CONTRIBUTING.md` (or equivalent) documents "after editing a taxonomy entry, run
-     <command> to regenerate".
-   - **Open question for Plan phase:** how to handle the README index's `Core move`
-     column, which is hand-curated and has no source in the per-entry header today.
-     Candidates: (a) generator preserves that column on regen; (b) add `Core move` to
-     each per-entry canonical header (true single-source-of-truth, leaning toward this);
-     (c) keep README index hand-maintained, generate a minimal separate scope index for
-     the orchestrator. Pick during Plan.
+     reads the canonical header table at the top of the file, and emits a single
+     ordered index table.
+   - **The generated table goes into two files**, between sentinel comment markers,
+     written by one run of the generator:
+     - `skills/slobac-audit/SKILL.md` — so the orchestrator gets the slug→scope
+       partition from the SKILL.md it already loads (zero extra runtime reads).
+     - `skills/slobac-audit/references/docs/taxonomy/README.md` — replacing the
+       hand-curated table currently at lines 11–27.
+   - **Columns:** `Slug | Severity | Detection Scope`. Drop `#` and `Core move`.
+   - **Order:** severity descending (Critical → High → Medium → Low), tiebreak slug
+     alphabetical.
+   - `SKILL.md` Step 2 reads the embedded table for the partition; per-entry header
+     reads at runtime are removed.
+   - CI runs a drift check (regenerate, `git diff --exit-code` on both files) and fails
+     the PR on drift.
+   - `CONTRIBUTING.md` documents "after editing a taxonomy entry's header, run
+     <command> to regenerate."
+   - `memory-bank/techContext.md` gets a documented exception clarifying that the
+     "no generator, no CI drift-check" rule applies to canonical manifesto *content*
+     (per-smell entries, principles, glossary, workflows) — not to a generated
+     navigation index that consumes those entries.
 5. **Subagent assumption documented (B5)**: The required-environment assumption
    (subagent-capable harness) is called out in the project-level `README.md`. No
    pointer from `SKILL.md` to the repo README — the skill bundle ships independently of

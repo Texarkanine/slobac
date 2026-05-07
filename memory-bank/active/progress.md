@@ -13,6 +13,9 @@ inline-fallback subagent workflow.
 ## Phase log
 
 - 2026-05-07: COMPLEXITY-ANALYSIS — Level 2 determined.
+- 2026-05-07: PLAN — Complete. 19 TDD steps; `pytest` introduced; generator script
+  + sentinel-bracketed dual-target embed; CI drift-check; `techContext.md` exception
+  documented.
 
 ## Follow-ups (not in this task)
 
