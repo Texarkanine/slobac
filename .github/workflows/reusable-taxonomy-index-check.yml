@@ -1,0 +1,46 @@
+# Regenerates the taxonomy index from canonical entry headers and fails if
+# committed SKILL.md / taxonomy README drift; then runs the Python unit suite.
+#
+# Callers: ci.yml (every PR + main push), docs.yaml (release / workflow_dispatch
+# only — not pull_request, to avoid duplicating the same job alongside ci.yml).
+
+name: Taxonomy index check
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Taxonomy index drift-check + pytest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v8.0.0
+        with:
+          enable-cache: true
+
+      - name: Install dev dependencies
+        # --frozen: fail if uv.lock is out of date vs pyproject.toml.
+        run: uv sync --group dev --frozen
+
+      - name: Regenerate taxonomy index
+        run: uv run python scripts/gen_taxonomy_index.py
+
+      - name: Verify no drift
+        run: |
+          if ! git diff --exit-code -- \
+              skills/slobac-audit/SKILL.md \
+              skills/slobac-audit/references/docs/taxonomy/README.md; then
+            echo "::error::Taxonomy index is out of date."
+            echo "Run 'uv run python scripts/gen_taxonomy_index.py' locally and commit the result."
+            exit 1
+          fi
+
+      - name: Run unit tests
+        run: uv run pytest
