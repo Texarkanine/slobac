@@ -116,3 +116,26 @@ def test_regenerate_raises_on_unparseable_entry_file(
             taxonomy_dir,
             targets=[(readme_target, "readme"), (skill_target, "skill")],
         )
+
+
+def test_regenerate_raises_on_empty_taxonomy_dir(tmp_path: Path) -> None:
+    """
+    When taxonomy_dir contains no .md files other than README.md (an empty /
+    broken-state repo), regenerate must raise TaxonomyIndexError rather than
+    silently writing an empty-header-only table into the target files.
+    """
+    taxonomy_dir = tmp_path / "taxonomy"
+    taxonomy_dir.mkdir()
+    readme_target = taxonomy_dir / "README.md"
+    readme_target.write_text(
+        "# Taxonomy\n\n<!-- BEGIN: taxonomy-index -->\n<!-- END: taxonomy-index -->\n"
+    )
+    skill_target = tmp_path / "SKILL.md"
+    skill_target.write_text(
+        "# Skill\n\n<!-- BEGIN: taxonomy-index -->\n<!-- END: taxonomy-index -->\n"
+    )
+    with pytest.raises(TaxonomyIndexError):
+        regenerate(
+            taxonomy_dir,
+            targets=[(readme_target, "readme"), (skill_target, "skill")],
+        )

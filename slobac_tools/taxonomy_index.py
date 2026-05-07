@@ -211,7 +211,13 @@ def replace_between_sentinels(
         )
 
     begin_idx = text.index(begin)
-    end_idx = text.index(end, begin_idx + len(begin))
+    try:
+        end_idx = text.index(end, begin_idx + len(begin))
+    except ValueError:
+        raise TaxonomyIndexError(
+            f"sentinel END appears before BEGIN for marker {marker_id!r}",
+            field="marker",
+        )
 
     body = content if content.endswith("\n") else content + "\n"
     return (
@@ -235,12 +241,26 @@ def regenerate(
 
     The function is idempotent: a second invocation against the same inputs
     produces zero file diff.
+
+    Raises
+    ------
+    TaxonomyIndexError
+        If no taxonomy entries are found (broken repository state), or if any
+        entry file is malformed.
     """
     entries = []
     for path in sorted(taxonomy_dir.glob("*.md")):
         if path.name == "README.md":
             continue
         entries.append(parse_entry(path))
+
+    if not entries:
+        raise TaxonomyIndexError(
+            f"no taxonomy entries found in {taxonomy_dir} — "
+            "at least one non-README.md entry is required",
+            file_path=taxonomy_dir,
+            field="header",
+        )
 
     ordered = order_entries(entries)
 

@@ -63,3 +63,19 @@ def test_replace_between_sentinels_duplicate_begin_marker_raises() -> None:
     with pytest.raises(TaxonomyIndexError) as exc_info:
         replace_between_sentinels(text, "X")
     assert exc_info.value.field == "marker"
+
+
+def test_replace_between_sentinels_inverted_markers_raises() -> None:
+    """
+    When END sentinel appears before BEGIN sentinel in the document, the
+    function must raise TaxonomyIndexError(field="marker") rather than
+    leaking a raw ValueError from str.index().
+    """
+    text = (
+        "<!-- END: taxonomy-index -->\n"
+        "content\n"
+        "<!-- BEGIN: taxonomy-index -->\n"
+    )
+    with pytest.raises(TaxonomyIndexError) as exc_info:
+        replace_between_sentinels(text, "new content")
+    assert exc_info.value.field == "marker"
