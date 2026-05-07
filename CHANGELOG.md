@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.0](https://github.com/Texarkanine/slobac/compare/v0.3.0...v0.4.0) (2026-05-07)
+
+
+### Features
+
+* **slobac-audit:** post-release v1 hardening + generated taxonomy index ([#19](https://github.com/Texarkanine/slobac/issues/19)) ([9c6d85c](https://github.com/Texarkanine/slobac/commit/9c6d85cb8429f0c1fa55f936d2896a7391159c25))
+
+
+### Bug Fixes
+
+* **docs:** reconcile CONTRIBUTING and memory bank links after principles split ([#18](https://github.com/Texarkanine/slobac/issues/18)) ([794e169](https://github.com/Texarkanine/slobac/commit/794e1690841707669321ea980c08728f5abe0618))
+* **docs:** some documentation site cleanup ([#16](https://github.com/Texarkanine/slobac/issues/16)) ([0f9971c](https://github.com/Texarkanine/slobac/commit/0f9971c40f3eece719f0ef8aa1ab71f926032e34))
+
 ## [0.3.0](https://github.com/Texarkanine/slobac/compare/v0.2.0...v0.3.0) (2026-05-06)
 
 
