@@ -151,60 +151,109 @@ Each step is one TDD cycle: write/extend the failing test, implement to pass, re
      `tests/python/fixtures/valid_single_scope.md`,
      `tests/python/fixtures/valid_multi_scope.md`,
      `slobac_tools/taxonomy_index.py`.
-   - Changes: implement `parse_entry` using a single regex against the line-5 row;
-     return `TaxonomyEntry`. Multi-scope split on `,` with `.strip()`.
-   - Validation: 2 tests pass.
+   - Changes (in order):
+     1. Write the two fixture files (single-scope, multi-scope shaped like real
+        canonical entries — line 3 column header, line 4 separator, line 5 data).
+     2. Replace the corresponding stub tests in `test_parse_entry.py` with real
+        assertions: parse the fixture, assert the returned `TaxonomyEntry` matches
+        expected slug/severity/scopes.
+     3. Run `uv run pytest tests/python/unit/test_parse_entry.py -k "happy or multi"` —
+        expect failure (red) because `parse_entry` still raises `NotImplementedError`.
+     4. Implement `parse_entry` using a single regex against the line-5 row; return
+        `TaxonomyEntry`. Multi-scope splits on `,` with `.strip()`.
+     5. Re-run pytest — expect green.
 
 4. **TDD: `parse_entry` error paths.**
-   - Files: same test file + new fixture files for malformed cases (missing line 5,
-     wrong-shaped row, unknown severity, unknown scope).
-   - Changes: extend `parse_entry` with explicit validation; raise
-     `TaxonomyIndexError` with file + field on each malformed case.
-   - Validation: 4–6 error-path tests pass.
+   - Files: `tests/python/unit/test_parse_entry.py` + new fixture files for malformed
+     cases (missing line 5, wrong-shaped row, unknown severity, unknown scope),
+     `slobac_tools/taxonomy_index.py`.
+   - Changes (in order):
+     1. Add the malformed fixture files.
+     2. Add error-path tests asserting `pytest.raises(TaxonomyIndexError, match=...)`
+        with the file path and offending field surfaced in the exception message.
+     3. Run pytest — expect new tests to fail (red).
+     4. Extend `parse_entry` with explicit validation that raises `TaxonomyIndexError`
+        carrying file + field on each malformed case.
+     5. Re-run pytest — expect green.
 
 5. **TDD: `order_entries`.**
    - Files: `tests/python/unit/test_ordering.py`, `slobac_tools/taxonomy_index.py`.
-   - Changes: implement with `key=(SEVERITY_ORDER[severity], slug)` where
-     `SEVERITY_ORDER = {"Critical": 0, "High": 1, "Medium": 2, "Low": 3}`.
-   - Validation: ordering tests pass.
+   - Changes (in order):
+     1. Replace ordering test stubs with assertions: an unsorted list of
+        `TaxonomyEntry` returns sorted as `[Critical*, High*, Medium*, Low*]`, each
+        tier alphabetical by slug.
+     2. Run pytest — red.
+     3. Implement `order_entries` with
+        `key=(SEVERITY_ORDER[severity], slug)` where
+        `SEVERITY_ORDER = {"Critical": 0, "High": 1, "Medium": 2, "Low": 3}`.
+     4. Re-run pytest — green.
 
 6. **TDD: `render_table` for both link targets.**
    - Files: `tests/python/unit/test_render.py`, `slobac_tools/taxonomy_index.py`.
-   - Changes: implement; emits markdown table with `Slug | Severity | Detection
-     Scope` header, link target conditional on `link_target` param. Multi-scope
-     rendered with the original comma-joined string.
-   - Validation: render tests pass.
+   - Changes (in order):
+     1. Replace render-test stubs with assertions: given a known fixture entry list,
+        rendered output matches the expected `Slug | Severity | Detection Scope`
+        markdown table for `link_target="readme"` (relative `./<slug>.md`) and for
+        `link_target="skill"` (relative `references/docs/taxonomy/<slug>.md`).
+        Include a multi-scope row to assert the comma-joined string is preserved
+        byte-for-byte.
+     2. Run pytest — red.
+     3. Implement `render_table`.
+     4. Re-run pytest — green.
 
 7. **TDD: `replace_between_sentinels` happy path + missing-markers error.**
    - Files: `tests/python/unit/test_sentinels.py`, `slobac_tools/taxonomy_index.py`.
-   - Changes: implement using regex with explicit BEGIN/END marker matching; raise
-     `TaxonomyIndexError` if 0 or >1 occurrences of either marker. Preserve
-     surrounding whitespace.
-   - Validation: sentinel tests pass.
+   - Changes (in order):
+     1. Replace sentinel-test stubs with assertions: well-formed input replaces only
+        the bracketed region; surrounding bytes unchanged. Missing/duplicate markers
+        raise `TaxonomyIndexError`.
+     2. Run pytest — red.
+     3. Implement `replace_between_sentinels` using regex with explicit BEGIN/END
+        marker matching; raise on 0 or >1 occurrences of either marker.
+     4. Re-run pytest — green.
 
 8. **TDD: `regenerate` end-to-end against fixture taxonomy dir.**
    - Files: `tests/python/unit/test_end_to_end.py`,
-     `tests/python/fixtures/mini_taxonomy/` (3–4 small entries + a README + a SKILL
+     `tests/python/fixtures/mini_taxonomy/` (3–4 small entries + a README and a SKILL
      stub with sentinels), `slobac_tools/taxonomy_index.py`.
-   - Changes: implement `regenerate` to glob `taxonomy_dir/*.md` excluding
-     `README.md`, parse all, order, render per target, write each target via
-     `replace_between_sentinels`. Idempotency test: run twice → second run produces
-     zero file diff.
-   - Validation: end-to-end test passes; idempotency test passes.
+   - Changes (in order):
+     1. Build the mini_taxonomy fixture directory.
+     2. Add tests: `regenerate(...)` writes both targets correctly; running
+        `regenerate` a second time produces zero diff (idempotency); a non-`README.md`
+        markdown file under `taxonomy_dir/` without a valid header raises
+        `TaxonomyIndexError`.
+     3. Run pytest — red.
+     4. Implement `regenerate` to glob `taxonomy_dir/*.md` excluding `README.md`,
+        parse all, order, render per target, write each target via
+        `replace_between_sentinels`.
+     5. Re-run pytest — green.
 
-9. **Add sentinel markers + initial generated table to the two real targets.**
+9. **Add sentinel markers + initial generated table to the two real targets;
+   reconcile README preamble.**
    - Files: `skills/slobac-audit/references/docs/taxonomy/README.md`,
      `skills/slobac-audit/SKILL.md`.
    - Changes:
-     - In `taxonomy/README.md`: replace the existing hand-curated table (lines
-       11–27) with `<!-- BEGIN: taxonomy-index -->` / `<!-- END: taxonomy-index -->`
-       sentinels around an empty placeholder. Run the generator. Confirm output is
-       severity-desc + alpha-asc and column-shape correct.
+     - In `taxonomy/README.md`:
+       1. Replace the existing hand-curated table (lines 11–27) with
+          `<!-- BEGIN: taxonomy-index -->` / `<!-- END: taxonomy-index -->` sentinels
+          around an empty placeholder.
+       2. Rewrite the line-9 preamble paragraph that today says *"Ordered roughly by
+          how much semantic reasoning the required judgment demands…"* to instead
+          describe the new ordering rule explicitly: ordered by severity descending
+          (Critical → High → Medium → Low), tiebreak alphabetical by slug. Note that
+          the table is generated from the per-entry header tables and points the
+          reader at `CONTRIBUTING.md` for the regen command.
+       3. Preserve the post-table prose: severity definition paragraph, "Non-goals",
+          "Governor rules", and footnotes. Only the table region is generator-owned.
+       4. Run the generator. Confirm output is severity-desc + alpha-asc and
+          column-shape correct.
      - In `SKILL.md`: insert a new short subsection "Supported slugs and detection
        scopes" near the top of Step 2 (before the partition rule), with the
-       sentinels and generated table inside.
+       sentinels and generated table inside; add a one-line note that the table is
+       generated and a sibling copy lives in `taxonomy/README.md`.
    - Validation: `git diff` shows the expected table content; `uv run properdocs
-     build --strict` stays green (table renders).
+     build --strict` stays green (table + revised preamble render); a re-run of the
+     generator produces zero diff (idempotency confirmed on real targets).
 
 10. **Rewrite SKILL.md Step 2 partition rule.**
     - Files: `skills/slobac-audit/SKILL.md`.

@@ -16,6 +16,10 @@ inline-fallback subagent workflow.
 - 2026-05-07: PLAN — Complete. 19 TDD steps; `pytest` introduced; generator script
   + sentinel-bracketed dual-target embed; CI drift-check; `techContext.md` exception
   documented.
+- 2026-05-07: PREFLIGHT — PASS with two minor amendments folded into `tasks.md`:
+  (1) explicit per-cycle TDD ordering in steps 3–8; (2) README preamble rewrite in
+  step 9 to match new severity-desc ordering. One advisory captured (future
+  scope-vs-subagent cross-validation).
 
 ## Follow-ups (not in this task)
 
