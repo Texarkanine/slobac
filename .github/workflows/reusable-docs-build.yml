@@ -1,0 +1,38 @@
+# Does the doc site build without errors?
+name: Documentation Site
+
+on:
+  workflow_call:
+    inputs:
+      upload-pages-artifact:
+        description: Upload `site/` for the GitHub Pages deploy job (deploy workflows only).
+        type: boolean
+        required: false
+        default: false
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v8.0.0
+        with:
+          enable-cache: true
+
+      - name: Install docs dependencies
+        # --frozen: fail if uv.lock is out of date vs pyproject.toml. Lock drift
+        # must be a PR-reviewable change, not a silent CI-time regeneration.
+        run: uv sync --group docs --frozen
+
+      - name: Build site (strict)
+        run: uv run properdocs build --strict
+
+      - name: Upload Pages artifact
+        if: ${{ inputs.upload-pages-artifact }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site

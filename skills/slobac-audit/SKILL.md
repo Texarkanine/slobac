@@ -14,20 +14,46 @@ The operator names a directory (explicitly or implicitly: "these tests", "my sui
 
 From the operator's request, resolve a list of **in-scope smell slugs** drawn from the supported set.
 
-**Slug-only invocation contract.** The supported-slug set is the set of taxonomy entry filenames under `references/docs/taxonomy/` (excluding `README.md`); every `<slug>.md` is a supported slug, and there is no other source of truth. Operators must invoke this skill with **explicit slug names** (e.g. `tautology-theatre`, `vacuous-assertion`). Free-text or fuzzy-phrase requests (e.g. "audit my tests for tautology", "find tests that mock the SUT") are **refused**: respond with the supported-slug list and ask the operator to re-invoke with explicit slugs. Do not silently resolve a phrase to a slug. The same refusal applies if the operator names a slug whose taxonomy entry does not exist.
+### Supported slugs and detection scopes
+
+The table below is the orchestrator's authoritative slug → detection-scope index. It is generated from each canonical entry's header table by `scripts/gen_taxonomy_index.py`; a sibling copy lives in [`references/docs/taxonomy/README.md`](./references/docs/taxonomy/README.md) for human navigation. Do not hand-edit the table — edit the canonical entry's header and run the generator.
+
+<!-- BEGIN: taxonomy-index -->
+| Slug | Severity | Detection Scope |
+|---|---|---|
+| [`tautology-theatre`](references/docs/taxonomy/tautology-theatre.md) | Critical | per-test |
+| [`deliverable-fossils`](references/docs/taxonomy/deliverable-fossils.md) | High | per-test, cross-suite |
+| [`implementation-coupled`](references/docs/taxonomy/implementation-coupled.md) | High | per-test |
+| [`over-specified-mock`](references/docs/taxonomy/over-specified-mock.md) | High | per-test |
+| [`pseudo-tested`](references/docs/taxonomy/pseudo-tested.md) | High | per-test |
+| [`semantic-redundancy`](references/docs/taxonomy/semantic-redundancy.md) | High | cross-suite |
+| [`vacuous-assertion`](references/docs/taxonomy/vacuous-assertion.md) | High | per-test |
+| [`conditional-logic`](references/docs/taxonomy/conditional-logic.md) | Medium | per-test |
+| [`monolithic-test-file`](references/docs/taxonomy/monolithic-test-file.md) | Medium | per-file |
+| [`naming-lies`](references/docs/taxonomy/naming-lies.md) | Medium | per-test |
+| [`presentation-coupled`](references/docs/taxonomy/presentation-coupled.md) | Medium | per-test |
+| [`shared-state`](references/docs/taxonomy/shared-state.md) | Medium | per-file |
+| [`wrong-level`](references/docs/taxonomy/wrong-level.md) | Medium | cross-suite |
+| [`mystery-guest`](references/docs/taxonomy/mystery-guest.md) | Low | per-test |
+| [`rotten-green`](references/docs/taxonomy/rotten-green.md) | Low | per-test |
+<!-- END: taxonomy-index -->
+
+**Slug-only invocation contract.** The supported-slug set is exactly the `Slug` column of the table above. Operators must invoke this skill with **explicit slug names** (e.g. `tautology-theatre`, `vacuous-assertion`). Free-text or fuzzy-phrase requests (e.g. "audit my tests for tautology", "find tests that mock the SUT") are **refused**: respond with the supported-slug list and ask the operator to re-invoke with explicit slugs. Do not silently resolve a phrase to a slug. The same refusal applies if the operator names a slug not in the table.
 
 The single exception is the bulk-select wildcard: if the operator's invocation is `all`, `everything`, or unscoped (no slug names at all), resolve to the full supported-slug set. This is the only non-slug input the orchestrator accepts.
 
-**Classify in-scope slugs by detection scope.** For each in-scope slug, read its `Detection Scope` from `references/docs/taxonomy/<slug>.md` (the header table). Partition into:
+**Classify in-scope slugs by detection scope.** Use the `Detection Scope` column of the embedded table above — do **not** read each `<slug>.md`'s header at runtime; the table has already lifted that information. Partition the in-scope slugs into:
 
-- **per-test / per-file set** — slugs with detection scope `per-test` or `per-file`. These go to batch assessors.
-- **cross-suite set** — slugs with detection scope `cross-suite`. These go to the cross-suite assessor.
+- **per-test / per-file set** — slugs whose detection scope contains `per-test` or `per-file`. These go to batch assessors.
+- **cross-suite set** — slugs whose detection scope contains `cross-suite`. These go to the cross-suite assessor.
 
-Note: `deliverable-fossils` has both `per-test` and `cross-suite` scopes. Its per-test detection (Phase A: rename) goes to batch assessors; its cross-suite detection (Phase B: regroup) goes to the cross-suite assessor.
+A slug whose detection scope lists multiple values (e.g. `deliverable-fossils` = `per-test, cross-suite`) goes to **both** sets: its per-test detection (Phase A: rename) is handled by batch assessors; its cross-suite detection (Phase B: regroup) is handled by the cross-suite assessor.
 
 ## Step 3 — launch scout
 
 Resolve the absolute filesystem path to this skill's `references/` directory (the directory containing `report-template.md`, `behavior-summary-format.md`, `suite-manifest-format.md`, `subagents/`, and `docs/`). This path is passed to all subagents so they can resolve reference files at runtime.
+
+🚨 **The orchestrator MUST NOT enumerate, count, or measure the suite itself.** If you find yourself running `find`, `wc`, `ls`, `Glob`, or any equivalent against the target suite root in this step, **stop and launch the scout instead.** The scout's role is the orchestrator's *evidence base* for partitioning, output budgeting, and report provenance — short-circuiting it produces silently wrong file/char/test counts and downstream miscalibration. (Two of three post-release runs miscounted the suite by either 4 files or ~30k chars when they bypassed the scout; the run that launched it got the counts right.)
 
 Read `references/subagents/scout.md`. Launch a readonly subagent whose task is the content of that file, supplemented with:
 
@@ -35,7 +61,7 @@ Read `references/subagents/scout.md`. Launch a readonly subagent whose task is t
 - The absolute `references/` path resolved above.
 - The content of `references/suite-manifest-format.md` (the output format spec).
 
-The scout will enumerate test files, measure their sizes, detect ecosystem and tier conventions, and return a **Suite Manifest**.
+The scout will enumerate test files, measure their sizes, detect ecosystem and tier conventions, and return a **Suite Manifest**. The orchestrator copies the scout's headline counts (file count, total chars, total tests) into the report's `Suite manifest` summary line in Step 8 — this is how a reviewer audits whether scout actually ran.
 
 ## Step 4 — partition and configure batches
 
@@ -51,13 +77,29 @@ Determine the content budget per batch:
 
 Content budget per batch = total context budget × 0.60 (reserve 40% for smell definitions, instructions, and reasoning).
 
-### 4b. Partition files
+### 4b. Output budget per batch
 
-If total chars from the Suite Manifest fits in one content budget: **1 batch, all files.** This is the small-suite degenerate case — functionally identical to a single-agent audit, but executed via the batch assessor skill for consistency.
+The 60% content budget governs **input** (file source + smell definitions + instructions). Subagent **output** has its own ceiling — most models cap a single response well below their input window, and the batch assessor's output is dominated by the behavior-summary table whose size scales with test count × richness.
 
-If total chars exceeds one content budget: partition files into N batches using greedy bin-packing by character count. Keep files from the same directory together when possible (directory cohesion aids per-file smells like `shared-state`).
+Bound the maximum tests per batch by these per-richness caps so the assessor's output never gets truncated:
 
-### 4c. Compute summary richness
+| Richness | Approx chars per row | Max tests per batch |
+|----------|---------------------|---------------------|
+| `full`     | ~400–600 | **~120** |
+| `standard` | ~200–350 | **~250** |
+| `compact`  | ~80–120  | **~600** |
+
+These caps reserve headroom for the findings section above the table; tune downward if a target model has a notably small output cap.
+
+This guard prevents the truncated-batch failure mode observed in post-release auto-model runs (`full` richness × 379 tests ≈ 190k chars of output in one subagent message → silent table truncation → empty cross-suite findings on suites that obviously contain redundancies).
+
+### 4c. Partition files
+
+If total chars from the Suite Manifest fits in one input content budget **and** total test count fits under the output cap from Step 4b: **1 batch, all files.** This is the small-suite degenerate case — functionally identical to a single-agent audit, but executed via the batch assessor skill for consistency.
+
+If either budget is exceeded: partition files into N batches using greedy bin-packing by character count, with the binding constraint being whichever budget — input chars or output tests — yields **more** batches. Keep files from the same directory together when possible (directory cohesion aids per-file smells like `shared-state`).
+
+### 4d. Compute summary richness
 
 Determine the behavior summary richness level based on total test count vs. the cross-suite assessor's context budget:
 
@@ -77,7 +119,7 @@ Read `references/subagents/batch.md`. For each batch (1 for small suites, N for 
 
 - The file list for this batch.
 - The per-test / per-file smell slugs from Step 2.
-- The summary richness level from Step 4c.
+- The summary richness level from Step 4d.
 - The tier conventions from the Suite Manifest.
 - The absolute `references/` path (resolved in Step 3).
 - The content of `references/behavior-summary-format.md` (the summary output format spec).
@@ -96,9 +138,24 @@ Collect findings and behavior summaries from all batch assessors.
 - **Merge findings** — concatenate findings from all batches. There should be no duplicates (each file is assigned to exactly one batch).
 - **Merge behavior summaries** — concatenate summary tables from all batches and re-sort by file path (lexicographic), then line number (ascending). If duplicate rows appear (same File + Line), keep the first and log a warning.
 
+## Step 6.5 — verify behavior-summary integrity
+
+Before any cross-suite work, validate that the merged behavior-summary table from Step 6 actually represents the suite. Compare:
+
+- `merged_rows` — number of behavior-summary rows across all batches after merge.
+- `expected_tests` — total `Test count` from the scout's Suite Manifest (Step 3).
+
+Apply this gate:
+
+- `merged_rows ≥ expected_tests × 0.95` → proceed to Step 7.
+- `0 < merged_rows < expected_tests × 0.95` → identify the batch whose missing rows account for the gap and retry **that batch** (idempotent — same file list, same parameters). On a second under-budget result, **halt with a structured error** that names the batch and the gap; do not proceed to cross-suite. Note the gap in the eventual report under "Out-of-scope requests" with an explicit "audit incomplete" line.
+- `merged_rows == 0` → halt with the same structured error.
+
+This guard prevents the silent-failure mode observed in post-release auto-model runs: a truncated batch produced an incomplete merged table; cross-suite ran against the partial IR and emitted "no findings" for `semantic-redundancy` on a suite that obviously contains redundancies. **Never feed a partial IR to cross-suite.**
+
 ## Step 7 — launch cross-suite assessor (if needed)
 
-If the cross-suite smell set from Step 2 is **non-empty**:
+If the cross-suite smell set from Step 2 is **non-empty** and the integrity gate from Step 6.5 passed:
 
 Read `references/subagents/cross-suite.md`. Launch a readonly subagent whose task is the content of that file, supplemented with:
 
@@ -123,9 +180,10 @@ Write the report using the shape in [`references/report-template.md`](./referenc
 - Default path: `./slobac-audit.md` in the operator's current working directory.
 - If the operator named a different path, use that.
 - If a file already exists at the chosen path, emit at `slobac-audit-2.md`, `slobac-audit-3.md`, … — do not clobber a prior report.
+- Populate the `Suite manifest` line in the report header with the scout's headline counts (file count, total chars, total tests). This is the orchestrator's contract for letting a reviewer audit whether scout actually ran.
 - Include a "Tests considered but not flagged" section from batch assessor results.
 - Include an explicit "No findings for scope `<slug>`" line when a requested in-scope smell produces zero findings.
-- In the Summary section, note the orchestration metadata: how many batch assessors were launched, whether cross-suite analysis ran, and the summary richness level used.
+- In the Summary paragraph, note the orchestration shape per the contract in `references/report-template.md`: how many batch assessors ran, which budget (input chars vs output tests) was binding, whether the Step 6.5 integrity gate passed cleanly (or required a retry, or halted), and — if the cross-suite assessor ran — the richness tier it declared in its `Consumed richness` line.
 
 ## Step 9 — close
 

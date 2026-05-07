@@ -71,6 +71,10 @@ For confirmed findings, formulate the five finding fields:
 
 Your final message back to the orchestrator contains:
 
+### Consumed richness tier
+
+A single line — `Consumed richness: <full|standard|compact>` — naming the richness tier of the merged behavior-summary table the orchestrator handed you. The orchestrator transcribes this into the report's Summary line so a reviewer can downgrade their confidence on a `compact`-fed cross-suite pass (signal density is materially lower at `compact` than at `full`).
+
 ### Cross-Suite Findings
 
 All confirmed findings from Step 4, in the five-field format. Group by smell slug, then by file path.

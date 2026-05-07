@@ -6,25 +6,27 @@ The taxonomy is foundational. It names smells, describes how to see them, and pr
 
 ## The catalog
 
-Ordered roughly by how much semantic reasoning the required judgment demands. Higher-numbered entries lean on mechanical signals; lower-numbered entries need reasoning a linter cannot do.
+Ordered by **severity descending** (Critical → High → Medium → Low), then alphabetical by slug within each severity tier. The table is generated from each entry's canonical header by `scripts/gen_taxonomy_index.py`; a sibling copy lives at the top of `skills/slobac-audit/SKILL.md` where the audit orchestrator consumes it. Do not hand-edit the table — edit the canonical entry's header and run `uv run python scripts/gen_taxonomy_index.py` from the repo root.
 
-| # | Slug | Core move | Severity | Detection Scope |
-|---|---|---|---|---|
-| 1 | [`deliverable-fossils`](./deliverable-fossils.md) | rename + regroup per product behavior | High | per-test, cross-suite |
-| 2 | [`semantic-redundancy`](./semantic-redundancy.md) | cluster, pick canonical, fold/delete the rest | High | cross-suite |
-| 3 | [`wrong-level`](./wrong-level.md) | relocate to correct test level | Medium | cross-suite |
-| 4 | [`naming-lies`](./naming-lies.md) | rename test or strengthen body to match the claim | Medium | per-test |
-| 5 | [`vacuous-assertion`](./vacuous-assertion.md) | strengthen the oracle | High | per-test |
-| 6 | [`pseudo-tested`](./pseudo-tested.md) | add assertion that kills the no-op mutant | High | per-test |
-| 7 | [`tautology-theatre`](./tautology-theatre.md) | delete or rewrite to exercise real SUT | Critical | per-test |
-| 8 | [`over-specified-mock`](./over-specified-mock.md) | relax to behavior-relevant interaction only | High | per-test |
-| 9 | [`implementation-coupled`](./implementation-coupled.md) | drive through public API instead | High | per-test |
-| 10 | [`presentation-coupled`](./presentation-coupled.md) | parse then assert semantics, not formatting | Medium | per-test |
-| 11 | [`conditional-logic`](./conditional-logic.md) | split or pin the precondition | Medium | per-test |
-| 12 | [`shared-state`](./shared-state.md) | move setup to per-test factory / restore globals | Medium | per-file |
-| 13 | [`mystery-guest`](./mystery-guest.md) | inline a 1–3 line summary of relevant fixture shape | Low | per-test |
-| 14 | [`rotten-green`](./rotten-green.md) | delete the empty/dead scaffold or add the missing assertion | Low | per-test |
-| 15 | [`monolithic-test-file`](./monolithic-test-file.md) | split file by behavior domain | Medium | per-file |
+<!-- BEGIN: taxonomy-index -->
+| Slug | Severity | Detection Scope |
+|---|---|---|
+| [`tautology-theatre`](./tautology-theatre.md) | Critical | per-test |
+| [`deliverable-fossils`](./deliverable-fossils.md) | High | per-test, cross-suite |
+| [`implementation-coupled`](./implementation-coupled.md) | High | per-test |
+| [`over-specified-mock`](./over-specified-mock.md) | High | per-test |
+| [`pseudo-tested`](./pseudo-tested.md) | High | per-test |
+| [`semantic-redundancy`](./semantic-redundancy.md) | High | cross-suite |
+| [`vacuous-assertion`](./vacuous-assertion.md) | High | per-test |
+| [`conditional-logic`](./conditional-logic.md) | Medium | per-test |
+| [`monolithic-test-file`](./monolithic-test-file.md) | Medium | per-file |
+| [`naming-lies`](./naming-lies.md) | Medium | per-test |
+| [`presentation-coupled`](./presentation-coupled.md) | Medium | per-test |
+| [`shared-state`](./shared-state.md) | Medium | per-file |
+| [`wrong-level`](./wrong-level.md) | Medium | cross-suite |
+| [`mystery-guest`](./mystery-guest.md) | Low | per-test |
+| [`rotten-green`](./rotten-green.md) | Low | per-test |
+<!-- END: taxonomy-index -->
 
 **Severity** is a relative-harm/safety hint: how bad the smell is for the suite, weighted by how safe the canonical fix is. Critical smells can usually be deleted outright because they were killing no mutants. Lower severities need transforms and correspondingly more reviewer attention. No severity is a mandate to act; it is input to prioritization.
 
