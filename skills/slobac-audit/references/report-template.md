@@ -18,13 +18,7 @@ Write to `./slobac-audit.md` in the operator's current working directory. If the
 
 ## Summary
 
-<One paragraph. Total finding count, broken down per smell. Any in-scope smell
-with zero findings gets an explicit "No findings for scope <slug>" line — the
-audit does not silently skip a requested smell. Also state the orchestration
-shape: how many batch assessors ran, the per-batch input + output budgets and
-which one was binding, whether the Step 6.5 integrity gate passed cleanly (or
-required a retry / halted), and — if the cross-suite assessor ran — the
-behavior-summary richness tier it consumed (`full`, `standard`, or `compact`).>
+<One paragraph. Total finding count, broken down per smell. Any in-scope smell with zero findings gets an explicit "No findings for scope <slug>" line — the audit does not silently skip a requested smell. Also state the orchestration shape: how many batch assessors ran, the per-batch input + output budgets and which one was binding, whether the Step 6.5 integrity gate passed cleanly (or required a retry / halted), and — if the cross-suite assessor ran — the behavior-summary richness tier it consumed (`full`, `standard`, or `compact`).>
 
 ## Findings
 
@@ -36,27 +30,15 @@ behavior-summary richness tier it consumed (`full`, `standard`, or `compact`).>
 - **Prescribed remediation:** <Concrete next action. For naming-lies, name the fix arm explicitly (rename / strengthen / investigate). For deliverable-fossils, name the phase (rename-only, or rename + regroup). Encode the *behavior* in any rename suggestion, not the fossil label.>
 - **Why this isn't a false positive:** <One sentence. The guard against the specific over-trigger this finding could be mistaken for. If no principled guard applies, the finding itself is suspect — reconsider before emitting.>
 
-<Repeat the finding block for every flagged test. If a test exhibits more than
-one in-scope smell, emit one finding block per smell — do not collapse. Each
-finding has its own remediation because each smell prescribes a different fix.>
+<Repeat the finding block for every flagged test. If a test exhibits more than one in-scope smell, emit one finding block per smell — do not collapse. Each finding has its own remediation because each smell prescribes a different fix.>
 
 ## Tests considered but not flagged
 
-<Always include this section. If the audit examined tests that looked
-smell-adjacent but were verified clean on closer reading, record one line per
-test: test location + one-sentence reason the audit decided not to flag. If no
-tests were considered and cleared, write `None.` This section is how the audit
-shows its work; it is how a future reviewer can disagree with the auditor
-without re-running it.>
+<Always include this section. If the audit examined tests that looked smell-adjacent but were verified clean on closer reading, record one line per test: test location + one-sentence reason the audit decided not to flag. If no tests were considered and cleared, write `None.` This section is how the audit shows its work; it is how a future reviewer can disagree with the auditor without re-running it.>
 
 ## Out-of-scope requests
 
-<Always include this section. If the operator named a smell slug the audit
-does not support (anything other than `deliverable-fossils`, `naming-lies`,
-`shared-state`, `monolithic-test-file`, `semantic-redundancy`, or
-`wrong-level`), name it here and state explicitly that it was not audited. Do
-not silently drop it; do not audit it anyway. If no out-of-scope slugs were
-requested, write `None.`>
+<Always include this section. If the operator named a smell slug the audit does not support (anything other than `deliverable-fossils`, `naming-lies`, `shared-state`, `monolithic-test-file`, `semantic-redundancy`, or `wrong-level`), name it here and state explicitly that it was not audited. Do not silently drop it; do not audit it anyway. If no out-of-scope slugs were requested, write `None.`>
 ~~~
 
 ## Field-level contracts
