@@ -91,9 +91,16 @@ Severity is a prioritization hint, not a mandate.
 
 ### After adding or editing an entry
 
-1. **Regenerate the taxonomy index.** Run `uv run python scripts/gen_taxonomy_index.py` from the repo root. This re-emits the slug / severity / detection-scope index in two places — between the `<!-- BEGIN: taxonomy-index -->` … `<!-- END: taxonomy-index -->` sentinels in `skills/slobac-audit/SKILL.md` (where the audit orchestrator consumes it) and in `skills/slobac-audit/references/docs/taxonomy/README.md` (human navigation). **Required whenever you add a slug, change a slug's `Severity`, or change a slug's `Detection Scope`.** CI runs the same generator and fails the PR on drift; regenerating locally first is the path of least resistance.
-2. Run `uv run properdocs build --strict` — must stay green.
-3. Verify all cross-links in the new entry resolve (`../principles/test-qualities.md#anchor`, `../principles/refactor-qualities.md#anchor`, `../principles/glossary.md#term`, sibling entries).
+1. **Regenerate the taxonomy index.** Run 
+	```bash
+	uv run python scripts/gen_taxonomy_index.py
+	```
+	from the repo root. **Required whenever you add a slug, change a slug's `Severity`, or change a slug's `Detection Scope`.** CI runs the same generator and fails the PR on drift; regenerating locally first is the path of least resistance.
+2. Run 
+	```bash
+	uv run properdocs build --strict
+	```
+	— must stay green.
 
 ## Skill architecture
 
