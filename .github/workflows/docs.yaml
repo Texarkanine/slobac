@@ -21,37 +21,11 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # PRs run the same check via ci.yml (avoids duplicate taxonomy+pytest runs).
+  # Release / manual deploy still gates on drift before Pages.
   taxonomy-index-drift:
-    name: Taxonomy index drift-check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup uv
-        uses: astral-sh/setup-uv@v8.0.0
-        with:
-          enable-cache: true
-
-      - name: Install dev dependencies
-        # --frozen: fail if uv.lock is out of date.
-        run: uv sync --group dev --frozen
-
-      - name: Regenerate taxonomy index
-        run: uv run python scripts/gen_taxonomy_index.py
-
-      - name: Verify no drift
-        run: |
-          if ! git diff --exit-code -- \
-              skills/slobac-audit/SKILL.md \
-              skills/slobac-audit/references/docs/taxonomy/README.md; then
-            echo "::error::Taxonomy index is out of date."
-            echo "Run 'uv run python scripts/gen_taxonomy_index.py' locally and commit the result."
-            exit 1
-          fi
-
-      - name: Run unit tests
-        run: uv run pytest
+    if: github.event_name != 'pull_request'
+    uses: ./.github/workflows/reusable-taxonomy-index-check.yml
 
   build:
     name: Build site
