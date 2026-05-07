@@ -1,10 +1,5 @@
-# `uv sync --group docs --frozen` + `properdocs build --strict`.
-#
-# Callers:
-# - ci.yml — strict build only (default: no artifact upload).
-# - docs.yaml — same build + upload artifact when deploying to Pages.
-
-name: Docs site build
+# Does the doc site build without errors?
+name: Documentation Site
 
 on:
   workflow_call:
@@ -17,7 +12,7 @@ on:
 
 jobs:
   build:
-    name: Build site
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

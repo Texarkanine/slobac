@@ -1,10 +1,6 @@
 # Regenerates the taxonomy index from canonical entry headers and fails if
-# committed SKILL.md / taxonomy README drift; then runs the Python unit suite.
-#
-# Callers: ci.yml (every PR + main push), docs.yaml (release / workflow_dispatch
-# only — not pull_request, to avoid duplicating the same job alongside ci.yml).
-
-name: Taxonomy index check
+# committed SKILL.md / taxonomy README drift
+name: Taxonomy
 
 on:
   workflow_call:
@@ -14,7 +10,7 @@ permissions:
 
 jobs:
   check:
-    name: Taxonomy index drift-check + pytest
+    name: Drift Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,6 +25,9 @@ jobs:
         # --frozen: fail if uv.lock is out of date vs pyproject.toml.
         run: uv sync --group dev --frozen
 
+      - name: Run unit tests
+        run: uv run pytest
+
       - name: Regenerate taxonomy index
         run: uv run python scripts/gen_taxonomy_index.py
 
@@ -41,6 +40,3 @@ jobs:
             echo "Run 'uv run python scripts/gen_taxonomy_index.py' locally and commit the result."
             exit 1
           fi
-
-      - name: Run unit tests
-        run: uv run pytest
