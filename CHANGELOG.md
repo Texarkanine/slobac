@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/Texarkanine/slobac/compare/v0.4.0...v0.4.1) (2026-05-08)
+
+
+### Bug Fixes
+
+* **docs:** ensure docsite root has a landing page ([751405b](https://github.com/Texarkanine/slobac/commit/751405bde872934c27ec276a6140651da9da291d))
+
 ## [0.4.0](https://github.com/Texarkanine/slobac/compare/v0.3.0...v0.4.0) (2026-05-07)
 
 
