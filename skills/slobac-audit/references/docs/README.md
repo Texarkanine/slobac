@@ -23,5 +23,5 @@ SLOBAC ships several things:
     - **[Taxonomy](taxonomy/README.md)** — the catalog of named failure modes, one entry per smell. Start with `taxonomy/README.md` for the curated reading order across the 15 entries; each entry is a standalone page you can jump to directly.
     - **[Glossary](principles/glossary.md)** — definitions and citations for terms the other pages rely on (mutation testing, kill-sets, tautology theatre, canonical location, etc.).
 2. Install the audit skill:
-    - **[Using the SLOBAC audit](using-slobac.md)** — instructions for installing and invoking the audit skill.
+    - **[Running the SLOBAC audit](using-slobac.md)** — instructions for installing and invoking the audit skill.
 3. Have your AI agents audit your test suite: `/slobac-audit` and it'll walk you through the process.
