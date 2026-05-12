@@ -15,6 +15,7 @@ Write to `./slobac-audit.md` in the operator's current working directory. If the
 - **Target suite root:** <path to the audited directory, as given to the skill>
 - **Audit date:** <ISO-8601 date, e.g. 2026-04-23>
 - **Suite manifest:** <scout-reported counts: N files, M chars, K tests>
+- **Workdir:** <path to the audit workdir, e.g. `.slobac/2026-05-12T18-30-45/` — contains per-batch result files for artifact traceability; omit this line only if the workdir was cleaned up>
 
 ## Summary
 

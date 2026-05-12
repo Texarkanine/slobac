@@ -1,6 +1,6 @@
 # Cross-Suite Assessor Workflow
 
-This is a subagent of the [audit orchestrator](../../SKILL.md). It receives the merged behavior summaries from all batch assessors, a set of in-scope cross-suite smell slugs, and tier conventions. It clusters summaries, performs targeted source reads, and emits cross-suite findings.
+This is a subagent of the [audit orchestrator](../../SKILL.md). It receives a list of batch result file paths, a set of in-scope cross-suite smell slugs, and tier conventions. It reads and merges behavior summaries from disk, clusters them, performs targeted source reads, and emits cross-suite findings.
 
 The cross-suite assessor operates on the compressed intermediate representation (behavior summaries) rather than re-reading the full suite. It only reads source code for candidate groups that clustering identifies — a targeted subset, not the full suite.
 
@@ -8,19 +8,32 @@ The cross-suite assessor operates on the compressed intermediate representation 
 
 The orchestrator provides these in the launch prompt:
 
-- **Behavior summaries** — the merged behavior summary table from all batch assessors (per the format in `../behavior-summary-format.md`).
+- **Batch result file paths** — list of absolute paths to the batch result files written by batch assessors (one file per batch, each containing Findings and Behavior Summaries sections).
 - **In-scope cross-suite smell slugs** — which cross-suite smells to evaluate (drawn from the taxonomy's `cross-suite` detection scope).
 - **Tier conventions** — the directory-based tier conventions detected by the scout.
 - **Suite root** — the target directory path (for context in findings).
 - **References path** — the absolute filesystem path to the `references/` directory, for resolving taxonomy entries at runtime.
+- **Behavior summary format** — the spec to follow for parsing and merging (loaded from `../behavior-summary-format.md`).
 
 ## Step 1 — load canonical smell definitions
 
 For each slug in the in-scope cross-suite smell list, read **`../docs/taxonomy/<slug>.md`** (relative to this file; at runtime, use the orchestrator-supplied absolute references path + `docs/taxonomy/<slug>.md`). This is the single source of truth for what the smell is, how to detect it, and what the common over-triggers are.
 
+## Step 1.5 — read and merge batch result files
+
+Read each batch result file from the paths provided by the orchestrator. From each file, extract the **Behavior Summaries** section (the table following the `## Behavior Summaries` heading).
+
+Merge the extracted tables into a single behavior summary table:
+
+1. Concatenate all rows from all batch files.
+2. Re-sort by file path (lexicographic), then by line number (ascending) within each file — per the ordering rule in the behavior summary format spec.
+3. If duplicate rows appear (same File + Line), keep the first occurrence.
+
+This merged table is the primary input for the clustering steps below.
+
 ## Step 2 — cluster behavior summaries
 
-For each in-scope cross-suite smell, analyze the behavior summary table to identify candidate groups:
+For each in-scope cross-suite smell, analyze the merged behavior summary table to identify candidate groups:
 
 ### For `semantic-redundancy`
 
@@ -73,7 +86,7 @@ Your final message back to the orchestrator contains:
 
 ### Consumed richness tier
 
-A single line — `Consumed richness: <full|standard|compact>` — naming the richness tier of the merged behavior-summary table the orchestrator handed you. The orchestrator transcribes this into the report's Summary line so a reviewer can downgrade their confidence on a `compact`-fed cross-suite pass (signal density is materially lower at `compact` than at `full`).
+A single line — `Consumed richness: <full|standard|compact>` — naming the richness tier of the behavior-summary tables you read and merged from the batch result files. The orchestrator transcribes this into the report's Summary line so a reviewer can downgrade their confidence on a `compact`-fed cross-suite pass (signal density is materially lower at `compact` than at `full`).
 
 ### Cross-Suite Findings
 

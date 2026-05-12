@@ -1,6 +1,6 @@
 # Batch Assessor Workflow
 
-This is a subagent of the [audit orchestrator](../../SKILL.md). It receives a list of test files, a set of in-scope smell slugs (per-test and per-file only), a summary richness level, and tier conventions. It reads each file fully, evaluates smells, and emits findings plus behavior summaries.
+This is a subagent of the [audit orchestrator](../../SKILL.md). It receives a list of test files, a set of in-scope smell slugs (per-test and per-file only), a summary richness level, tier conventions, and a workdir path. It reads each file fully, evaluates smells, writes findings and behavior summaries to disk, and returns metadata to the orchestrator.
 
 The batch assessor is the universal audit engine for per-test and per-file smells. For small suites, the orchestrator launches one batch assessor with all files. For large suites, it launches N batch assessors in parallel, each with a partition of files.
 
@@ -14,6 +14,8 @@ The orchestrator provides these in the launch prompt:
 - **Tier conventions** — the directory-based tier conventions detected by the scout (e.g., "`unit/` directory → unit tier").
 - **Behavior summary format** — the spec to follow (loaded from `../behavior-summary-format.md`).
 - **References path** — the absolute filesystem path to the `references/` directory, for resolving taxonomy entries and format specs at runtime.
+- **Workdir path** — the absolute filesystem path to the audit run's working directory (e.g., `.slobac/<run-id>/`). The batch assessor writes its results file here.
+- **Batch ID** — a short identifier for this batch (e.g., `batch-1`, `batch-2`), used to name the output file.
 
 ## Step 1 — load canonical smell definitions
 
@@ -68,9 +70,9 @@ The **Tier** field is inferred from the file's directory path using the tier con
 
 The **Smells Found** field lists slugs of per-test smells detected for this test (from Step 3b), or `—` if none.
 
-## Step 4 — emit results
+## Step 4 — write results to disk
 
-Your final message back to the orchestrator contains two sections:
+Write a single markdown file to `<workdir>/batch-<id>.md` containing two sections:
 
 ### Findings
 
@@ -82,9 +84,20 @@ If no findings were produced for any in-scope smell, include: "No findings for s
 
 The complete behavior summary table for all tests in the batch, in the format defined by the behavior summary format spec. Rows are ordered by file path (lexicographic), then by line number (ascending) within each file.
 
+## Step 5 — return metadata to orchestrator
+
+Your final message back to the orchestrator is **metadata only** — the full results live in the file written in Step 4. Return exactly these fields:
+
+- **`path`** — the absolute path to the batch result file written in Step 4.
+- **`row_count`** — the number of behavior-summary rows in the file (i.e., the number of tests summarized).
+- **`finding_count`** — the number of findings emitted in the Findings section.
+
+Do not include findings or behavior-summary tables inline. The orchestrator does not read them from your response — it passes the file path to downstream consumers.
+
 ## Constraints
 
-- **Read-only.** This workflow does not modify test code.
+- **Read-only with respect to the audited codebase.** This workflow does not modify test code. Writing audit artifacts to the workdir is required and is not a violation of this constraint.
 - **Per-test and per-file smells only.** Cross-suite smells (`semantic-redundancy`, `wrong-level`, etc.) are handled by the cross-suite assessor, not this workflow. If you see cross-suite signals while reading, note them in the Smells Found column of behavior summaries (append `?` for suspected cross-suite smells) but do not emit findings for them.
 - **Canonical entries are the single source of truth.** Detection logic comes from the canonical taxonomy entries, not from paraphrased or memorized definitions.
 - **Finding quality over quantity.** A weak finding is worse than a missed finding. If any of the five fields cannot be articulated cleanly, reconsider before emitting.
+- **Workdir write access is required.** The batch assessor must be able to write to the workdir path provided by the orchestrator. If the write fails, report the error to the orchestrator — do not fall back to inline output.

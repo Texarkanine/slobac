@@ -24,3 +24,14 @@ Make the slobac-audit skill's intermediate representation file-first: batch asse
     - No conflicts, missed dependencies, or convention violations found
 * Insights
     - Batch file shape is implicitly defined by existing format specs; no new format spec file needed
+
+## 2026-05-12 - BUILD - COMPLETE
+
+* Work completed
+    - All 10 implementation steps completed, built to plan with no deviations
+    - 5 files modified: `batch.md`, `cross-suite.md`, `behavior-summary-format.md`, `SKILL.md`, `report-template.md`
+    - Cross-file consistency review passed: all cross-references verified, no stale inline-merge references
+* Decisions made
+    - Batch assessor launch changed from "readonly subagent" to "subagent" (needs workdir write access); clarified "read-only with respect to the audited codebase"
+    - Cross-suite assessor's "Consumed richness" line updated to reflect it reads from files, not from orchestrator handoff
+    - SKILL.md Step 8 now explicitly populates the Workdir line in the report header
