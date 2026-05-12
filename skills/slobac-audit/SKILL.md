@@ -61,9 +61,9 @@ Read `references/subagents/scout.md`. Launch a readonly subagent whose task is t
 - The absolute `references/` path resolved above.
 - The content of `references/suite-manifest-format.md` (the output format spec).
 
-The scout will enumerate test files, measure their sizes, detect ecosystem and tier conventions, and return a **Suite Manifest**. The orchestrator copies the scout's headline counts (file count, total chars, total tests) into the report's `Suite manifest` summary line in Step 8 — this is how a reviewer audits whether scout actually ran.
+The scout will enumerate test files, measure their sizes, detect ecosystem and tier conventions, and return a **Suite Manifest**. The orchestrator copies the scout's headline counts (file count, total chars, total tests) into the report's `Suite manifest` summary line in Step 10 — this is how a reviewer audits whether scout actually ran.
 
-## Step 3.5 — establish audit workdir
+## Step 4 — establish audit workdir
 
 Create a working directory for this audit run's intermediate artifacts (batch result files). The workdir persists on both success and failure so the operator can inspect per-batch artifacts post-hoc.
 
@@ -79,11 +79,11 @@ If the operator provided a `--workdir` path in their invocation, use that path i
 
 Verify the workdir is writable by creating a small test file and deleting it. If the write fails, **halt with a structured error** — do not fall back to inline IR. The error must name the path and the failure reason so the operator can fix permissions.
 
-## Step 4 — partition and configure batches
+## Step 5 — partition and configure batches
 
 Using the Suite Manifest from Step 3:
 
-### 4a. Context budget determination
+### 5a. Context budget determination
 
 Determine the content budget per batch:
 
@@ -93,7 +93,7 @@ Determine the content budget per batch:
 
 Content budget per batch = total context budget × 0.60 (reserve 40% for smell definitions, instructions, and reasoning).
 
-### 4b. Output budget per batch
+### 5b. Output budget per batch
 
 The 60% content budget governs **input** (file source + smell definitions + instructions). Subagent **output** has its own ceiling — most models cap a single response well below their input window, and the batch assessor's output is dominated by the behavior-summary table whose size scales with test count × richness.
 
@@ -109,13 +109,13 @@ These caps reserve headroom for the findings section above the table; tune downw
 
 This guard prevents the truncated-batch failure mode observed in post-release auto-model runs (`full` richness × 379 tests ≈ 190k chars of output in one subagent message → silent table truncation → empty cross-suite findings on suites that obviously contain redundancies).
 
-### 4c. Partition files
+### 5c. Partition files
 
-If total chars from the Suite Manifest fits in one input content budget **and** total test count fits under the output cap from Step 4b: **1 batch, all files.** This is the small-suite degenerate case — functionally identical to a single-agent audit, but executed via the batch assessor skill for consistency.
+If total chars from the Suite Manifest fits in one input content budget **and** total test count fits under the output cap from Step 5b: **1 batch, all files.** This is the small-suite degenerate case — functionally identical to a single-agent audit, but executed via the batch assessor skill for consistency.
 
 If either budget is exceeded: partition files into N batches using greedy bin-packing by character count, with the binding constraint being whichever budget — input chars or output tests — yields **more** batches. Keep files from the same directory together when possible (directory cohesion aids per-file smells like `shared-state`).
 
-### 4d. Compute summary richness
+### 5d. Compute summary richness
 
 Determine the behavior summary richness level based on total test count vs. the cross-suite assessor's context budget:
 
@@ -129,17 +129,17 @@ These thresholds are approximate and shift based on average test length. The goa
 
 If no cross-suite smells are in scope, richness level is irrelevant (summaries won't be consumed by a cross-suite assessor), but batch assessors still produce them for completeness.
 
-## Step 5 — launch batch assessors
+## Step 6 — launch batch assessors
 
 Read `references/subagents/batch.md`. For each batch (1 for small suites, N for large suites), launch a subagent whose task is the content of that file, supplemented with:
 
 - The file list for this batch.
 - The per-test / per-file smell slugs from Step 2.
-- The summary richness level from Step 4d.
+- The summary richness level from Step 5d.
 - The tier conventions from the Suite Manifest.
 - The absolute `references/` path (resolved in Step 3).
 - The content of `references/behavior-summary-format.md` (the summary output format spec).
-- The workdir path from Step 3.5.
+- The workdir path from Step 4.
 - The batch ID (e.g., `batch-1`, `batch-2`, …).
 
 Batch assessors must have **write access** to the workdir. They are read-only with respect to the audited codebase, but writing audit artifacts to the workdir is a required capability — not a violation of the read-only constraint. If the runtime environment cannot grant write access (e.g., a strict readonly sandbox with no filesystem exceptions), **halt and tell the operator why** — do not silently fall back to inline output.
@@ -151,7 +151,7 @@ For multiple batches, launch them **in parallel** (each as a separate subagent).
 - If a batch assessor returns garbage (unparseable, missing required sections): retry once with the same inputs. If it fails again, skip the batch and note in the report which files were not assessed.
 - If a batch assessor times out: skip and note. Do not block the entire audit on one batch.
 
-## Step 6 — collect batch metadata
+## Step 7 — collect batch metadata
 
 Collect the metadata returned by each batch assessor: `{path, row_count, finding_count}`. The orchestrator does **not** read the batch result files — the full findings and behavior summaries live on disk, not in the orchestrator's context. The orchestrator works only with pointers and counts.
 
@@ -163,28 +163,28 @@ Build a batch manifest:
 | batch-2  | `<workdir>/batch-2.md` | N | M |
 | …        | …         | …         | …             |
 
-## Step 6.5 — verify behavior-summary integrity
+## Step 8 — verify behavior-summary integrity
 
 Before any cross-suite work, validate that the batch results on disk actually represent the suite. Compare:
 
-- `total_rows` — sum of `row_count` from all batch metadata entries collected in Step 6.
+- `total_rows` — sum of `row_count` from all batch metadata entries collected in Step 7.
 - `expected_tests` — total `Test count` from the scout's Suite Manifest (Step 3).
 
 Apply this gate:
 
-- `total_rows ≥ expected_tests × 0.95` → proceed to Step 7.
+- `total_rows ≥ expected_tests × 0.95` → proceed to Step 9.
 - `0 < total_rows < expected_tests × 0.95` → identify the batch whose missing rows account for the gap and retry **that batch** (idempotent — same file list, same parameters, same workdir path and batch ID so it overwrites the prior file). On a second under-budget result, **halt with a structured error** that names the batch and the gap; do not proceed to cross-suite. Note the gap in the eventual report under "Out-of-scope requests" with an explicit "audit incomplete" line.
 - `total_rows == 0` → halt with the same structured error.
 
 This guard prevents the silent-failure mode observed in post-release auto-model runs: a truncated batch produced an incomplete IR; cross-suite ran against the partial data and emitted "no findings" for `semantic-redundancy` on a suite that obviously contains redundancies. **Never feed a partial IR to cross-suite.**
 
-## Step 7 — launch cross-suite assessor (if needed)
+## Step 9 — launch cross-suite assessor (if needed)
 
-If the cross-suite smell set from Step 2 is **non-empty** and the integrity gate from Step 6.5 passed:
+If the cross-suite smell set from Step 2 is **non-empty** and the integrity gate from Step 8 passed:
 
 Read `references/subagents/cross-suite.md`. Launch a readonly subagent whose task is the content of that file, supplemented with:
 
-- The list of batch result file paths from the batch manifest (Step 6).
+- The list of batch result file paths from the batch manifest (Step 7).
 - The cross-suite smell slugs.
 - The tier conventions from the Suite Manifest.
 - The suite root path.
@@ -193,11 +193,11 @@ Read `references/subagents/cross-suite.md`. Launch a readonly subagent whose tas
 
 If the cross-suite smell set is **empty**: skip this step entirely. The batch findings are the complete result.
 
-## Step 8 — synthesize report
+## Step 10 — synthesize report
 
 Merge all findings:
 - Batch assessor findings (per-test + per-file smells) — read the Findings sections from each batch result file in the workdir. This is a targeted read of a known section; the full behavior-summary tables in those files are not loaded into the orchestrator's context.
-- Cross-suite assessor findings (if Step 7 ran) — returned inline by the cross-suite assessor.
+- Cross-suite assessor findings (if Step 9 ran) — returned inline by the cross-suite assessor.
 
 Deduplicate: if the same test appears in both batch and cross-suite findings for the same smell slug, keep the more detailed finding (cross-suite findings typically have richer rationale for cross-suite smells).
 
@@ -207,12 +207,12 @@ Write the report using the shape in [`references/report-template.md`](./referenc
 - If the operator named a different path, use that.
 - If a file already exists at the chosen path, emit at `slobac-audit-2.md`, `slobac-audit-3.md`, … — do not clobber a prior report.
 - Populate the `Suite manifest` line in the report header with the scout's headline counts (file count, total chars, total tests). This is the orchestrator's contract for letting a reviewer audit whether scout actually ran.
-- Populate the `Workdir` line in the report header with the workdir path from Step 3.5. This enables tracing findings back to per-batch artifacts.
+- Populate the `Workdir` line in the report header with the workdir path from Step 4. This enables tracing findings back to per-batch artifacts.
 - Include a "Tests considered but not flagged" section from batch assessor results.
 - Include an explicit "No findings for scope `<slug>`" line when a requested in-scope smell produces zero findings.
-- In the Summary paragraph, note the orchestration shape per the contract in `references/report-template.md`: how many batch assessors ran, which budget (input chars vs output tests) was binding, whether the Step 6.5 integrity gate passed cleanly (or required a retry, or halted), and — if the cross-suite assessor ran — the richness tier it declared in its `Consumed richness` line.
+- In the Summary paragraph, note the orchestration shape per the contract in `references/report-template.md`: how many batch assessors ran, which budget (input chars vs output tests) was binding, whether the Step 8 integrity gate passed cleanly (or required a retry, or halted), and — if the cross-suite assessor ran — the richness tier it declared in its `Consumed richness` line.
 
-## Step 9 — close
+## Step 11 — close
 
 Tell the operator where the report was written and which scopes were covered. Do not summarize the findings in chat — the report is the deliverable. If unsupported slugs were requested, remind the operator which were skipped and why.
 
