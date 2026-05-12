@@ -55,11 +55,4 @@ The orchestrator does not read or inline the behavior summary tables. It collect
 
 ## Consumption by Cross-Suite Assessor
 
-The cross-suite assessor receives batch result file paths from the orchestrator and reads the files itself. Its workflow:
-
-1. **Read and merge** — read each batch result file, extract the Behavior Summaries section, merge into a single table sorted by the ordering rule above.
-2. **Cluster** — group rows by semantic similarity of the Behavior field (LLM judgment, not embedding API).
-3. **Filter** — identify candidate groups where ≥2 rows from different files describe the same observable behavior.
-4. **Targeted read** — for each candidate group, read the source of just those tests (using File + Line as pointers).
-5. **Confirm or reject** — with source in hand, determine whether the overlap is real (`semantic-redundancy`) or intentional (contract guard, different knowledge protected).
-6. **Tier analysis** — compare each row's Tier field against its actual behavior to detect `wrong-level`.
+The cross-suite assessor receives batch result file paths from the orchestrator and reads the files itself. It extracts the Behavior Summaries sections, merges them into a single sorted table, and uses that table as the primary input for clustering and candidate identification. See `subagents/cross-suite.md` for the operational procedure.

@@ -19,7 +19,7 @@ The orchestrator provides these in the launch prompt:
 
 For each slug in the in-scope cross-suite smell list, read **`../docs/taxonomy/<slug>.md`** (relative to this file; at runtime, use the orchestrator-supplied absolute references path + `docs/taxonomy/<slug>.md`). This is the single source of truth for what the smell is, how to detect it, and what the common over-triggers are.
 
-## Step 1.5 — read and merge batch result files
+## Step 2 — read and merge batch result files
 
 Read each batch result file from the paths provided by the orchestrator. From each file, extract the **Behavior Summaries** section (the table following the `## Behavior Summaries` heading).
 
@@ -31,7 +31,7 @@ Merge the extracted tables into a single behavior summary table:
 
 This merged table is the primary input for the clustering steps below.
 
-## Step 2 — cluster behavior summaries
+## Step 3 — cluster behavior summaries
 
 For each in-scope cross-suite smell, analyze the merged behavior summary table to identify candidate groups:
 
@@ -56,16 +56,16 @@ For each in-scope cross-suite smell, analyze the merged behavior summary table t
 2. Compare the current file grouping against the behavior clusters. If tests that belong to the same product capability are scattered across unrelated files, they are candidates for regrouping.
 3. This is a Phase B detection that builds on Phase A (rename, handled by batch assessors). Only flag if regrouping would meaningfully improve suite navigation.
 
-## Step 3 — targeted source reads
+## Step 4 — targeted source reads
 
-For each candidate group identified in Step 2:
+For each candidate group identified in Step 3:
 
 1. Use the **File** and **Line** fields from the behavior summaries as pointers.
 2. Read only the source of the candidate tests — not the full files, not the full suite. Read enough context around each test (the test function plus its immediate setup/teardown and imports) to confirm or reject the finding.
 3. For `semantic-redundancy`: verify that the tests truly exercise the same observable behavior, not just similar-looking code. Check whether the overlap is intentional (contract guard, different knowledge protected) or accidental.
 4. For `wrong-level`: verify that the actual test code matches what the behavior summary described. Check imports and function calls to confirm the tier mismatch.
 
-## Step 4 — confirm or reject findings
+## Step 5 — confirm or reject findings
 
 For each candidate:
 
@@ -80,7 +80,7 @@ For confirmed findings, formulate the five finding fields:
 - **Prescribed remediation:** concrete action per the canonical entry's Prescribed Fix. For `semantic-redundancy`, name the canonical location and explain why it's canonical. For `wrong-level`, name the target tier and why.
 - **Why this isn't a false positive:** one sentence naming the over-trigger and why this case isn't it.
 
-## Step 5 — emit results
+## Step 6 — emit results
 
 Your final message back to the orchestrator contains:
 
@@ -90,7 +90,7 @@ A single line — `Consumed richness: <full|standard|compact>` — naming the ri
 
 ### Cross-Suite Findings
 
-All confirmed findings from Step 4, in the five-field format. Group by smell slug, then by file path.
+All confirmed findings from Step 5, in the five-field format. Group by smell slug, then by file path.
 
 If no findings were produced for any in-scope smell, include: "No cross-suite findings for scope `<slug>`."
 
