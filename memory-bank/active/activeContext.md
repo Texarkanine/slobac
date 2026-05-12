@@ -1,11 +1,12 @@
 # Active Context
 
 ## Current Task: file-first-ir
-**Phase:** QA - COMPLETE
+**Phase:** REFLECT - COMPLETE
 
 ## What Was Done
-- QA review passed: all 8 acceptance criteria verified, no KISS/DRY/YAGNI/completeness/regression/integrity/documentation issues found
-- No fixes needed — built to plan with no deviations
+- Reflection document written at `memory-bank/active/reflection/reflection-file-first-ir.md`
+- Persistent files checked — no updates needed (file-first IR is internal architecture, not system-level)
+- Key insight: "readonly" constraint was doing double duty (codebase safety vs sandbox mode); file-first IR forced separating these concerns
 
 ## Next Step
-- Reflect phase will now run automatically
+- Run `/niko-archive` to create the archive document and finalize the current project

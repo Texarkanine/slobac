@@ -42,3 +42,11 @@ Make the slobac-audit skill's intermediate representation file-first: batch asse
     - All 8 acceptance criteria verified against implementation
     - KISS/DRY/YAGNI/completeness/regression/integrity/documentation checks passed
     - No fixes needed — built to plan
+
+## 2026-05-12 - REFLECT - COMPLETE
+
+* Work completed
+    - Reflection document written
+    - Persistent files reconciled — no updates needed
+* Insights
+    - "Readonly" constraint was doing double duty (codebase safety vs sandbox mode); file-first IR forced separating these concerns explicitly
