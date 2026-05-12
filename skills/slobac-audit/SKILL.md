@@ -2,6 +2,7 @@
 name: slobac-audit
 description: Audit a test suite for common test smells based on the SLOBAC manifesto.
 license: "Multiple — see LICENSES/ and REUSE.toml"
+enable-model-invocation: false
 ---
 
 # Test Suite Audit Workflow
