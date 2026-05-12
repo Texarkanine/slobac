@@ -184,4 +184,4 @@ No new technology — validation not required. All changes are to markdown contr
 - [x] Technology validation complete
 - [x] Preflight
 - [x] Build
-- [ ] QA
+- [x] QA
