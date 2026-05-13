@@ -4,7 +4,7 @@
 **In-scope smells:** `deliverable-fossils`
 **Expected finding count:** 4
 
-Shape mirrors the audit report template. Each finding below must appear in the emitted `slobac-audit.md` with equivalent content; phrasing need not be byte-identical, but the test location, smell slug, remediation path, and rationale anchor must match.
+Shape mirrors the audit report template. Each finding below must appear in the emitted `.slobac/audit.md` with equivalent content; phrasing need not be byte-identical, but the test location, smell slug, remediation path, and rationale anchor must match.
 
 ## Findings
 

@@ -49,14 +49,10 @@ Rows are ordered by file path (lexicographic), then by line number (ascending) w
 
 ## Merge Semantics
 
-When the orchestrator collects summaries from multiple batch assessors, it concatenates the tables and re-sorts by the ordering rule above. Duplicate rows (same File + Line) are not expected — the orchestrator's partitioning assigns each file to exactly one batch. If duplicates occur due to an error, the orchestrator keeps the first occurrence and logs a warning.
+Each batch assessor writes its behavior summary table to a file in the audit workdir (`<workdir>/batch-<id>.md`). The **cross-suite assessor** — not the orchestrator — owns the merge: it reads all batch result files, extracts the Behavior Summaries sections, concatenates the tables, and re-sorts by the ordering rule above. Duplicate rows (same File + Line) are not expected — the orchestrator's partitioning assigns each file to exactly one batch. If duplicates occur due to an error, the cross-suite assessor keeps the first occurrence.
+
+The orchestrator does not read or inline the behavior summary tables. It collects metadata (`{path, row_count, finding_count}`) from each batch assessor's response and passes the list of file paths to the cross-suite assessor.
 
 ## Consumption by Cross-Suite Assessor
 
-The cross-suite assessor receives the merged behavior summary table as its primary input. Its workflow:
-
-1. **Cluster** — group rows by semantic similarity of the Behavior field (LLM judgment, not embedding API).
-2. **Filter** — identify candidate groups where ≥2 rows from different files describe the same observable behavior.
-3. **Targeted read** — for each candidate group, read the source of just those tests (using File + Line as pointers).
-4. **Confirm or reject** — with source in hand, determine whether the overlap is real (`semantic-redundancy`) or intentional (contract guard, different knowledge protected).
-5. **Tier analysis** — compare each row's Tier field against its actual behavior to detect `wrong-level`.
+The cross-suite assessor receives batch result file paths from the orchestrator and reads the files itself. It extracts the Behavior Summaries sections, merges them into a single sorted table, and uses that table as the primary input for clustering and candidate identification. See `subagents/cross-suite.md` for the operational procedure.

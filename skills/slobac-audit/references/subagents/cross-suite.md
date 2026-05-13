@@ -1,6 +1,6 @@
 # Cross-Suite Assessor Workflow
 
-This is a subagent of the [audit orchestrator](../../SKILL.md). It receives the merged behavior summaries from all batch assessors, a set of in-scope cross-suite smell slugs, and tier conventions. It clusters summaries, performs targeted source reads, and emits cross-suite findings.
+This is a subagent of the [audit orchestrator](../../SKILL.md). It receives a list of batch result file paths, a set of in-scope cross-suite smell slugs, and tier conventions. It reads and merges behavior summaries from disk, clusters them, performs targeted source reads, and emits cross-suite findings.
 
 The cross-suite assessor operates on the compressed intermediate representation (behavior summaries) rather than re-reading the full suite. It only reads source code for candidate groups that clustering identifies — a targeted subset, not the full suite.
 
@@ -8,19 +8,32 @@ The cross-suite assessor operates on the compressed intermediate representation 
 
 The orchestrator provides these in the launch prompt:
 
-- **Behavior summaries** — the merged behavior summary table from all batch assessors (per the format in `../behavior-summary-format.md`).
+- **Batch result file paths** — list of absolute paths to the batch result files written by batch assessors (one file per batch, each containing Findings and Behavior Summaries sections).
 - **In-scope cross-suite smell slugs** — which cross-suite smells to evaluate (drawn from the taxonomy's `cross-suite` detection scope).
 - **Tier conventions** — the directory-based tier conventions detected by the scout.
 - **Suite root** — the target directory path (for context in findings).
 - **References path** — the absolute filesystem path to the `references/` directory, for resolving taxonomy entries at runtime.
+- **Behavior summary format** — the spec to follow for parsing and merging (loaded from `../behavior-summary-format.md`).
 
 ## Step 1 — load canonical smell definitions
 
 For each slug in the in-scope cross-suite smell list, read **`../docs/taxonomy/<slug>.md`** (relative to this file; at runtime, use the orchestrator-supplied absolute references path + `docs/taxonomy/<slug>.md`). This is the single source of truth for what the smell is, how to detect it, and what the common over-triggers are.
 
-## Step 2 — cluster behavior summaries
+## Step 2 — read and merge batch result files
 
-For each in-scope cross-suite smell, analyze the behavior summary table to identify candidate groups:
+Read each batch result file from the paths provided by the orchestrator. From each file, extract the **Behavior Summaries** section (the table following the `## Behavior Summaries` heading).
+
+Merge the extracted tables into a single behavior summary table:
+
+1. Concatenate all rows from all batch files.
+2. Re-sort by file path (lexicographic), then by line number (ascending) within each file — per the ordering rule in the behavior summary format spec.
+3. If duplicate rows appear (same File + Line), keep the first occurrence.
+
+This merged table is the primary input for the clustering steps below.
+
+## Step 3 — cluster behavior summaries
+
+For each in-scope cross-suite smell, analyze the merged behavior summary table to identify candidate groups:
 
 ### For `semantic-redundancy`
 
@@ -43,16 +56,16 @@ For each in-scope cross-suite smell, analyze the behavior summary table to ident
 2. Compare the current file grouping against the behavior clusters. If tests that belong to the same product capability are scattered across unrelated files, they are candidates for regrouping.
 3. This is a Phase B detection that builds on Phase A (rename, handled by batch assessors). Only flag if regrouping would meaningfully improve suite navigation.
 
-## Step 3 — targeted source reads
+## Step 4 — targeted source reads
 
-For each candidate group identified in Step 2:
+For each candidate group identified in Step 3:
 
 1. Use the **File** and **Line** fields from the behavior summaries as pointers.
 2. Read only the source of the candidate tests — not the full files, not the full suite. Read enough context around each test (the test function plus its immediate setup/teardown and imports) to confirm or reject the finding.
 3. For `semantic-redundancy`: verify that the tests truly exercise the same observable behavior, not just similar-looking code. Check whether the overlap is intentional (contract guard, different knowledge protected) or accidental.
 4. For `wrong-level`: verify that the actual test code matches what the behavior summary described. Check imports and function calls to confirm the tier mismatch.
 
-## Step 4 — confirm or reject findings
+## Step 5 — confirm or reject findings
 
 For each candidate:
 
@@ -67,17 +80,17 @@ For confirmed findings, formulate the five finding fields:
 - **Prescribed remediation:** concrete action per the canonical entry's Prescribed Fix. For `semantic-redundancy`, name the canonical location and explain why it's canonical. For `wrong-level`, name the target tier and why.
 - **Why this isn't a false positive:** one sentence naming the over-trigger and why this case isn't it.
 
-## Step 5 — emit results
+## Step 6 — emit results
 
 Your final message back to the orchestrator contains:
 
 ### Consumed richness tier
 
-A single line — `Consumed richness: <full|standard|compact>` — naming the richness tier of the merged behavior-summary table the orchestrator handed you. The orchestrator transcribes this into the report's Summary line so a reviewer can downgrade their confidence on a `compact`-fed cross-suite pass (signal density is materially lower at `compact` than at `full`).
+A single line — `Consumed richness: <full|standard|compact>` — naming the richness tier of the behavior-summary tables you read and merged from the batch result files. The orchestrator transcribes this into the report's Summary line so a reviewer can downgrade their confidence on a `compact`-fed cross-suite pass (signal density is materially lower at `compact` than at `full`).
 
 ### Cross-Suite Findings
 
-All confirmed findings from Step 4, in the five-field format. Group by smell slug, then by file path.
+All confirmed findings from Step 5, in the five-field format. Group by smell slug, then by file path.
 
 If no findings were produced for any in-scope smell, include: "No cross-suite findings for scope `<slug>`."
 

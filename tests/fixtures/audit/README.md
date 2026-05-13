@@ -37,7 +37,7 @@ Scenarios added for taxonomy parity (Phase 3):
 
 ## Validation mode
 
-Phase 1 validation is **manual**. The operator invokes the audit skill against a fixture path in Cursor or Claude Code, reads the emitted `slobac-audit.md`, and compares it to `expected-findings.md` for that scenario. A scripted eval harness (golden-file or structured-pattern matching) is deliberately deferred to Phase 2 — Phase 1 is proving the shape works, not proving the detection is byte-stable.
+Phase 1 validation is **manual**. The operator invokes the audit skill against a fixture path in Cursor or Claude Code, reads the emitted `.slobac/audit.md`, and compares it to `expected-findings.md` for that scenario. A scripted eval harness (golden-file or structured-pattern matching) is deliberately deferred to Phase 2 — Phase 1 is proving the shape works, not proving the detection is byte-stable.
 
 ## Polyglot note
 

@@ -4,7 +4,7 @@ The audit skill emits its report as markdown in this shape. Fill every angle-bra
 
 ## Default emission path
 
-Write to `./slobac-audit.md` in the operator's current working directory. If the operator names a different path in their invocation, use that path. If a file already exists at the chosen path, append a `-2`, `-3`, … suffix to avoid clobbering prior reports — do not overwrite.
+Write to `<workdir>/audit.md` — in the audit workdir alongside the per-batch result files. If the operator names a different path in their invocation, use that path. If a file already exists at the chosen path, append a `-2`, `-3`, … suffix to avoid clobbering prior reports — do not overwrite.
 
 ## Template
 
@@ -18,7 +18,7 @@ Write to `./slobac-audit.md` in the operator's current working directory. If the
 
 ## Summary
 
-<One paragraph. Total finding count, broken down per smell. Any in-scope smell with zero findings gets an explicit "No findings for scope <slug>" line — the audit does not silently skip a requested smell. Also state the orchestration shape: how many batch assessors ran, the per-batch input + output budgets and which one was binding, whether the Step 6.5 integrity gate passed cleanly (or required a retry / halted), and — if the cross-suite assessor ran — the behavior-summary richness tier it consumed (`full`, `standard`, or `compact`).>
+<One paragraph. Total finding count, broken down per smell. Any in-scope smell with zero findings gets an explicit "No findings for scope <slug>" line — the audit does not silently skip a requested smell. Also state the orchestration shape: how many batch assessors ran, the per-batch input + output budgets and which one was binding, whether the integrity gate passed cleanly (or required a retry / halted), and — if the cross-suite assessor ran — the behavior-summary richness tier it consumed (`full`, `standard`, or `compact`).>
 
 ## Findings
 
