@@ -74,15 +74,17 @@ The **Smells Found** field lists slugs of per-test smells detected for this test
 
 Write a single markdown file to `<workdir>/batch-<id>.md` containing two sections:
 
-### Findings
+~~~markdown
+## Findings
 
 All findings from Steps 3b and 3c, in the five-field format. Group by file, ordered by file path then line number.
 
 If no findings were produced for any in-scope smell, include: "No findings for scope `<slug>`."
 
-### Behavior Summaries
+## Behavior Summaries
 
 The complete behavior summary table for all tests in the batch, in the format defined by the behavior summary format spec. Rows are ordered by file path (lexicographic), then by line number (ascending) within each file.
+~~~
 
 ## Step 5 — return metadata to orchestrator
 
