@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/Texarkanine/slobac/compare/v0.4.1...v0.4.2) (2026-05-13)
+
+
+### Bug Fixes
+
+* **slobac-audit:** file-first IR to survive context compaction ([#21](https://github.com/Texarkanine/slobac/issues/21)) ([df56de5](https://github.com/Texarkanine/slobac/commit/df56de57eb9f0f7518622c972e1f8995c24b733e))
+
 ## [0.4.1](https://github.com/Texarkanine/slobac/compare/v0.4.0...v0.4.1) (2026-05-08)
 
 
