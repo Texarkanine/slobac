@@ -2,7 +2,7 @@
   "name": "slobac",
   "displayName": "SLOBAC",
   "description": "Test-suite audit: find and fix smells in mature test suites.",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "author": {
     "name": "Texarkanine"
   },
