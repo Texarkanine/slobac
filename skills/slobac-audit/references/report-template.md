@@ -4,7 +4,7 @@ The audit skill emits its report as markdown in this shape. Fill every angle-bra
 
 ## Default emission path
 
-Write to `./.slobac/audit.md` in the operator's current working directory — alongside the per-batch artifacts in the audit workdir. If the operator names a different path in their invocation, use that path. If a file already exists at the chosen path, append a `-2`, `-3`, … suffix to avoid clobbering prior reports — do not overwrite.
+Write to `<workdir>/audit.md` — in the audit workdir alongside the per-batch result files. If the operator names a different path in their invocation, use that path. If a file already exists at the chosen path, append a `-2`, `-3`, … suffix to avoid clobbering prior reports — do not overwrite.
 
 ## Template
 
@@ -15,7 +15,6 @@ Write to `./.slobac/audit.md` in the operator's current working directory — al
 - **Target suite root:** <path to the audited directory, as given to the skill>
 - **Audit date:** <ISO-8601 date, e.g. 2026-04-23>
 - **Suite manifest:** <scout-reported counts: N files, M chars, K tests>
-- **Workdir:** <path to the audit workdir, e.g. `.slobac/2026-05-12T18-30-45/` — contains per-batch result files for artifact traceability
 
 ## Summary
 

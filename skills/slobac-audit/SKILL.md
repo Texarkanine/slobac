@@ -56,7 +56,7 @@ Resolve the absolute filesystem path to this skill's `references/` directory (th
 
 🚨 **The orchestrator MUST NOT enumerate, count, or measure the suite itself.** If you find yourself running `find`, `wc`, `ls`, `Glob`, or any equivalent against the target suite root in this step, **stop and launch the scout instead.** The scout's role is the orchestrator's *evidence base* for partitioning, output budgeting, and report provenance — short-circuiting it produces silently wrong file/char/test counts and downstream miscalibration. (Two of three post-release runs miscounted the suite by either 4 files or ~30k chars when they bypassed the scout; the run that launched it got the counts right.)
 
-Read `references/subagents/scout.md`. Launch a readonly subagent whose task is the content of that file, supplemented with:
+Read `references/subagents/scout.md`. Launch a lightweight, efficient, readonly subagent whose task is the content of that file, supplemented with:
 
 - The target directory from Step 1.
 - The absolute `references/` path resolved above.
@@ -204,11 +204,10 @@ Deduplicate: if the same test appears in both batch and cross-suite findings for
 
 Write the report using the shape in [`references/report-template.md`](./references/report-template.md).
 
-- Default path: `./.slobac/audit.md` in the operator's current working directory.
+- Default path: `<workdir>/audit.md` (the workdir established in Step 4, alongside the per-batch result files).
 - If the operator named a different path, use that.
 - If a file already exists at the chosen path, emit at `audit-2.md`, `audit-3.md`, … — do not clobber a prior report.
 - Populate the `Suite manifest` line in the report header with the scout's headline counts (file count, total chars, total tests). This is the orchestrator's contract for letting a reviewer audit whether scout actually ran.
-- Populate the `Workdir` line in the report header with the workdir path from Step 4. This enables tracing findings back to per-batch artifacts.
 - Include a "Tests considered but not flagged" section from batch assessor results.
 - Include an explicit "No findings for scope `<slug>`" line when a requested in-scope smell produces zero findings.
 - In the Summary paragraph, note the orchestration shape per the contract in `references/report-template.md`: how many batch assessors ran, which budget (input chars vs output tests) was binding, whether the Step 8 integrity gate passed cleanly (or required a retry, or halted), and — if the cross-suite assessor ran — the richness tier it declared in its `Consumed richness` line.
