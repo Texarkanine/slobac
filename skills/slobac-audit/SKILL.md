@@ -204,7 +204,7 @@ Deduplicate: if the same test appears in both batch and cross-suite findings for
 
 Write the report using the shape in [`references/report-template.md`](./references/report-template.md).
 
-- Default path: `./slobac/audit.md` in the operator's current working directory.
+- Default path: `./.slobac/audit.md` in the operator's current working directory.
 - If the operator named a different path, use that.
 - If a file already exists at the chosen path, emit at `audit-2.md`, `audit-3.md`, … — do not clobber a prior report.
 - Populate the `Suite manifest` line in the report header with the scout's headline counts (file count, total chars, total tests). This is the orchestrator's contract for letting a reviewer audit whether scout actually ran.

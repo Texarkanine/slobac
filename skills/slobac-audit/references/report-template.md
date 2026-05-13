@@ -4,7 +4,7 @@ The audit skill emits its report as markdown in this shape. Fill every angle-bra
 
 ## Default emission path
 
-Write to `./slobac-audit.md` in the operator's current working directory. If the operator names a different path in their invocation, use that path. If a file already exists at the chosen path, append a `-2`, `-3`, … suffix to avoid clobbering prior reports — do not overwrite.
+Write to `./.slobac/audit.md` in the operator's current working directory — alongside the per-batch artifacts in the audit workdir. If the operator names a different path in their invocation, use that path. If a file already exists at the chosen path, append a `-2`, `-3`, … suffix to avoid clobbering prior reports — do not overwrite.
 
 ## Template
 
