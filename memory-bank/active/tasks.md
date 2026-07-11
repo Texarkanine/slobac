@@ -143,4 +143,5 @@ No new technology - validation not required
 - [x] Pre-Mortem complete
 - [x] Preflight — PASS with amendments (TDD reorder; systemPatterns/docs README count drift; on-disk fixture markdown)
 - [x] Build
-- [ ] QA
+- [x] QA — PASS (trivial: techContext count-agnostic wording)
+
