@@ -85,31 +85,35 @@ SLOBAC does not execute fixture suites in CI. “Tests” here are **planted aud
 
 ## Implementation Plan
 
-1. **Author `prose-pin.md`** (CONTRIBUTING shape; High; per-test; Protect Maintainable + Necessary + Independent of implementation)
+TDD encoding (preflight amendment): for each smell, **`expected-findings.md` is the failing spec**; plant fixture inputs to match; **then** author the canonical taxonomy entry so Signals/Fix/Example match the planted evidence.
+
+1. **Spec `prose-pin` expected-findings** (B1–B4)
+    - Files: `tests/fixtures/audit/prose-pin/expected-findings.md`
+2. **Plant `prose-pin` fixture inputs**
+    - Files: `tests/fixtures/audit/prose-pin/test_*.py`; on-disk `docs/*.md` and/or `skills/*/SKILL.md` under the fixture dir
+    - Changes: keyword/order/mention positives; fitness-function + temp-SUT negatives
+3. **Author `prose-pin.md` taxonomy** (High; per-test; Protect Maintainable + Necessary + Independent of implementation)
     - Files: `skills/slobac-audit/references/docs/taxonomy/prose-pin.md`
-    - Changes: full entry; stockroom-shaped examples; FP for fitness-function / schema / docs-as-tests / Vale tier
     - Creative ref: `creative-taxonomy-carve.md`
-2. **Author `loose-text-oracle.md`** (High; per-test; Protect Maintainable + Independent of implementation)
+4. **Spec `loose-text-oracle` expected-findings** (B5–B8)
+    - Files: `tests/fixtures/audit/loose-text-oracle/expected-findings.md`
+5. **Plant `loose-text-oracle` fixture inputs**
+    - Files: `tests/fixtures/audit/loose-text-oracle/test_*.py`
+    - Changes: ambiguous err/log/stdout positives; typed-error + text-is-product negatives
+6. **Author `loose-text-oracle.md` taxonomy** (High; per-test; Protect Maintainable + Independent of implementation)
     - Files: `skills/slobac-audit/references/docs/taxonomy/loose-text-oracle.md`
-    - Changes: full entry; err/log/stdout examples; recommendation hierarchy typed → structured logs → behavior → golden; FP guards per creative
-3. **Boundary edits on adjacent smells**
+7. **Boundary edits on adjacent smells**
     - Files: `presentation-coupled.md`, `vacuous-assertion.md`, `conditional-logic.md`
-    - Changes: Related modes links; PC description clarifies too-strong vs LTO too-weak; conditional-logic After example prefers type/code with `match=` only as supplementary datum
-4. **Regenerate taxonomy index**
-    - Files: `taxonomy/README.md`, `skills/slobac-audit/SKILL.md` (generated regions only)
+    - Changes: Related modes; PC too-strong vs LTO too-weak; conditional-logic After prefers type/code (`match=` only supplementary)
+8. **Regenerate taxonomy index**
     - Command: `uv run python scripts/gen_taxonomy_index.py`
-5. **Fixture `prose-pin`**
-    - Files: `tests/fixtures/audit/prose-pin/test_skill_docs.py` (or similar), `expected-findings.md`; tiny inline “committed” markdown strings or path constants simulating repo docs (no need to read real stockroom)
-    - Changes: B1–B4 planted
-6. **Fixture `loose-text-oracle`**
-    - Files: `tests/fixtures/audit/loose-text-oracle/test_emitter_messages.py`, `expected-findings.md`
-    - Changes: B5–B8 planted
-7. **Fixtures README**
-    - Files: `tests/fixtures/audit/README.md`
-    - Changes: Phase/taxonomy-parity bullets for both scenarios
-8. **Verification gates**
+9. **Count/drift doc touchups** (preflight amendment)
+    - Files: `memory-bank/systemPatterns.md`, `skills/slobac-audit/references/docs/README.md` — replace hardcoded “15 entries” with count-agnostic wording
+10. **Fixtures README**
+    - Files: `tests/fixtures/audit/README.md` — register both scenarios
+11. **Verification gates**
     - `uv run properdocs build --strict`
-    - Diff expected-findings vs planted signals by hand (QA will re-check)
+    - Hand-diff each `expected-findings.md` against planted signals
 
 ## Technology Validation
 
@@ -136,6 +140,6 @@ No new technology - validation not required
 - [x] Implementation plan complete
 - [x] Technology validation complete
 - [x] Pre-Mortem complete
-- [ ] Preflight
+- [x] Preflight — PASS with amendments (TDD reorder; systemPatterns/docs README count drift; on-disk fixture markdown)
 - [ ] Build
 - [ ] QA

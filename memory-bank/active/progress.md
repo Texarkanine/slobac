@@ -38,3 +38,13 @@ Add one or more SLOBAC taxonomy smells so a blind audit catches stockroom-style 
     - Hedge `conditional-logic` After-example so message `match=` is not taught as the semantic oracle
 * Insights
     - Manual fixture validation remains the project’s audit-fixture gate; properdocs + index regen are the mechanical gates
+
+## 2026-07-11 - PREFLIGHT - COMPLETE
+
+* Work completed
+    - Validated plan against conventions, dependencies, completeness, TDD encoding
+    - Amended implementation plan: expected-findings → plant fixtures → taxonomy; add systemPatterns/docs README “15” touchups; prefer on-disk markdown in prose-pin fixture
+* Decisions made
+    - Preflight PASS with amendments (not FAIL) — TDD gap was fixable in-plan
+* Insights
+    - Hardcoded “all 15 taxonomy entries” in systemPatterns/docs README would drift the moment we add slugs — same class of bug the SKILL table rework eliminated
