@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/Texarkanine/slobac/compare/v0.5.0...v1.0.0) (2026-07-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* **docs:** Ready for version 1.0 (stable) release ([#25](https://github.com/Texarkanine/slobac/issues/25))
+
+### Bug Fixes
+
+* **docs:** Ready for version 1.0 (stable) release ([#25](https://github.com/Texarkanine/slobac/issues/25)) ([0e4f887](https://github.com/Texarkanine/slobac/commit/0e4f887ef9e616c1851ca06d8d2d75834ce5316e))
+
 ## [0.5.0](https://github.com/Texarkanine/slobac/compare/v0.4.2...v0.5.0) (2026-07-11)
 
 
