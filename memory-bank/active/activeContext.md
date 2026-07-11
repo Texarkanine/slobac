@@ -1,13 +1,11 @@
 # Active Context
 
 ## Current Task: prose-pin and weak-text-oracle taxonomy smells
-**Phase:** REFLECT - COMPLETE (post-reflect taxonomy polish)
+**Phase:** ARCHIVE - IN-PROGRESS
 
 ## What Was Done
-- Reflect complete; archive still pending.
-- Operator-driven polish on both new entries (committed LTO revision + in-progress prose-pin):
-  - **loose-text-oracle:** reframed around unanchored proxy-for-meaning (not opposite-polarity-only); connection-token teaching example; footnotes; numbered disposition hierarchy; Related modes distinction-only; `rotten-green` link.
-  - **prose-pin:** committed prose generally (README/docs/HTML/…); agent skills one class not the definition; “never was behavioral” elevated to peer delete reason; footnotes; disposition order; Related modes no foreign fix recipes.
+- Reflect + post-reflect taxonomy polish complete.
+- Entering archive: will inline creative/reflection/plan into `memory-bank/archive/features/`, then clear ephemeral active files.
 
 ## Next Step
-- Operator: run `/niko-archive` to archive and finalize.
+- Complete archive document, delete ephemeral memory-bank files, commit.

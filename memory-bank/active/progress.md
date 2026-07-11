@@ -94,3 +94,12 @@ Add one or more SLOBAC taxonomy smells so a blind audit catches stockroom-style 
     - Agent-skill prose is one class of prose-pin, not the smell's definition
 * Insights
     - Taxonomy teaching examples land harder when they show several distinct meanings sharing one token (connection trio) rather than only opposite polarity
+
+## 2026-07-11 - ARCHIVE - IN-PROGRESS
+
+* Work completed
+    - Leaving REFLECT / post-reflect polish; beginning archive phase
+* Decisions made
+    - Category: `features/` (two new taxonomy smells + fixtures)
+* Insights
+    - None yet
