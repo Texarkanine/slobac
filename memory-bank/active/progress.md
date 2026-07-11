@@ -48,3 +48,16 @@ Add one or more SLOBAC taxonomy smells so a blind audit catches stockroom-style 
     - Preflight PASS with amendments (not FAIL) — TDD gap was fixable in-plan
 * Insights
     - Hardcoded “all 15 taxonomy entries” in systemPatterns/docs README would drift the moment we add slugs — same class of bug the SKILL table rework eliminated
+
+## 2026-07-11 - BUILD - COMPLETE
+
+* Work completed
+    - Taxonomy: `prose-pin.md`, `loose-text-oracle.md`
+    - Fixtures: `tests/fixtures/audit/prose-pin/` (docs + skill on disk), `loose-text-oracle/`
+    - Boundary edits on `presentation-coupled`, `vacuous-assertion`, `conditional-logic`
+    - Index regen; count-agnostic systemPatterns + docs README; fixtures README
+    - Verification: properdocs `--strict`, index `--check`, hand-diff, pytest 24 passed
+* Decisions made
+    - Built to creative Option B; no plan deviations
+* Insights
+    - Planting opposite-meaning comments beside LTO positives makes the underdetermination claim auditable without running the suite

@@ -8,7 +8,7 @@ A contributor who wants to modify SLOBAC safely needs to hold three load-bearing
 
 **1. The three deliverables layer; later layers depend on earlier ones for correctness.**
 
-- **Manifesto** is the opinion. The full manifesto lives at `skills/slobac-audit/references/docs/` — principles, glossary, workflows, and all 15 taxonomy entries. The reader-facing site is built directly from this directory by properdocs.
+- **Manifesto** is the opinion. The full manifesto lives at `skills/slobac-audit/references/docs/` — principles, glossary, workflows, and the taxonomy entries under `taxonomy/`. The reader-facing site is built directly from this directory by properdocs.
 - **Audit** is a portable report of manifesto violations in a specific suite. Its recommendations are only valid if the manifesto they cite is coherent.
 - **Apply** mechanically executes audit recommendations. It has almost no independent judgment; it inherits its correctness from the audit's correctness.
 
@@ -28,7 +28,7 @@ The "what SLOBAC is not" list in [`planning/VISION.md`](../planning/VISION.md) �
 
 ## Taxonomy entry uniformity is the primary invariant
 
-Every canonical taxonomy entry under `skills/slobac-audit/references/docs/taxonomy/` follows the shape defined in [`taxonomy/README.md`](../skills/slobac-audit/references/docs/taxonomy/README.md). When adding or editing an entry, the invariant to preserve is that a reader can skim any two entries and know exactly where to look for signals vs false-positive guards vs fix vs example. Drift in this shape is the single most damaging thing that can happen to the manifesto's usability. Evidence: all 15 existing entries follow the pattern.
+Every canonical taxonomy entry under `skills/slobac-audit/references/docs/taxonomy/` follows the shape defined in [`taxonomy/README.md`](../skills/slobac-audit/references/docs/taxonomy/README.md). When adding or editing an entry, the invariant to preserve is that a reader can skim any two entries and know exactly where to look for signals vs false-positive guards vs fix vs example. Drift in this shape is the single most damaging thing that can happen to the manifesto's usability. Evidence: every existing entry follows the pattern.
 
 ## Principles and taxonomy are bidirectionally coupled by design
 

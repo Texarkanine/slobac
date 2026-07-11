@@ -95,25 +95,26 @@ TDD encoding (preflight amendment): for each smell, **`expected-findings.md` is 
 3. **Author `prose-pin.md` taxonomy** (High; per-test; Protect Maintainable + Necessary + Independent of implementation) — DONE
     - Files: `skills/slobac-audit/references/docs/taxonomy/prose-pin.md`
     - Creative ref: `creative-taxonomy-carve.md`
-4. **Spec `loose-text-oracle` expected-findings** (B5–B8)
+4. **Spec `loose-text-oracle` expected-findings** (B5–B8) — DONE
     - Files: `tests/fixtures/audit/loose-text-oracle/expected-findings.md`
-5. **Plant `loose-text-oracle` fixture inputs**
-    - Files: `tests/fixtures/audit/loose-text-oracle/test_*.py`
-    - Changes: ambiguous err/log/stdout positives; typed-error + text-is-product negatives
-6. **Author `loose-text-oracle.md` taxonomy** (High; per-test; Protect Maintainable + Independent of implementation)
+5. **Plant `loose-text-oracle` fixture inputs** — DONE
+    - Files: `tests/fixtures/audit/loose-text-oracle/test_runtime_text.py`
+    - Changes: ambiguous err/log positives; typed-error + text-is-product negatives
+6. **Author `loose-text-oracle.md` taxonomy** (High; per-test; Protect Maintainable + Independent of implementation) — DONE
     - Files: `skills/slobac-audit/references/docs/taxonomy/loose-text-oracle.md`
-7. **Boundary edits on adjacent smells**
+7. **Boundary edits on adjacent smells** — DONE
     - Files: `presentation-coupled.md`, `vacuous-assertion.md`, `conditional-logic.md`
     - Changes: Related modes; PC too-strong vs LTO too-weak; conditional-logic After prefers type/code (`match=` only supplementary)
-8. **Regenerate taxonomy index**
+8. **Regenerate taxonomy index** — DONE
     - Command: `uv run python scripts/gen_taxonomy_index.py`
-9. **Count/drift doc touchups** (preflight amendment)
+9. **Count/drift doc touchups** (preflight amendment) — DONE
     - Files: `memory-bank/systemPatterns.md`, `skills/slobac-audit/references/docs/README.md` — replace hardcoded “15 entries” with count-agnostic wording
-10. **Fixtures README**
+10. **Fixtures README** — DONE
     - Files: `tests/fixtures/audit/README.md` — register both scenarios
-11. **Verification gates**
-    - `uv run properdocs build --strict`
-    - Hand-diff each `expected-findings.md` against planted signals
+11. **Verification gates** — DONE
+    - `uv run properdocs build --strict` green; index `--check` clean
+    - Hand-diff each `expected-findings.md` against planted signals (47 checks passed)
+    - `uv run pytest -q` → 24 passed
 
 ## Technology Validation
 
@@ -141,5 +142,5 @@ No new technology - validation not required
 - [x] Technology validation complete
 - [x] Pre-Mortem complete
 - [x] Preflight — PASS with amendments (TDD reorder; systemPatterns/docs README count drift; on-disk fixture markdown)
-- [ ] Build
+- [x] Build
 - [ ] QA
