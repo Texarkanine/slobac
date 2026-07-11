@@ -1,7 +1,6 @@
 site_name: SLOBAC - The Suite Life of Bobs and Code
 site_description: >-
-  A manifesto for what tests and test suites should be, and the named
-  ways they go wrong. Plus (eventually) an audit-and-remediation capability.
+  A manifesto for what tests and test suites should be, and the named ways they go wrong.
 site_url: https://texarkanine.github.io/slobac/
 site_author: Texarkanine
 

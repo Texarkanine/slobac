@@ -15,6 +15,8 @@ See if you "buy" what we're "selling" (don't worry,it's actually Free/Libre):
 
 [Install the `/slobac-audit` Agent Skill](https://texarkanine.github.io/slobac/using-slobac/) and have your favorite AI agent audit your test suite for common test smells.
 
+    /slobac-audit all smells, 1M context window, src/__tests__/**
+
 ### Harness Requirements
 
 #### Beefy, smart models
