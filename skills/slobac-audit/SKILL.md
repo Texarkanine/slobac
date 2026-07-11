@@ -1,6 +1,8 @@
 ---
 name: slobac-audit
-description: Audit a test suite for common test smells based on the SLOBAC manifesto.
+description: >
+  Use this skill to audit a test suite or set of test files for for test quality and design smells.
+  Produces a portable findings report without modifying code.
 license: "Multiple — see LICENSES/ and REUSE.toml"
 enable-model-invocation: false
 ---
