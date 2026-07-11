@@ -34,6 +34,8 @@ Scenarios added for taxonomy parity (Phase 3):
 - `conditional-logic/` — `test_promo_calculator.py`. Two positives (`if cond: assert(...)` shape; `try/except` without trailing `pytest.fail`); one negative control using `pytest.parametrize` with unconditional assertions.
 - `mystery-guest/` — `test_csv_importer.py` plus the external fixture data file `orders.csv`. Two positives (magic count `len == 6`; magic count `count_paid == 4` tied to the CSV row distribution); one negative control with inline fixture data and a derived expectation.
 - `rotten-green/` — `test_metric_collector.py`. Two positives (empty body with `# TODO` and `pass`; SUT call followed by `print(...)` instead of an assertion); one negative control with a real assertion on real SUT output.
+- `prose-pin/` — `test_docs_oracle.py` plus on-disk `docs/onboarding.md` and `skills/demo-wrapper/SKILL.md`. Two positives (keyword checklist on committed docs; feature-mention + order pin on committed SKILL.md); two negative controls (architectural fitness-function forbidden-token scan; prose-as-SUT temp skill fixture).
+- `loose-text-oracle/` — `test_runtime_text.py`. Two positives (ambiguous `pytest.raises(..., match="timeout")`; `"success" in caplog.text`); two negative controls (typed `NotFoundError` with supplementary param-name match; full CLI-help golden where text is the product).
 
 ## Validation mode
 

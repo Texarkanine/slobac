@@ -89,6 +89,7 @@ The original assertions would pass for `{}` or `{ description: ' ' }`. Strengthe
 - [`pseudo-tested`](./pseudo-tested.md), [`tautology-theatre`](./tautology-theatre.md) — adjacent members of the [Tautology Theatre](../principles/glossary.md#tautology-theatre) umbrella.
 - [`naming-lies`](./naming-lies.md) — a vacuous body often pairs with a title that over-promises.
 - [`presentation-coupled`](./presentation-coupled.md) — the opposite failure mode: assertions too *strong* on the wrong thing.
+- [`loose-text-oracle`](./loose-text-oracle.md) — present but underdetermined text match on runtime emissions; not "effectively no check," but still fails to lock meaning.
 
 ## Polyglot notes
 

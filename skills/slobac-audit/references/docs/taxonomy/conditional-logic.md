@@ -47,7 +47,7 @@ Branch-in-test-body signals over-trigger in three shapes the audit must not flag
 |---|---|
 | `if (cond) expect(...)` with intended optionality | Split into two tests: one where `cond` is true (fixture pins it), one where `cond` is false (asserts the other branch). |
 | `if (cond) expect(...)` compensating for a weak oracle | Fix the fixture so `cond` is guaranteed true; remove the branch; assert unconditionally. |
-| `try { sut() } catch (e) { expect(...) }` | Replace with the runner's throw matcher: `expect(() => sut()).toThrow(...)` / `pytest.raises(T, match=...)` / `expect { ... }.to raise_error(T, /msg/)`. |
+| `try { sut() } catch (e) { expect(...) }` | Replace with the runner's throw matcher: `expect(() => sut()).toThrow(SomeError)` / `pytest.raises(T)` / `expect { ... }.to raise_error(T)`. Prefer type/code as the semantic oracle; a message `match=` / regex may accompany only as a *supplementary* datum check — see [`loose-text-oracle`](./loose-text-oracle.md). |
 | Platform skip in body | Convert to `it.skip` / `pytest.mark.skipif` / `//go:build !windows` with a skip reason. |
 | Loop without exit assertion | Assert on the collected results after the loop. |
 
@@ -71,16 +71,17 @@ it('parses trailing JSON', () => {
 
 ```javascript
 it('rejects trailing garbage after JSON value', () => {
-  expect(() => parse('{ "a": 1 } garbage')).toThrow(/trailing/);
+  expect(() => parse('{ "a": 1 } garbage')).toThrow(SyntaxError);
 });
 ```
 
-The original test passed silently if `parse` returned normally; the catch block was never reached and no assertion was checked. Moved to a throw matcher that verifies the exception *and* that one was raised.
+The original test passed silently if `parse` returned normally; the catch block was never reached and no assertion was checked. Moved to a throw matcher that verifies a typed exception *and* that one was raised. Prefer type/code as the semantic oracle; a message regex may be added only as a supplementary datum check (see [`loose-text-oracle`](./loose-text-oracle.md)) — do not treat `toThrow(/trailing/)` alone as the happy-path fix.
 
 ## Related modes
 
 - [`rotten-green`](./rotten-green.md) — cousin; conditional-logic is "has an assertion but skips it on some paths", rotten-green is "has no assertion at all".
 - [`vacuous-assertion`](./vacuous-assertion.md) — `if`-gated weak checks overlap.
+- [`loose-text-oracle`](./loose-text-oracle.md) — after curing the conditional with a throw matcher, avoid leaving an underdetermined message regex as the sole semantic oracle.
 
 ## Polyglot notes
 

@@ -24,6 +24,8 @@ The converse of [`vacuous-assertion`](./vacuous-assertion.md): the oracle is too
 
 The semantic judgment: identify the layer at which the output has semantic meaning and assert there (parsed HTML node, DOM tree, structured log event, AST, JSON after normalization) rather than at the raw-string layer.
 
+Distinct from [`loose-text-oracle`](./loose-text-oracle.md): that smell is the other failure on free text — an underdetermined substring/regex that is too *weak* to lock meaning (opposite-polarity text still matches). Presentation-coupled is over-strong cosmetic/exact presentation; do not dump every string assert into this entry.
+
 Distinct from [`over-specified-mock`](./over-specified-mock.md): presentation coupling is about over-asserting the *output* of a real SUT; over-spec is about over-asserting the *interactions* with collaborators.
 
 ## Signals
@@ -82,8 +84,10 @@ The original test broke on whitespace, attribute-order, and wrapping changes. Th
 ## Related modes
 
 - [`vacuous-assertion`](./vacuous-assertion.md) — opposite failure (too weak where this one is too narrow).
+- [`loose-text-oracle`](./loose-text-oracle.md) — underdetermined meaning on free text (too weak); this entry is over-strong cosmetic/exact presentation.
 - [`over-specified-mock`](./over-specified-mock.md) — adjacent over-assertion mode, but interaction-flavored.
 - [`mystery-guest`](./mystery-guest.md) — presentation-coupled tests often include giant fixture strings with no summary of what matters.
+- [`prose-pin`](./prose-pin.md) — committed docs/skills as oracle; different artifact kind.
 
 ## Polyglot notes
 

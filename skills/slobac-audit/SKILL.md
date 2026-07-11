@@ -25,7 +25,9 @@ The table below is the orchestrator's authoritative slug → detection-scope ind
 | [`tautology-theatre`](references/docs/taxonomy/tautology-theatre.md) | Critical | per-test |
 | [`deliverable-fossils`](references/docs/taxonomy/deliverable-fossils.md) | High | per-test, cross-suite |
 | [`implementation-coupled`](references/docs/taxonomy/implementation-coupled.md) | High | per-test |
+| [`loose-text-oracle`](references/docs/taxonomy/loose-text-oracle.md) | High | per-test |
 | [`over-specified-mock`](references/docs/taxonomy/over-specified-mock.md) | High | per-test |
+| [`prose-pin`](references/docs/taxonomy/prose-pin.md) | High | per-test |
 | [`pseudo-tested`](references/docs/taxonomy/pseudo-tested.md) | High | per-test |
 | [`semantic-redundancy`](references/docs/taxonomy/semantic-redundancy.md) | High | cross-suite |
 | [`vacuous-assertion`](references/docs/taxonomy/vacuous-assertion.md) | High | per-test |

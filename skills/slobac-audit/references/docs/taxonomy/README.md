@@ -14,7 +14,9 @@ Ordered by **severity descending** (Critical → High → Medium → Low), then 
 | [`tautology-theatre`](./tautology-theatre.md) | Critical | per-test |
 | [`deliverable-fossils`](./deliverable-fossils.md) | High | per-test, cross-suite |
 | [`implementation-coupled`](./implementation-coupled.md) | High | per-test |
+| [`loose-text-oracle`](./loose-text-oracle.md) | High | per-test |
 | [`over-specified-mock`](./over-specified-mock.md) | High | per-test |
+| [`prose-pin`](./prose-pin.md) | High | per-test |
 | [`pseudo-tested`](./pseudo-tested.md) | High | per-test |
 | [`semantic-redundancy`](./semantic-redundancy.md) | High | cross-suite |
 | [`vacuous-assertion`](./vacuous-assertion.md) | High | per-test |
