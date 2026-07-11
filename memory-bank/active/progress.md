@@ -82,3 +82,15 @@ Add one or more SLOBAC taxonomy smells so a blind audit catches stockroom-style 
     - Standalone L3 task → next operator step is `/niko-archive`
 * Insights
     - See reflection doc: count-literal grep discipline; fixture-first taxonomy TDD
+
+## 2026-07-11 - POST-REFLECT POLISH
+
+* Work completed
+    - Operator review tightened both taxonomy entries before archive
+    - `loose-text-oracle`: unanchored-proxy framing + citations + hierarchy list (committed as `chore: some refactor`)
+    - `prose-pin`: broad committed-prose definition; delete-as-peer-reason for never-behavioral mention pins; LTO learnings mirrored
+* Decisions made
+    - Presence-of-wording pins were never a behavioral contract — delete is the primary disposition, not a parenthetical hedge
+    - Agent-skill prose is one class of prose-pin, not the smell's definition
+* Insights
+    - Taxonomy teaching examples land harder when they show several distinct meanings sharing one token (connection trio) rather than only opposite polarity
