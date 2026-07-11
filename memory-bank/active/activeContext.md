@@ -1,11 +1,12 @@
 # Active Context
 
 ## Current Task: prose-pin and weak-text-oracle taxonomy smells
-**Phase:** COMPLEXITY-ANALYSIS - COMPLETE
+**Phase:** PLAN - COMPLETE
 
 ## What Was Done
-- Intent clarified and approved: add one or more SLOBAC smells covering committed prose-pins and weak runtime string oracles on emitted text.
-- Complexity determined: **Level 3** — feature addition with open design decisions (smell cardinality, naming, boundaries vs `presentation-coupled` / `vacuous-assertion` / `conditional-logic`), multi-file taxonomy + index + related-mode + fixture updates, creative phase warranted.
+- Creative (architecture) resolved taxonomy carve: **two smells** — `prose-pin` + `loose-text-oracle` (both High, per-test).
+- Full L3 plan written: 8 implementation steps, B1–B10 behaviors, fixtures + index regen + adjacent-smell hedges.
+- Prior art briefs retained in `memory-bank/active/` as design inputs.
 
 ## Next Step
-- Load Level 3 workflow and execute Plan phase (`level3-plan.md`).
+- Preflight (`/niko-preflight` / niko-preflight skill) to validate the plan.
