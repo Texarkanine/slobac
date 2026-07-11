@@ -87,12 +87,12 @@ SLOBAC does not execute fixture suites in CI. “Tests” here are **planted aud
 
 TDD encoding (preflight amendment): for each smell, **`expected-findings.md` is the failing spec**; plant fixture inputs to match; **then** author the canonical taxonomy entry so Signals/Fix/Example match the planted evidence.
 
-1. **Spec `prose-pin` expected-findings** (B1–B4)
+1. **Spec `prose-pin` expected-findings** (B1–B4) — DONE
     - Files: `tests/fixtures/audit/prose-pin/expected-findings.md`
-2. **Plant `prose-pin` fixture inputs**
-    - Files: `tests/fixtures/audit/prose-pin/test_*.py`; on-disk `docs/*.md` and/or `skills/*/SKILL.md` under the fixture dir
+2. **Plant `prose-pin` fixture inputs** — DONE
+    - Files: `tests/fixtures/audit/prose-pin/test_docs_oracle.py`; `docs/onboarding.md`; `skills/demo-wrapper/SKILL.md`
     - Changes: keyword/order/mention positives; fitness-function + temp-SUT negatives
-3. **Author `prose-pin.md` taxonomy** (High; per-test; Protect Maintainable + Necessary + Independent of implementation)
+3. **Author `prose-pin.md` taxonomy** (High; per-test; Protect Maintainable + Necessary + Independent of implementation) — DONE
     - Files: `skills/slobac-audit/references/docs/taxonomy/prose-pin.md`
     - Creative ref: `creative-taxonomy-carve.md`
 4. **Spec `loose-text-oracle` expected-findings** (B5–B8)
