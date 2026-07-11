@@ -6,7 +6,7 @@
 
 ## Summary
 
-The test uses an underdetermined substring or regex on runtime-emitted text — error messages, log lines, stdout/stderr — as the primary oracle for meaning, so opposite-polarity text that happens to contain the token still passes.
+The test treats a substring or regex on runtime-emitted text — error messages, log lines, stdout/stderr — as locking a specific meaning, but token presence is an unanchored proxy: many distinct emissions that share the token still pass.
 
 ## Aliases
 
@@ -20,32 +20,39 @@ The test uses an underdetermined substring or regex on runtime-emitted text — 
 - "assert phrase in caplog"
 - "partial message oracle"
 
-_Audience: human readers landing on this entry from a fuzzy search query. The audit orchestrator does not read this section — it requires explicit slug invocation._
-
 ## Description
 
-The missing middle between [`presentation-coupled`](./presentation-coupled.md) (oracle too *strong* on presentation) and [`vacuous-assertion`](./vacuous-assertion.md) (effectively no check): there *is* an assertion on free text, but it underdetermines the semantic claim. `expect(err.message).toContain("timeout")`, `pytest.raises(..., match="timeout")`, `assert "success" in caplog.text` — each can stay green when the emitted text means the opposite of what the test name claims.
+The missing middle between [`presentation-coupled`](./presentation-coupled.md) (oracle too *strong* on presentation) and [`vacuous-assertion`](./vacuous-assertion.md) (effectively no check): there *is* an assertion on free text, but the match does not anchor the semantic claim the author thought they locked.
 
-The semantic judgment: ask *"would text with the opposite meaning still match this substring/regex?"* If yes, and the match is the primary (or only) identifier of which behavior/failure occurred, the smell fires.
+Classic shape — the author meant "too many connections," but wrote `expect(message).toContain("connection")`. All of these stay green:
 
-Distinct from [`prose-pin`](./prose-pin.md): that smell asserts on **committed** docs/skills file bytes, not process output. Distinct from presentation-coupled: long cosmetic HTML/`toContain` chains pin formatting accidents; this smell pins *underdetermined meaning* with a short ambiguous token.
+- `error: too many connections!`
+- `error: connection couldn't be established`
+- `error: database "connection" not found on host`
 
-Industry grounding: Go's "error strings are not part of the API," Node.js `ERR_` codes (messages are not the stable contract), Barr et al.'s partial-oracle vocabulary.
+Opposite-polarity wording (`"timeout disabled"`, `"operation success: false"`) is the same failure mode, not a separate one: the token is present while the meaning is not the one under test.
+
+The semantic judgment: ask *"which distinct meanings or failure modes would still match this substring/regex?"* If more than the intended claim would pass, and the match is the primary (or only) identifier of which behavior/failure occurred, the smell fires.
+
+Distinct from [`prose-pin`](./prose-pin.md): that smell asserts on **committed** docs/skills file bytes, not process output. Distinct from presentation-coupled: long cosmetic HTML/`toContain` chains pin formatting accidents; this smell pins an *unanchored meaning proxy* with a shared token.
+
+Industry grounding: Go's "error strings are not part of the API,"[^cheney][^go-wiki] Node.js `ERR_` codes (messages are not the stable contract),[^nodejs-err] and Barr et al.'s partial-oracle vocabulary.[^barr]
 
 ## Signals
 
-- `pytest.raises(T, match="ambiguous")` / `toThrow(/timeout/)` / `err.message.includes("…")` as the *sole* oracle for which failure occurred.
+- `pytest.raises(T, match="ambiguous")` / `toThrow(/connection/)` / `err.message.includes("…")` as the *sole* oracle for which failure occurred.
+- Shared-token matches where several distinct failures contain the same word (`"connection"`, `"timeout"`, `"success"`).
 - `assert "success" in caplog.text` / stdout/stderr substring where the token underdetermines outcome.
 - Regex/message match identifying error *kind* rather than verifying a dynamic datum beside a typed primary oracle.
-- Community shape: tests that would still pass if the SUT printed `"no timeout configured"` or `"operation success: false"`.
+- Community shape: tests that would still pass for an unrelated failure, an opposite-polarity message, or a coincidental token in an otherwise different diagnostic.
 
 ## False-positive guards
 
-- **Typed / coded primary oracle with supplementary datum match.** `raises(NotFoundError, match="gamma")` where the type/code identifies the failure and the match only checks that a dynamic parameter name appears (Go Wiki carve-out) is legitimate. Flag only when the message match *is* the identifier of which failure occurred.
+- **Typed / coded primary oracle with supplementary datum match.** `raises(NotFoundError, match="gamma")` where the type/code identifies the failure and the match only checks that a dynamic parameter name appears (Go Wiki carve-out)[^go-wiki] is legitimate. Flag only when the message match *is* the identifier of which failure occurred.
 - **Text is the product.** Compiler/CLI/linter diagnostics, formatter output, and intentional UX copy verified via full golden/approval/snapshot files are explicit presentation contracts — not lone underdetermined substrings. Do not flag whole-output goldens where the rendered text is the specified deliverable.
 - **i18n / message-key checks.** Asserting that the correct catalog key or locale entry is selected is a localization contract, not a loose meaning pin on free English.
 - **Structured assert after parse.** Parsing a log line or message into fields and asserting on those fields is the prescribed fix shape — do not flag the cured form.
-- **Vacuous `toThrow()` with no argument.** That extreme is closer to [`vacuous-assertion`](./vacuous-assertion.md) / rotten paths; escalate there when there is effectively no check. This entry is for *present but underdetermined* text matches.
+- **Vacuous `toThrow()` with no argument.** That extreme is closer to [`vacuous-assertion`](./vacuous-assertion.md) / [`rotten-green`](./rotten-green.md); escalate there when there is effectively no check. This entry is for *present but unanchored* text matches.
 
 ## Prescribed Fix
 
@@ -56,9 +63,15 @@ Industry grounding: Go's "error strings are not part of the API," Node.js `ERR_`
 | Need to lock rendered diagnostics | Switch to an explicit golden/approval snapshot of the *full* output, reviewed as a presentation contract. |
 | Dynamic datum in a human message | Keep message match only as *supplementary* beside type/code (parameter name appears). |
 
-Hierarchy (strongest first): typed error + code → structured log/event fields → behavioral state change → full golden text → substring/regex (last resort, supplementary only).
+Preference order (strongest first):
 
-Gate: [preservation of regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power). Climbing the hierarchy must not drop mutants the old substring happened to kill; prefer typed oracles that kill *more* wrong answers, including opposite-polarity messages.
+1. Typed error + stable machine code
+2. Structured log / event fields
+3. Behavioral state change
+4. Full golden / approval text (when the rendered output *is* the product)
+5. Substring / regex — last resort, and only as a supplementary datum check beside (1)
+
+Gate: [preservation of regression-detection power](../principles/refactor-qualities.md#preservation-of-regression-detection-power). Climbing the hierarchy must not drop mutants the old substring happened to kill; prefer typed oracles that reject the unrelated failures the token would have accepted.
 
 ## Example
 
@@ -66,7 +79,7 @@ Gate: [preservation of regression-detection power](../principles/refactor-qualit
 
 ```python
 def test_fetch_raises_on_timeout():
-    # Opposite meaning that would also match: RuntimeError("timeout disabled").
+    # Also matches: "timeout disabled", "no timeout configured", …
     with pytest.raises(RuntimeError, match="timeout"):
         fetch("alpha", fail="timeout")
 ```
@@ -80,19 +93,28 @@ def test_fetch_raises_on_timeout():
     assert exc_info.value.resource == "alpha"  # structured field, not message text
 ```
 
-The original oracle accepted any `RuntimeError` whose message happened to contain `"timeout"`, including opposite-polarity wording. The fixed form identifies the failure by type and structured fields; human message text is no longer the API.
+The original oracle accepted any `RuntimeError` whose message happened to contain `"timeout"` — including unrelated and opposite-polarity wording. The fixed form identifies the failure by type and structured fields; human message text is no longer the API.
 
 ## Related modes
 
-- [`presentation-coupled`](./presentation-coupled.md) — too *strong* on exact/cosmetic presentation of SUT output; this entry is too *weak* / underdetermined on free text.
-- [`vacuous-assertion`](./vacuous-assertion.md) — effectively no semantic check; loose-text-oracle still asserts, but underdetermines meaning.
-- [`prose-pin`](./prose-pin.md) — committed docs/skills as oracle; different artifact kind, different fix (delete/docs-lint vs typed error).
-- [`conditional-logic`](./conditional-logic.md) — `try/except` without fail often pairs with message asserts; after moving to a throw matcher, prefer type/code over `match=` as the semantic oracle.
+- [`presentation-coupled`](./presentation-coupled.md) — too *strong* on exact/cosmetic presentation of SUT output; this entry is too *weak* / unanchored on free text.
+- [`vacuous-assertion`](./vacuous-assertion.md) — effectively no semantic check; loose-text-oracle still asserts, but the match does not lock the claimed meaning.
+- [`prose-pin`](./prose-pin.md) — committed docs/skills as oracle; different artifact kind (file bytes vs runtime emission).
+- [`conditional-logic`](./conditional-logic.md) — `try/except` without fail often pairs with message asserts on the caught error.
+- [`rotten-green`](./rotten-green.md) — no assertion at all; escalate bare `toThrow()` / empty bodies there, not here.
 
 ## Polyglot notes
 
 - **Python:** prefer custom exception classes / `pytest.raises(T)` without relying on `match=`; structlog / pytest-structlog for log fields.
 - **JS/TS:** prefer `err.code` / custom error subclasses over `toThrow(/msg/)`; eslint-plugin-jest `require-to-throw-message` only kills the vacuous end — still require type/code beside any message.
-- **Go:** `errors.Is` / `errors.As` and typed error values; Go Wiki permits string compare only for properties like parameter-name inclusion.
+- **Go:** `errors.Is` / `errors.As` and typed error values; Go Wiki permits string compare only for properties like parameter-name inclusion.[^go-wiki]
 - **Ruby:** `raise_error(SomeError)` with typed class; avoid message-only `raise_error(/msg/)`.
 - **Rust:** match error enums; for diagnostics that *are* the product, use UI/`trybuild` golden files rather than substring asserts.
+
+[^cheney]: Cheney, D. (2016). *Don't just check errors, handle them gracefully*. <https://dave.cheney.net/2016/04/27/dont-just-check-errors-handle-them-gracefully>. "Comparing the string form of an error is, in my opinion, a code smell."
+
+[^go-wiki]: Go Wiki, *Go Test Comments* — "Error strings." <https://go.dev/wiki/TestComments#error-strings>. Discourages string comparison to identify error *kind*; permits checking that a message includes a dynamic property such as a parameter name.
+
+[^nodejs-err]: Node.js API docs, *Errors* — `error.code`. <https://nodejs.org/api/errors.html#errorcode>. "`error.code` is the most stable way to identify an error… In contrast, `error.message` strings may change between any versions of Node.js."
+
+[^barr]: Barr, E., Harman, M., McMinn, P., Shahbaz, M., & Yoo, S. (2015). *The Oracle Problem in Software Testing: A Survey*. IEEE Transactions on Software Engineering, 41(5), 507–525. <https://doi.org/10.1109/TSE.2014.2372785>. Defines partial oracles as specifying important but incomplete properties of the SUT.

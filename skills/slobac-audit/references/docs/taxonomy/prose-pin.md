@@ -6,7 +6,7 @@
 
 ## Summary
 
-The test treats the suite's own committed documentation or agent-skill prose as an oracle — keyword checklists, feature-mention pins, or editorial order — so wording edits fail CI with no product regression.
+The test treats the suite's own committed documentation or other prose as an oracle — keyword checklists, feature-mention pins, or editorial order — so wording edits fail CI with no product regression.
 
 ## Aliases
 
@@ -18,8 +18,6 @@ The test treats the suite's own committed documentation or agent-skill prose as 
 - "SKILL.md mention pin"
 - "assert phrase in README"
 - "feature-mention completeness on docs"
-
-_Audience: human readers landing on this entry from a fuzzy search query. The audit orchestrator does not read this section — it requires explicit slug invocation._
 
 ## Description
 
