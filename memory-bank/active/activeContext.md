@@ -1,11 +1,11 @@
 # Active Context
 
 ## Current Task: prose-pin and weak-text-oracle taxonomy smells
-**Phase:** QA - COMPLETE
+**Phase:** REFLECT - COMPLETE
 
 ## What Was Done
-- Build delivered `prose-pin` + `loose-text-oracle` (taxonomy, fixtures, boundary edits, index, docs).
-- QA PASS: one trivial fix — `memory-bank/techContext.md` still said “15 canonical smell definitions”; made count-agnostic (same drift class as preflight amendment).
+- Reflection written: `memory-bank/active/reflection/reflection-prose-pin-weak-text-oracle-smells.md`
+- Persistent files reconciled: systemPatterns/techContext already count-agnostic from build/QA; productContext unchanged.
 
 ## Next Step
-- Reflect phase runs next (`/niko-reflect`).
+- Operator: run `/niko-archive` to archive and finalize.
