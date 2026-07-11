@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/Texarkanine/slobac/compare/v0.4.2...v0.5.0) (2026-07-11)
+
+
+### Features
+
+* **taxonomy:** add prose-pin and loose-text-oracle smells ([#23](https://github.com/Texarkanine/slobac/issues/23)) ([ee1b17f](https://github.com/Texarkanine/slobac/commit/ee1b17f6388165c79f1ae6533153c9a905ebfe9a))
+
 ## [0.4.2](https://github.com/Texarkanine/slobac/compare/v0.4.1...v0.4.2) (2026-05-13)
 
 
