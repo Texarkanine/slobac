@@ -43,10 +43,10 @@
   --md-default-fg-color--lighter: #8a8072;
   --md-default-fg-color--lightest: #5c5348;
 
-  /* Deeper ember for header chrome; bright orange stays on accent/links. */
-  --md-primary-fg-color: #b45309;
-  --md-primary-fg-color--light: #d97706;
-  --md-primary-fg-color--dark: #92400e;
+  /* Soft amber dark header (variant D); accent/links stay #fb923c. */
+  --md-primary-fg-color: #de8131;
+  --md-primary-fg-color--light: #e69a55;
+  --md-primary-fg-color--dark: #c46e22;
   --md-primary-bg-color: #1c1914;
   --md-primary-bg-color--light: #1c1914;
 
