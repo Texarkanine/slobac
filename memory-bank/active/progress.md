@@ -13,3 +13,15 @@ Restyle the SLOBAC ProperDocs / Material docs site to a gentle creamy/papery lig
     - Stay on Material custom CSS schemes; invent SLOBAC warm tokens or adapt open warm scales rather than Claude reconstruction packs
 * Insights
     - No official Anthropic open brand kit; circulating “Claude parchment” packs are third-party reconstructions — inspiration only
+
+## 2026-07-14 - PLAN - COMPLETE
+
+* Work completed
+    - Produced Level 2 TDD plan: yaml wiring + CSS scheme tokens + strict build
+    - Mapped touchpoints: `properdocs.yaml`, `skills/slobac-audit/references/docs/stylesheets/extra.css`, `tests/python/unit/test_docs_theme_tokens.py`
+* Decisions made
+    - Theme CSS lives under `docs_dir/stylesheets/` (Material `extra_css` constraint)
+    - Automate contract/wiring tests only; visual cream/orange feel is QA via local serve
+    - Original SLOBAC tokens inspired by open warm scales — not Anthropic reconstruction packs
+* Insights
+    - Existing pytest covers taxonomy tooling only; theme work extends that suite with file-contract tests rather than a new harness
