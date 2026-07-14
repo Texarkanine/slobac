@@ -59,3 +59,13 @@ Restyle the SLOBAC ProperDocs / Material docs site to a gentle creamy/papery lig
     - Dark chrome uses deeper ember; bright orange reserved for accents/links (closer to “gentle + orange highlights”)
 * Insights
     - Material maps `primary` to the full header bar — saturated primary on dark reads as loud chrome, not “highlight”
+
+## 2026-07-14 - REFLECT - COMPLETE
+
+* Work completed
+    - Wrote `memory-bank/active/reflection/reflection-creamy-papery-docs-theme.md`
+    - Reconciled persistent files: no further edits (Design System pointer already in techContext)
+* Decisions made
+    - None new
+* Insights
+    - Material primary = header chrome; bright accent belongs on links for “orange highlights”
