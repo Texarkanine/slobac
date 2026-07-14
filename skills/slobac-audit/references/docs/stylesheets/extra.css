@@ -1,7 +1,6 @@
 /*
- * SLOBAC docs theme — original paper / ember tokens.
+ * Texarkanine docs theme — paper/ember tokens.
  * Warm cream light + warm charcoal dark with amber/orange accents.
- * Inspired by open warm scales (e.g. stone/amber feel); not an Anthropic brand pack.
  */
 
 [data-md-color-scheme="default"] {
@@ -43,7 +42,6 @@
   --md-default-fg-color--lighter: #8a8072;
   --md-default-fg-color--lightest: #5c5348;
 
-  /* Soft amber dark header (variant D); accent/links stay #fb923c. */
   --md-primary-fg-color: #de8131;
   --md-primary-fg-color--light: #e69a55;
   --md-primary-fg-color--dark: #c46e22;
