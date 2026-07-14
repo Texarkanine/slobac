@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/Texarkanine/slobac/compare/v1.0.0...v1.1.0) (2026-07-14)
+
+
+### Features
+
+* **docs:** creamy paper/ember Material theme ([#27](https://github.com/Texarkanine/slobac/issues/27)) ([b5469f3](https://github.com/Texarkanine/slobac/commit/b5469f318ee6b0d3245eba46469c1b4c2972b3c1))
+
 ## [1.0.0](https://github.com/Texarkanine/slobac/compare/v0.5.0...v1.0.0) (2026-07-11)
 
 
