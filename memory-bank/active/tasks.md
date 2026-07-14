@@ -14,6 +14,7 @@ Restyle the ProperDocs / Material docs site from indigo default/slate to an orig
 - [Stylesheet registration]: `properdocs.yaml` lists `extra_css` including `stylesheets/extra.css` → build includes the override sheet
 - [Light scheme tokens]: CSS for `[data-md-color-scheme="default"]` (or `:root` / default scheme) defines warm paper background and warm ink foreground via `--md-default-bg-color` / `--md-default-fg-color` (and primary/accent shades) → light mode is cream/paper, not cool gray/white+indigo
 - [Dark scheme tokens]: CSS for `[data-md-color-scheme="slate"]` defines warm dark background and amber/orange primary/accent (and typeset link color where overridden) → dark mode uses warm neutrals with orange highlights
+- [Warm chrome surfaces]: both schemes set warm `--md-code-bg-color` (and footer bg) → code wells / footer do not remain cool-gray defaults on paper/ember canvases
 - [No indigo palette]: palette blocks no longer set `primary: indigo` / `accent: indigo` → default Material indigo is gone
 - [Strict build]: `uv run properdocs build --strict` → exits 0 (existing CI gate; no link/theme breakage)
 - [Edge — toggle retained]: both light and dark palette entries with toggle icons remain → user can still switch schemes
@@ -40,7 +41,7 @@ Restyle the ProperDocs / Material docs site from indigo default/slate to an orig
 
 3. **Implement SLOBAC paper/ember token set**
    - Files: `skills/slobac-audit/references/docs/stylesheets/extra.css`
-   - Changes: Original warm palette (inspired by open warm scales such as Tailwind stone/amber *feel*, not Anthropic reconstruction hex packs). Light: cream/paper `--md-default-bg-color`, warm ink fg, soft ember primary header, amber accent/links. Dark (`slate`): warm charcoal bg, warm elevated surfaces, amber/orange `--md-primary-*` / `--md-accent-*` / `--md-typeset-a-color` for orange-on-dark highlights. Tune `--md-hue` only if needed as a secondary tweak — prefer explicit hex tokens for predictability. Comment in CSS that tokens are SLOBAC-original.
+   - Changes: Original warm palette (inspired by open warm scales such as Tailwind stone/amber *feel*, not Anthropic reconstruction hex packs). Light: cream/paper `--md-default-bg-color`, warm ink fg, soft ember primary header, amber accent/links. Dark (`slate`): warm charcoal bg, warm elevated surfaces, amber/orange `--md-primary-*` / `--md-accent-*` / `--md-typeset-a-color` for orange-on-dark highlights. Also warm secondary surfaces so the theme does not read as “cream canvas + cold Material chrome”: `--md-code-bg-color`, `--md-code-fg-color`, and footer vars (`--md-footer-bg-color` / fg) under both schemes. Tune `--md-hue` only if needed as a secondary tweak — prefer explicit hex tokens for predictability. Comment in CSS that tokens are SLOBAC-original.
 
 4. **Make contract tests green; run strict build**
    - Files: `tests/python/unit/test_docs_theme_tokens.py`, (verify) `properdocs.yaml`, `extra.css`
@@ -81,6 +82,11 @@ No new technology - validation not required. Uses existing ProperDocs + Material
 - [x] Implementation plan complete
 - [x] Technology validation complete
 - [x] Pre-Mortem complete
-- [ ] Preflight
+- [x] Preflight
 - [ ] Build
 - [ ] QA
+
+## Preflight Amendments
+
+- Extended token scope to code-block and footer surfaces under both schemes (avoids cold Material chrome on a warm canvas).
+- Confirmed `references/docs/**` REUSE override → new `stylesheets/extra.css` is CC-BY-SA-4.0 with the manifesto tree (acceptable; no plan change required).
