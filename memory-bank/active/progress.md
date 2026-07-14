@@ -37,3 +37,15 @@ Restyle the SLOBAC ProperDocs / Material docs site to a gentle creamy/papery lig
     - Stay with `default`/`slate` scheme names + custom primary/accent (named custom schemes would require fuller token ownership)
 * Insights
     - Cream themes commonly fail by leaving cold code wells; chrome surface tokens are load-bearing for the brief
+
+## 2026-07-14 - BUILD - COMPLETE
+
+* Work completed
+    - Implemented paper/ember CSS tokens and Material custom palette wiring
+    - Added theme contract tests; full suite 29 passed; strict docs build green
+    - Pointed techContext Design System at `stylesheets/extra.css`
+* Decisions made
+    - Parsed `properdocs.yaml` via text/regex in tests (file contains `!!python/object/apply` slugify tag unsafe for `yaml.safe_load`)
+    - Distinct hexes from common Anthropic reconstruction packs (`#f6f0e4` paper, `#f59e0b`/`#fb923c` ember accents)
+* Insights
+    - None beyond preflight chrome-surface note

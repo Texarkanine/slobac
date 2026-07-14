@@ -72,4 +72,4 @@ These are referenced by the manifesto and will be **orchestrated**, never reimpl
 
 ## Design System
 
-N/A. SLOBAC has no user-facing UI. The audit output is plain text (format TBD per `planning/VISION.md` §5 open question #1).
+Docs site chrome (not product UI): ProperDocs / Material tokens live in [`skills/slobac-audit/references/docs/stylesheets/extra.css`](../skills/slobac-audit/references/docs/stylesheets/extra.css), wired from [`properdocs.yaml`](../properdocs.yaml) (`primary`/`accent: custom` + `extra_css`). Warm paper light / ember dark; original SLOBAC tokens. Contract-tested in `tests/python/unit/test_docs_theme_tokens.py`.

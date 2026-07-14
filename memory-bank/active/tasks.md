@@ -83,8 +83,16 @@ No new technology - validation not required. Uses existing ProperDocs + Material
 - [x] Technology validation complete
 - [x] Pre-Mortem complete
 - [x] Preflight
-- [ ] Build
+- [x] Build
 - [ ] QA
+
+## Build Checklist
+
+- [x] Stub theme contract tests (fail first)
+- [x] Add stylesheet + wire `properdocs.yaml` (`primary`/`accent: custom`, `extra_css`)
+- [x] Implement SLOBAC paper/ember token set (incl. code/footer chrome)
+- [x] Contract tests green; full `tests/python` green; `properdocs build --strict` green
+- [x] `techContext.md` Design System pointer updated
 
 ## Preflight Amendments
 

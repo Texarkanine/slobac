@@ -1,11 +1,14 @@
 # Active Context
 
 ## Current Task: creamy-papery-docs-theme
-**Phase:** PREFLIGHT - COMPLETE
+**Phase:** BUILD - COMPLETE
 
 ## What Was Done
-- Preflight PASS (with plan amendment: warm code/footer surfaces)
-- TDD ordering verified; conventions and REUSE path confirmed
+- Added `skills/slobac-audit/references/docs/stylesheets/extra.css` (paper light / ember dark tokens)
+- Wired `properdocs.yaml`: `primary`/`accent: custom`, `extra_css: stylesheets/extra.css`
+- Added `tests/python/unit/test_docs_theme_tokens.py` (5 contract tests)
+- Updated `memory-bank/techContext.md` Design System pointer
+- Verification: 29 pytest passed; `properdocs build --strict` passed
 
 ## Next Step
-- Build phase (`niko-build` / Level 2 build)
+- QA phase
