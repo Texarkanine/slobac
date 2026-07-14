@@ -84,7 +84,7 @@ No new technology - validation not required. Uses existing ProperDocs + Material
 - [x] Pre-Mortem complete
 - [x] Preflight
 - [x] Build
-- [ ] QA
+- [x] QA
 
 ## Build Checklist
 
@@ -98,3 +98,8 @@ No new technology - validation not required. Uses existing ProperDocs + Material
 
 - Extended token scope to code-block and footer surfaces under both schemes (avoids cold Material chrome on a warm canvas).
 - Confirmed `references/docs/**` REUSE override → new `stylesheets/extra.css` is CC-BY-SA-4.0 with the manifesto tree (acceptable; no plan change required).
+
+## QA Results
+
+- PASS. Visual check (light + dark via `properdocs serve`): cream paper canvas and ember header in light; warm charcoal + orange link accents in dark.
+- Trivial fix applied: softened dark-mode `--md-primary-fg-color` from `#f59e0b` to `#b45309` so the header is gentler while `--md-typeset-a-color` / accent stay `#fb923c` for orange highlights.

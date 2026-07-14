@@ -49,3 +49,13 @@ Restyle the SLOBAC ProperDocs / Material docs site to a gentle creamy/papery lig
     - Distinct hexes from common Anthropic reconstruction packs (`#f6f0e4` paper, `#f59e0b`/`#fb923c` ember accents)
 * Insights
     - None beyond preflight chrome-surface note
+
+## 2026-07-14 - QA - COMPLETE
+
+* Work completed
+    - Reviewed KISS/DRY/YAGNI/completeness against brief; visual QA in browser light+dark
+    - Softened dark header primary; re-verified tokens and pytest
+* Decisions made
+    - Dark chrome uses deeper ember; bright orange reserved for accents/links (closer to “gentle + orange highlights”)
+* Insights
+    - Material maps `primary` to the full header bar — saturated primary on dark reads as loud chrome, not “highlight”
