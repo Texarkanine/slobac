@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/Texarkanine/slobac/compare/v1.1.0...v1.1.1) (2026-07-18)
+
+
+### Bug Fixes
+
+* **slobac-audit:** clean up the skill text a bit ([#29](https://github.com/Texarkanine/slobac/issues/29)) ([9435ad4](https://github.com/Texarkanine/slobac/commit/9435ad474e3f10c5474f5be47affb33465b5f73d))
+
 ## [1.1.0](https://github.com/Texarkanine/slobac/compare/v1.0.0...v1.1.0) (2026-07-14)
 
 
