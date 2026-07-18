@@ -11,15 +11,13 @@ enable-model-invocation: false
 
 ## Step 1 — determine the target suite root
 
-The operator names a directory (explicitly or implicitly: "these tests", "my suite", a path in their message). If no target is identifiable, ask for one. Do not audit the whole repo by default; that is almost never what the operator wants and will produce an unreadably long report.
+The operator names a directory (explicitly or implicitly: "these tests", "my suite", a path in their message). If no target is identifiable, ask for one. Do not audit the whole repo by default; that is an expensive and slow operation that would be an unpleasant surprise for the operator.
 
 ## Step 2 — parse scope
 
 From the operator's request, resolve a list of **in-scope smell slugs** drawn from the supported set.
 
 ### Supported slugs and detection scopes
-
-The table below is the orchestrator's authoritative slug → detection-scope index. It is generated from each canonical entry's header table by `scripts/gen_taxonomy_index.py`; a sibling copy lives in [`references/docs/taxonomy/README.md`](./references/docs/taxonomy/README.md) for human navigation. Do not hand-edit the table — edit the canonical entry's header and run the generator.
 
 <!-- BEGIN: taxonomy-index -->
 | Slug | Severity | Detection Scope |
@@ -58,7 +56,7 @@ A slug whose detection scope lists multiple values (e.g. `deliverable-fossils` =
 
 Resolve the absolute filesystem path to this skill's `references/` directory (the directory containing `report-template.md`, `behavior-summary-format.md`, `suite-manifest-format.md`, `subagents/`, and `docs/`). This path is passed to all subagents so they can resolve reference files at runtime.
 
-🚨 **The orchestrator MUST NOT enumerate, count, or measure the suite itself.** If you find yourself running `find`, `wc`, `ls`, `Glob`, or any equivalent against the target suite root in this step, **stop and launch the scout instead.** The scout's role is the orchestrator's *evidence base* for partitioning, output budgeting, and report provenance — short-circuiting it produces silently wrong file/char/test counts and downstream miscalibration. (Two of three post-release runs miscounted the suite by either 4 files or ~30k chars when they bypassed the scout; the run that launched it got the counts right.)
+🚨 **The orchestrator MUST NOT enumerate, count, or measure the suite itself.** If you find yourself running `find`, `wc`, `ls`, `Glob`, or any equivalent against the target suite root in this step, **stop and launch the scout instead.** The scout's role is the orchestrator's *evidence base* for partitioning, output budgeting, and report provenance — short-circuiting it produces silently wrong file/char/test counts and downstream miscalibration.
 
 Read `references/subagents/scout.md`. Launch a lightweight, efficient, readonly subagent whose task is the content of that file, supplemented with:
 
@@ -112,7 +110,7 @@ Bound the maximum tests per batch by these per-richness caps so the assessor's o
 
 These caps reserve headroom for the findings section above the table; tune downward if a target model has a notably small output cap.
 
-This guard prevents the truncated-batch failure mode observed in post-release auto-model runs (`full` richness × 379 tests ≈ 190k chars of output in one subagent message → silent table truncation → empty cross-suite findings on suites that obviously contain redundancies).
+This guard exists because batch output is dominated by the behavior-summary table, which scales with `tests × richness`, and a single subagent response that exceeds the model's output ceiling is truncated silently — leaving a partial or empty table that the cross-suite assessor then treats as complete, producing false-negative cross-suite findings.
 
 ### 5c. Partition files
 
@@ -181,7 +179,7 @@ Apply this gate:
 - `0 < total_rows < expected_tests × 0.95` → identify the batch whose missing rows account for the gap and retry **that batch** (idempotent — same file list, same parameters, same workdir path and batch ID so it overwrites the prior file). On a second under-budget result, **halt with a structured error** that names the batch and the gap; do not proceed to cross-suite. Note the gap in the eventual report under "Out-of-scope requests" with an explicit "audit incomplete" line.
 - `total_rows == 0` → halt with the same structured error.
 
-This guard prevents the silent-failure mode observed in post-release auto-model runs: a truncated batch produced an incomplete IR; cross-suite ran against the partial data and emitted "no findings" for `semantic-redundancy` on a suite that obviously contains redundancies. **Never feed a partial IR to cross-suite.**
+Incomplete IR is indistinguishable from a clean suite at the cross-suite stage: missing rows look like absent smells, so a truncated batch produces false-negative "no findings." This gate refuses to proceed until `total_rows` matches the scout's expected test count. **Never feed a partial IR to cross-suite.**
 
 ## Step 9 — launch cross-suite assessor (if needed)
 
@@ -224,10 +222,6 @@ Tell the operator where the report was written and which scopes were covered. Do
 
 - **Read-only.** This skill does not modify test code. If the operator asks the skill to apply fixes, that is a future capability that does not exist yet — decline and direct them to treat the report as input to a separate step.
 - **Canonical entries are the single source of truth.** The canonical smell definitions in this skill bundle are the manifesto. If a detection feels right but the canonical entry's Signals don't cover it, that is a signal the canonical entry needs extending — stop and surface it as a manifesto gap, do not carry detection content outside the canonical entry.
-- **Preserve regression-detection power.** Every prescribed remediation in a finding is bounded by the [preservation-of-regression-detection-power](references/docs/principles/refactor-qualities.md#preservation-of-regression-detection-power) governor rule.
-- **Fossil vocabulary is a signal, not a verdict.** The word "refactor" in a title does not make a fossil; a ticket ID in a docstring does not make a fossil. The judgment is whether the vocabulary describes the test's reason-for-existence vs. the behavior it verifies.
-- **Naming-lie detection is semantic.** Title/body tokenization is a first pass, not a verdict.
-- **Cross-suite findings require targeted source reads.** The cross-suite assessor must read source before confirming a finding — behavior summary clustering alone is insufficient evidence.
 - **Batch assessor is the universal audit engine.** There is no separate single-agent code path. Small suites get 1 batch assessor with all files; large suites get N batch assessors with partitions. The degenerate case of 1 batch is the "single-agent" experience.
 - **Context budget is conservative by default.** The 200K-token floor with 60% content allocation ensures the audit works on any model. Operators can unlock better results (fewer batches, richer summaries) by specifying a larger context window.
 - **Failure is isolated.** A failed batch assessor does not invalidate the entire audit. Note the gap and continue.
