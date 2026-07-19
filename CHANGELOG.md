@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/Texarkanine/slobac/compare/v1.1.1...v1.2.0) (2026-07-19)
+
+
+### Features
+
+* **docs:** add llms.txt to static site ([#31](https://github.com/Texarkanine/slobac/issues/31)) ([3cfffa2](https://github.com/Texarkanine/slobac/commit/3cfffa217cddeef05fc547c9e01dd9da7ecbd84c))
+
 ## [1.1.1](https://github.com/Texarkanine/slobac/compare/v1.1.0...v1.1.1) (2026-07-18)
 
 
