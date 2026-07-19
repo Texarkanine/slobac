@@ -228,6 +228,18 @@ wheels = [
 ]
 
 [[package]]
+name = "mkdocs-llms-source"
+version = "1.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "mkdocs" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/44/02/80b5d343e5efe53ff9b1c34797215fe0551d6d01f831451b48ac8f74699a/mkdocs_llms_source-1.2.0.tar.gz", hash = "sha256:177efd34aca375a0ea747b6cf22596be22ba4c32a7a072bf97405250e4078566", size = 72610, upload-time = "2026-07-18T22:02:52.126Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6b/b7/b6d49bb519cd6b37a151404133a1dc140a96125a780344cf21e2c24c3b80/mkdocs_llms_source-1.2.0-py3-none-any.whl", hash = "sha256:6fda5242cb8c9f50a792fcaa880f185ae67ebef4490143406e5a432eaffd8ac2", size = 7872, upload-time = "2026-07-18T22:02:50.849Z" },
+]
+
+[[package]]
 name = "mkdocs-material"
 version = "9.7.0"
 source = { registry = "https://pypi.org/simple" }
@@ -489,6 +501,9 @@ wheels = [
 name = "slobac-docs"
 version = "0"
 source = { virtual = "." }
+dependencies = [
+    { name = "mkdocs-llms-source" },
+]
 
 [package.dev-dependencies]
 dev = [
@@ -502,6 +517,7 @@ docs = [
 ]
 
 [package.metadata]
+requires-dist = [{ name = "mkdocs-llms-source", specifier = ">=1.2.0" }]
 
 [package.metadata.requires-dev]
 dev = [{ name = "pytest", specifier = "~=8.3" }]

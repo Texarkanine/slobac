@@ -63,6 +63,8 @@ extra_css:
 plugins:
   - search
   - awesome-pages
+  - llms-source:
+      source_revision: true
 
 markdown_extensions:
   # Core structure / typography
