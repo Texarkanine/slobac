@@ -7,7 +7,7 @@ def on_files(files: Files, config: MkDocsConfig) -> Files:
     root = Path(config.config_file_path).resolve().parent
     brand = root / "docs" / "img"
     assets = {
-        "img/favicon.ico": brand / "favicon.ico"
+        "favicon.ico": brand / "favicon.ico"
     }
     for src_uri, abs_path in assets.items():
         if not abs_path.is_file():
