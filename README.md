@@ -1,6 +1,6 @@
 # SLOBAC - The Suite Life of Bobs and Code
 
-![SLOBAC Logo](./docs/img/slobac.jpg)
+![What would you say your tests do here?](./docs/img/slobac-hero.jpg)
 
 An agentic skill toolkit for cleaning up software test suites.
 

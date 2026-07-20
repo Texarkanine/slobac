@@ -25,6 +25,7 @@ validation:
 theme:
   name: material
   language: en
+  favicon: favicon.ico
   features:
     - navigation.instant
     - navigation.tracking
@@ -56,6 +57,10 @@ theme:
         name: Switch to light mode
   icon:
     repo: fontawesome/brands/github
+    logo: fontawesome/solid/bug
+
+hooks:
+  - docs/hooks/image_hooks.py
 
 extra_css:
   - stylesheets/extra.css
