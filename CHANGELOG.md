@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/Texarkanine/slobac/compare/v1.2.0...v1.3.0) (2026-07-20)
+
+
+### Features
+
+* **docs:** add favicon and "bug" logo ([#33](https://github.com/Texarkanine/slobac/issues/33)) ([fcda390](https://github.com/Texarkanine/slobac/commit/fcda39023fd42eaf0511c4035c455af02d200cd8))
+
 ## [1.2.0](https://github.com/Texarkanine/slobac/compare/v1.1.1...v1.2.0) (2026-07-19)
 
 
