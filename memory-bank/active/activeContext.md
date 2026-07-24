@@ -1,11 +1,12 @@
 # Active Context
 
 ## Current Task: skills-sh-install-surface
-**Phase:** COMPLEXITY-ANALYSIS - COMPLETE
+**Phase:** PLAN - COMPLETE
 
 ## What Was Done
-- Intent clarified and approved: instrument repo for skills.sh installability under the vercel-labs/skills model (full skill dirs; minimal JSON + docs).
-- Complexity determined: Level 2 (small self-contained enhancement — install surface / docs, not skill redesign).
+- Verified claim against live CLI: `npx skills add <repo> --list` finds `slobac-audit`; `--copy` install preserves `references/` (taxonomy intact).
+- Determined no new registry/plugin JSON is required for discovery — work is docs + pytest contract + optional badge.
+- Wrote Level 2 implementation plan with TDD mapping into `tasks.md`.
 
 ## Next Step
-- Load Level 2 workflow and execute its next phase.
+- Preflight validation (automatic per L2 workflow).
