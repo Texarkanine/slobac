@@ -29,7 +29,12 @@ Make SLOBAC's existing `skills/slobac-audit/` package discoverable and documente
 
 1. **RED — discoverability / layout / docs-contract tests**
    - Files: `tests/python/unit/test_skills_sh_surface.py` (new)
-   - Changes: add failing tests for B1–B3 (B3 fails until docs mention `npx skills add`; B1/B2 should pass against current tree — write them first as the contract lock; sequence so at least one RED exists before doc edits, or temporarily assert a sentinel string then implement)
+   - Changes: add tests for B1–B3 and Edge marketplace preserved in one module. Assert: (a) SKILL.md frontmatter `name`/`description` non-empty; (b) skill root has `references/` + `LICENSES/`; (c) `using-slobac.md` contains `npx skills add` and `Texarkanine/slobac`; (d) `using-slobac.md` still mentions `txrk9-agent-plugins`. Expect RED on (c) until step 2; (a)(b)(d) may already be green as characterization locks.
+
+### Preflight Amendments
+
+- Marketplace preservation is a required assertion in `test_skills_sh_surface.py`, not docs-only QA.
+- Do not add plugin/registry JSON unless a post-docs CLI smoke regresses (none expected).
 
 2. **GREEN — document skills.sh / `npx skills` install path**
    - Files: `skills/slobac-audit/references/docs/using-slobac.md`
@@ -80,6 +85,6 @@ No new technology - validation not required. Existing stack: `npx skills` (exter
 - [x] Implementation plan complete
 - [x] Technology validation complete
 - [x] Pre-Mortem complete
-- [ ] Preflight
+- [x] Preflight
 - [ ] Build
 - [ ] QA

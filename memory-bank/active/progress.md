@@ -27,3 +27,14 @@ Make this repository installable via skills.sh / `npx skills` (vercel-labs/skill
 * Insights
     - Operator hypothesis ("json config + docs") was half-right: docs yes, new JSON no
     - skills.sh public listing needs a real `npx skills add owner/repo` install to seed telemetry; badge may lag
+
+## 2026-07-24 - PREFLIGHT - COMPLETE
+
+* Work completed
+    - Validated TDD encoding, conventions, dependency impact (properdocs/README consumers), completeness vs brief
+    - Amended tasks.md: marketplace path asserted in pytest; explicit no-JSON unless smoke regresses
+    - Wrote `.preflight-status` = PASS
+* Decisions made
+    - PASS (no advisory blocking); optional skills.sh badge remains optional in build step 3
+* Insights
+    - Characterization tests for already-true discovery contracts are appropriate locks, not dead weight
