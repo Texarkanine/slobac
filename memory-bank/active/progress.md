@@ -38,3 +38,16 @@ Make this repository installable via skills.sh / `npx skills` (vercel-labs/skill
     - PASS (no advisory blocking); optional skills.sh badge remains optional in build step 3
 * Insights
     - Characterization tests for already-true discovery contracts are appropriate locks, not dead weight
+
+## 2026-07-24 - BUILD - COMPLETE
+
+* Work completed
+    - Added skills.sh surface contract tests (4); full suite 28 passed
+    - Documented `npx skills add Texarkanine/slobac --skill slobac-audit` in using-slobac + README (+ badge)
+    - Surgical techContext install-path update
+    - properdocs --strict green; CLI --list still finds only slobac-audit
+* Decisions made
+    - No new JSON manifests; discovery was already sufficient
+    - Marketplace install kept as alternate section under Install
+* Insights
+    - Operator "json config" hypothesis correctly rejected by evidence; docs were the real gap

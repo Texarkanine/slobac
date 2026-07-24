@@ -78,6 +78,15 @@ No new technology - validation not required. Existing stack: `npx skills` (exter
 - **Plan failed because docs replaced marketplace install and broke Cursor/Claude plugin users**: Require additive Install section (Edge marketplace preserved).
 - **Plan failed because we treated skills.sh listing as a config file problem and never verified CLI behavior**: Already disproven in planning via `--list` and `--copy` smokes; keep those as QA gate.
 
+## Implementation Progress
+
+- [x] Step 1 — RED tests (`test_skills_sh_surface.py`)
+- [x] Step 2 — GREEN `using-slobac.md` skills.sh install section
+- [x] Step 3 — README install command + skills.sh badge
+- [x] Step 4 — `techContext.md` install pointer
+- [x] Step 5 — pytest + properdocs + `npx skills --list` smoke
+- [x] Step 6 — no plugin JSON changes (confirmed unnecessary)
+
 ## Status
 
 - [x] Initialization complete
@@ -86,5 +95,5 @@ No new technology - validation not required. Existing stack: `npx skills` (exter
 - [x] Technology validation complete
 - [x] Pre-Mortem complete
 - [x] Preflight
-- [ ] Build
+- [x] Build
 - [ ] QA
