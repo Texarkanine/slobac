@@ -51,3 +51,24 @@ Make this repository installable via skills.sh / `npx skills` (vercel-labs/skill
     - Marketplace install kept as alternate section under Install
 * Insights
     - Operator "json config" hypothesis correctly rejected by evidence; docs were the real gap
+
+## 2026-07-24 - QA - COMPLETE
+
+* Work completed
+    - Semantic review against brief/plan: requirements complete; marketplace additive; no invented JSON
+    - KISS fix: replaced mini YAML frontmatter parser with two regex presence checks
+    - Re-ran full pytest (28 passed); wrote `.qa-validation-status` = PASS
+* Decisions made
+    - Badge retained (plan-optional, shipped); telemetry lag accepted
+* Insights
+    - Characterization helpers should stay as thin as the assertion they serve
+
+## 2026-07-24 - REFLECT - COMPLETE
+
+* Work completed
+    - Wrote `memory-bank/active/reflection/reflection-skills-sh-install-surface.md`
+    - Reconciled persistents: techContext already updated in build; productContext/systemPatterns left alone
+* Decisions made
+    - Standalone L2 complete; next operator step is `/niko-archive`
+* Insights
+    - Smoke the real install client before inventing packaging config

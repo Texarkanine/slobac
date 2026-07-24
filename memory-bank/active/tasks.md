@@ -96,4 +96,4 @@ No new technology - validation not required. Existing stack: `npx skills` (exter
 - [x] Pre-Mortem complete
 - [x] Preflight
 - [x] Build
-- [ ] QA
+- [x] QA
