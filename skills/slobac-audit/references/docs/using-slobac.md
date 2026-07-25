@@ -10,9 +10,7 @@ The skill ships as a standard [Agent Skills](https://agentskills.io) directory (
 npx skills add Texarkanine/slobac --skill slobac-audit
 ```
 
-That copies or symlinks the full `slobac-audit` skill into your agent harness. There is no separate publish or packaging step for [skills.sh](https://skills.sh) — the public GitHub repo is the source; the directory indexes installs via CLI telemetry.
-
-### Via plugin marketplace
+### Via Plugin Marketplace
 
 Install the [txrk9-agent-plugins](https://github.com/Texarkanine/txrk9-agent-plugins) Plugin Marketplace into your harness of choice.
 

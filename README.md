@@ -19,8 +19,6 @@ See if you "buy" what we're "selling" (don't worry,it's actually Free/Libre):
 npx skills add Texarkanine/slobac --skill slobac-audit
 ```
 
-[![skills.sh](https://skills.sh/b/Texarkanine/slobac)](https://skills.sh/Texarkanine/slobac)
-
     /slobac-audit all smells, 1M context window, src/__tests__/**
 
 ### Harness Requirements
