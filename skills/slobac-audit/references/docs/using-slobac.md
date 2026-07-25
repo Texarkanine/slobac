@@ -2,19 +2,11 @@
 
 ## Install
 
-### Via skills.sh / `npx skills`
-
-The skill ships as a standard [Agent Skills](https://agentskills.io) directory (`SKILL.md` plus `references/` and other sidecars). Install it with the [skills](https://github.com/vercel-labs/skills) CLI:
-
 ```bash
 npx skills add Texarkanine/slobac --skill slobac-audit
 ```
 
-### Via Plugin Marketplace
-
-Install the [txrk9-agent-plugins](https://github.com/Texarkanine/txrk9-agent-plugins) Plugin Marketplace into your harness of choice.
-
-Then, install the `slobac` plugin from that marketplace.
+Or install the `slobac` plugin from the [txrk9-agent-plugins](https://github.com/Texarkanine/txrk9-agent-plugins) marketplace.
 
 Either path gives your harness access to the `/slobac-audit` [Agent Skill](https://agentskills.io).
 

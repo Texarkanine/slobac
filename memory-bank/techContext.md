@@ -16,7 +16,7 @@ The canonical source is [`skills/slobac-audit/`](../skills/slobac-audit/). Layou
 
 Subagent workflows (`references/subagents/scout.md`, `batch.md`, `cross-suite.md`) are dispatched by the orchestrator as raw task prompts. All shared content (taxonomy, format specs) lives under `references/` — subagents resolve it via the absolute path passed by the orchestrator at runtime.
 
-Per-harness discovery paths are operator-install concerns, not architectural ones. The canonical source stays harness-agnostic. Operators can install via **`npx skills add Texarkanine/slobac --skill slobac-audit`** ([skills.sh](https://skills.sh) / [vercel-labs/skills](https://github.com/vercel-labs/skills) — full skill directory, no separate packaging step) or via the `slobac` plugin from the [`Texarkanine/txrk9-agent-plugins`](https://github.com/Texarkanine/txrk9-agent-plugins) marketplace catalog (see [`using-slobac.md`](../skills/slobac-audit/references/docs/using-slobac.md)). Legacy symlink installs into `.cursor/skills/` / `.claude/skills/` remain possible for repo contributors; install and smoke-test guidance is in the same document.
+Per-harness discovery paths are operator-install concerns, not architectural ones. The canonical source stays harness-agnostic; install via **`npx skills add Texarkanine/slobac --skill slobac-audit`** or the [`txrk9-agent-plugins`](https://github.com/Texarkanine/txrk9-agent-plugins) marketplace (see [`using-slobac.md`](../skills/slobac-audit/references/docs/using-slobac.md)).
 
 ### Full-manifesto-in-bundle pattern
 
