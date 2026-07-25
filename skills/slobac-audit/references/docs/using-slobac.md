@@ -2,11 +2,13 @@
 
 ## Install
 
-Install the [txrk9-agent-plugins](https://github.com/Texarkanine/txrk9-agent-plugins) Plugin Marketplace into your harness of choice.
+```bash
+npx skills add Texarkanine/slobac --skill slobac-audit
+```
 
-Then, install the `slobac` plugin from that marketplace.
+Or install the `slobac` plugin from the [txrk9-agent-plugins](https://github.com/Texarkanine/txrk9-agent-plugins) marketplace.
 
-This will give your harness access to the `/slobac-audit` [Agent Skill](https://agentskills.io).
+Either path gives your harness access to the `/slobac-audit` [Agent Skill](https://agentskills.io).
 
 ## Scope
 
