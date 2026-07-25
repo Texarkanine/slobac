@@ -84,3 +84,12 @@ Make this repository installable via skills.sh / `npx skills` (vercel-labs/skill
     - Docs-only surface is enough; no `skills.sh.json`, no plugin `skills` array, no pytest lock
 * Insights
     - Ponytail cut the contract-test layer after it was already shipping — the install command in docs is the product
+
+## 2026-07-25 - ARCHIVE - IN-PROGRESS
+
+* Work completed
+    - Operator invoked `/niko-archive` for the full L2 task
+* Decisions made
+    - Archive category: `enhancements/` (additive install-docs surface for existing skill)
+* Insights
+    - None yet; proceeding to archive document + ephemeral cleanup
