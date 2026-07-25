@@ -80,12 +80,13 @@ No new technology - validation not required. Existing stack: `npx skills` (exter
 
 ## Implementation Progress
 
-- [x] Step 1 — RED tests (`test_skills_sh_surface.py`)
-- [x] Step 2 — GREEN `using-slobac.md` skills.sh install section
-- [x] Step 3 — README install command + skills.sh badge
+- [x] Step 1 — RED tests (`test_skills_sh_surface.py`) — later deleted in post-reflect polish
+- [x] Step 2 — GREEN `using-slobac.md` skills.sh install section — later trimmed to command + marketplace one-liner
+- [x] Step 3 — README install command + skills.sh badge — badge removed post-reflect
 - [x] Step 4 — `techContext.md` install pointer
 - [x] Step 5 — pytest + properdocs + `npx skills --list` smoke
 - [x] Step 6 — no plugin JSON changes (confirmed unnecessary)
+
 
 ## Status
 

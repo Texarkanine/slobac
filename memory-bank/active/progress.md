@@ -72,3 +72,15 @@ Make this repository installable via skills.sh / `npx skills` (vercel-labs/skill
     - Standalone L2 complete; next operator step is `/niko-archive`
 * Insights
     - Smoke the real install client before inventing packaging config
+
+## 2026-07-25 - POST-REFLECT PR POLISH
+
+* Work completed
+    - Removed skills.sh badge (empty until telemetry)
+    - Deleted `test_skills_sh_surface.py` — characterization of already-true layout + docs string checks were not earning their keep
+    - Trimmed `using-slobac.md` Install to the `npx skills add` command + marketplace alternate
+    - Shortened techContext install pointer
+* Decisions made
+    - Docs-only surface is enough; no `skills.sh.json`, no plugin `skills` array, no pytest lock
+* Insights
+    - Ponytail cut the contract-test layer after it was already shipping — the install command in docs is the product
