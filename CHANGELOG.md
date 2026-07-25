@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/Texarkanine/slobac/compare/v1.3.0...v1.4.0) (2026-07-25)
+
+
+### Features
+
+* **docs:** add skills.sh / npx skills install surface ([#35](https://github.com/Texarkanine/slobac/issues/35)) ([ce8812e](https://github.com/Texarkanine/slobac/commit/ce8812e8c2a1b9c74578dd0bba1c22d2c81269b0))
+
 ## [1.3.0](https://github.com/Texarkanine/slobac/compare/v1.2.0...v1.3.0) (2026-07-20)
 
 
