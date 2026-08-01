@@ -1,5 +1,7 @@
 # SLOBAC - The Suite Life of Bobs and Code
 
+[![REUSE status](https://api.reuse.software/badge/github.com/Texarkanine/slobac)](https://api.reuse.software/info/github.com/Texarkanine/slobac)
+
 ![What would you say your tests do here?](./docs/img/slobac-hero.jpg)
 
 An agentic skill toolkit for cleaning up software test suites.
