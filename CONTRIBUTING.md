@@ -1,4 +1,18 @@
-# Contributing to SLOBAC
+# Contributing
+
+Want to contribute? We'd love to see it! Thoughtful issues and PRs that make the project better are enthusiastically welcomed here!
+
+## Issues
+
+Open an issue for a bug, an idea, or a question.
+
+## Pull requests
+
+1. Fork the repository. If you already have write access, a branch on the origin is fine.
+2. Open a pull request against `main` and fill in the pull request template.
+3. Title the PR as a [conventional commit](https://www.conventionalcommits.org/): `feat`, `fix`, or `chore`. This repository uses release-please: `feat` and `fix` cut a release; `chore` does not.
+
+Keep the change focused: one concern per pull request when practical.
 
 ## Adding a taxonomy entry
 
@@ -134,3 +148,7 @@ uv run properdocs serve
 ```
 
 The site builds from `skills/slobac-audit/references/docs/`. `properdocs build --strict` is the CI gate — warnings are errors.
+
+## License
+
+By opening a pull request, you license your contribution under this repository's license, and you grant Texarkanine a perpetual, worldwide, non-exclusive right to relicense that contribution as part of this project under any [OSI-approved](https://opensource.org/licenses) license. You keep your copyright.
